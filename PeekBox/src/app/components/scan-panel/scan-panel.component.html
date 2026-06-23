@@ -1,0 +1,204 @@
+<div class="scan-split" #stageRef>
+  <div class="ss-backdrop" (click)="close()"></div>
+
+  <!-- LEFT: Info + box preview -->
+  <div class="ss-left">
+    <div class="ss-l-blobs">
+      <div class="sslb sslb--1"></div>
+      <div class="sslb sslb--2"></div>
+      <div class="sslb sslb--3"></div>
+      <div class="sslb sslb--4"></div>
+    </div>
+
+    <button class="ss-l-back" (click)="close()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      <span>Torna indietro</span>
+    </button>
+
+    <div class="ss-l-content">
+      <div class="ss-l-loading-error" *ngIf="caricamentoError && boxTrovati.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ caricamentoError }}</span>
+      </div>
+
+      <div class="ss-l-waiting" *ngIf="boxTrovati.length === 0">
+        <div class="ss-l-w-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="9"/>
+            <line x1="20" y1="20" x2="17" y2="17"/>
+          </svg>
+        </div>
+        <h2 class="ss-l-w-title">Scansiona un QR Code</h2>
+        <p class="ss-l-w-text">Inquadra il codice QR presente sulla tua box con la fotocamera sul lato destro. I dettagli appariranno qui automaticamente.</p>
+      </div>
+
+      <div class="ss-l-info" *ngIf="boxTrovati.length === 0">
+        <div class="ss-l-info-item">
+          <div class="ss-l-info-num">1</div>
+          <div class="ss-l-info-text">
+            <strong>Posiziona il QR Code</strong>
+            <span>Centra il codice QR nel riquadro della fotocamera a destra</span>
+          </div>
+        </div>
+        <div class="ss-l-info-item">
+          <div class="ss-l-info-num">2</div>
+          <div class="ss-l-info-text">
+            <strong>Attendi la scansione</strong>
+            <span>La lettura avviene automaticamente in pochi secondi</span>
+          </div>
+        </div>
+        <div class="ss-l-info-item">
+          <div class="ss-l-info-num">3</div>
+          <div class="ss-l-info-text">
+            <strong>Visualizza la box</strong>
+            <span>I dettagli della box appariranno qui con un click per aprirli</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ss-l-tip" *ngIf="boxTrovati.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span>Non hai il QR Code? Puoi inserire il codice manualmente nel campo sottostante.</span>
+      </div>
+
+      <div class="ss-l-boxes" *ngIf="boxTrovati.length > 0">
+        <div class="ss-l-boxes-label">Box trovate</div>
+        <div class="ss-l-result" *ngFor="let box of boxTrovati">
+          <div class="ss-l-r-card">
+            <div class="ss-l-r-row ss-l-r-row--label">
+              <span>{{ box.nome }}</span>
+            </div>
+            <div class="ss-l-r-row" *ngIf="box.descrizione">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span>{{ box.descrizione }}</span>
+            </div>
+            <div class="ss-l-r-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              <span>{{ box.nome_armadio || 'Nessun armadio' }}</span>
+            </div>
+            <div class="ss-l-r-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Creata il {{ box.data_creazione || '—' }}</span>
+            </div>
+            <div class="ss-l-r-tags" *ngIf="box.is_preferito">
+              <span class="ss-l-r-tag ss-l-r-tag--fav">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Preferito
+              </span>
+            </div>
+          </div>
+          <button class="ss-l-r-cta" (click)="vaiABox(box)">
+            <span>Apri dettaglio</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Scanner panel -->
+  <div class="ss-right">
+    <div class="sr-blobs">
+      <div class="srb-blob srb-blob--1"></div>
+      <div class="srb-blob srb-blob--2"></div>
+      <div class="srb-blob srb-blob--3"></div>
+      <div class="srb-blob srb-blob--4"></div>
+    </div>
+
+    <div class="sr-body">
+      <div class="sr-card" #tiltCard>
+        <div class="sr-card-glare"></div>
+        <div class="sr-card-accent"></div>
+        <div class="sr-card-pattern"></div>
+        <div class="sr-card-bubble sr-card-bubble--1"></div>
+        <div class="sr-card-bubble sr-card-bubble--2"></div>
+        <div class="sr-card-bubble sr-card-bubble--3"></div>
+
+        <div class="sr-card-header sr-card-header--center">
+          <h1 class="sr-card-title">Scansiona QR</h1>
+          <p class="sr-card-sub">Inquadra il codice QR della box</p>
+        </div>
+
+        <div class="sr-card-body">
+          <div class="sr-viewfinder">
+            <div class="sr-camera-preview" [class.scan-active]="cameraAttiva" [class.camera-off]="!cameraAttiva && !erroreCamera">
+              <video #videoEl autoplay playsinline muted class="sr-camera-video" [class.hidden]="!cameraAttiva"></video>
+              <canvas #canvasEl class="hidden"></canvas>
+
+              <div class="sr-scanner-overlay" *ngIf="cameraAttiva">
+                <div class="sr-laser-line"></div>
+                <div class="sr-laser-glow"></div>
+                <div class="sr-scanning-indicator">
+                  <div class="sr-si-dot"></div>
+                  <span>Scansione in corso...</span>
+                </div>
+              </div>
+
+              <div class="sr-camera-off-placeholder" *ngIf="!cameraAttiva && !erroreCamera">
+                <div class="sr-cop-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </div>
+                <h3>Fotocamera spenta</h3>
+                <p>Attiva la fotocamera per scansionare un codice QR</p>
+              </div>
+
+              <div class="sr-camera-error" *ngIf="erroreCamera">
+                <div class="sr-cep-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3>Errore fotocamera</h3>
+                <p>{{ erroreCamera }}</p>
+              </div>
+            </div>
+
+            <div class="sr-actions-row">
+              <button class="sr-btn sr-btn--action" (click)="daGalleria()" title="Galleria">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Galleria</span>
+              </button>
+              <button class="sr-btn sr-btn--action" [class.active]="cameraAttiva" (click)="toggleCamera()">
+                <svg *ngIf="!cameraAttiva" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg *ngIf="cameraAttiva" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                <span>{{ cameraAttiva ? 'Spegni' : 'Scansiona' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="sr-manual-section">
+            <div class="sr-manual-card">
+              <div class="sr-mc-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M6 16h.01M10 16h.01M14 16h.01"/></svg>
+              </div>
+              <div class="sr-mc-input-wrap">
+                <input type="text" placeholder="Inserisci codice box..." [(ngModel)]="codiceManuale" (keyup.enter)="cercaBox()">
+              </div>
+              <button class="sr-mc-go" (click)="cercaBox()" [disabled]="!codiceManuale">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+            <div class="gallery-error" *ngIf="proprietarioError">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="10" r="9"/>
+                <line x1="10" y1="6" x2="10" y2="12"/>
+                <line x1="10" y1="14" x2="10.01" y2="14"/>
+              </svg>
+              <span>{{ proprietarioError }}</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

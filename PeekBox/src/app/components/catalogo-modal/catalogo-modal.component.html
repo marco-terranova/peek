@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>📦 Catalogo Elementi</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="chiudi()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Cerca elemento..."
+      [debounce]="250"
+      (ionInput)="onRicerca($event)"
+      animated>
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment
+      [value]="categoriaSelezionata"
+      (ionChange)="onCategoriaChange($event)"
+      scrollable>
+      @for (cat of categorie; track cat) {
+        <ion-segment-button [value]="cat">
+          <ion-label>{{ cat }}</ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (isLoading) {
+    <div class="loading-center">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Caricamento catalogo...</p>
+    </div>
+  } @else if (itemsFiltrati.length === 0) {
+    <div class="empty-state">
+      <p>Nessun elemento trovato.</p>
+    </div>
+  } @else {
+    <ion-list lines="full">
+      @for (item of itemsFiltrati; track item.id) {
+        <ion-item>
+          <ion-thumbnail slot="start">
+            <img [src]="item.default_image_url" [alt]="item.name"
+                 onerror="this.src='assets/icon/favicon.png'" />
+          </ion-thumbnail>
+
+          <ion-label>
+            <h2>{{ item.name }}</h2>
+            <p>{{ item.category }}</p>
+          </ion-label>
+
+          <div slot="end" class="qty-controls">
+            @if (getQuantita(item) > 0) {
+              <ion-button fill="clear" size="small" (click)="decrementa(item)">
+                <ion-icon name="remove-circle-outline" color="danger"></ion-icon>
+              </ion-button>
+              <ion-badge color="primary">{{ getQuantita(item) }}</ion-badge>
+            }
+            <ion-button fill="clear" size="small" (click)="incrementa(item)">
+              <ion-icon name="add-circle-outline" color="success"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      color="primary"
+      [disabled]="totaleElementiCarrello === 0 || isSaving"
+      (click)="confermaAggiunta()">
+      @if (isSaving) {
+        <ion-spinner name="crescent" slot="start"></ion-spinner>
+        Salvataggio...
+      } @else {
+        Aggiungi {{ totaleElementiCarrello > 0 ? '(' + totaleElementiCarrello + ')' : '' }} alla Box
+      }
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,399 @@
+@use '../../theme/variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+
+$green: #7DC740; $green-d: #5A9E2A; $green-l: #A8E675;
+$blue: #3AABDB; $blue-d: #2A8BB5;
+$dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
+
+@mixin glass($a: 0.6, $b: 30px) {
+  background: rgba(255, 255, 255, $a);
+  backdrop-filter: blur($b);
+  -webkit-backdrop-filter: blur($b);
+}
+
+:host {
+  display: block;
+  font-family: 'Outfit', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.home-content {
+  --background: #{$page};
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: linear-gradient(160deg, $page 0%, #E8F4F8 40%, #F0F7EE 100%);
+}
+
+// ── Animated blobs ─────────────────────────────────────
+.hm-blobs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.hmb-blob {
+  position: absolute; border-radius: 50%; filter: blur(60px);
+  opacity: .45;
+}
+.hmb-blob--1 {
+  width: 500px; height: 500px; top: -180px; right: -60px;
+  background: radial-gradient(circle, $blue, transparent 70%);
+  animation: hmb-m1 18s ease-in-out infinite;
+}
+.hmb-blob--2 {
+  width: 400px; height: 400px; bottom: -140px; left: -80px;
+  background: radial-gradient(circle, $green, transparent 70%);
+  animation: hmb-m2 15s ease-in-out infinite 2s;
+}
+.hmb-blob--3 {
+  width: 280px; height: 280px; top: 30%; left: 5%;
+  background: radial-gradient(circle, $blue, transparent 70%);
+  animation: hmb-m3 20s ease-in-out infinite 4s;
+}
+.hmb-blob--4 {
+  width: 220px; height: 220px; top: 50%; right: 10%;
+  background: radial-gradient(circle, $green, transparent 70%);
+  animation: hmb-m4 16s ease-in-out infinite 6s;
+}
+@keyframes hmb-m1 {
+  0%,100% { transform: translate(0,0) scale(1); border-radius: 50%; }
+  33% { transform: translate(40px,30px) scale(1.1); border-radius: 42% 58% 58% 42% / 48% 52% 48% 52%; }
+  66% { transform: translate(-20px,50px) scale(0.95); border-radius: 55% 45% 45% 55% / 52% 48% 52% 48%; }
+}
+@keyframes hmb-m2 {
+  0%,100% { transform: translate(0,0) scale(1); border-radius: 50%; }
+  33% { transform: translate(-30px,-40px) scale(1.15); border-radius: 55% 45% 48% 52% / 42% 58% 42% 58%; }
+  66% { transform: translate(30px,-20px) scale(0.9); border-radius: 45% 55% 52% 48% / 55% 45% 55% 45%; }
+}
+@keyframes hmb-m3 {
+  0%,100% { transform: translate(0,0) rotate(0deg) scale(1); border-radius: 50%; }
+  50% { transform: translate(20px,-30px) rotate(180deg) scale(1.2); border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; }
+}
+@keyframes hmb-m4 {
+  0%,100% { transform: translate(0,0) rotate(0deg) scale(1); border-radius: 50%; }
+  50% { transform: translate(-25px,20px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOP-RIGHT BUTTONS
+// ═══════════════════════════════════════════════════════════
+.btn-scan, .btn-add, .btn-filtri {
+  position: absolute;
+  z-index: 10;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  color: $green-d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 4px 16px rgba(15, 23, 42, 0.04),
+    0 8px 24px rgba(15, 23, 42, 0.04);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s;
+  right: 28px;
+  svg { width: 22px; height: 22px; transition: transform 0.3s; }
+  &:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+      0 8px 20px rgba(15, 23, 42, 0.08),
+      0 16px 40px rgba(15, 23, 42, 0.06);
+  }
+  &:active { transform: scale(0.9); }
+}
+.btn-scan { top: 28px; }
+.btn-add { top: calc(28px + 48px + 12px); }
+.btn-filtri { top: calc(28px + 48px + 12px + 48px + 12px); }
+
+// ═══════════════════════════════════════════════════════════
+//  MAIN CONTENT — BOX LIST
+// ═══════════════════════════════════════════════════════════
+.hm-main {
+  position: absolute;
+  inset: 100px 20px 100px 20px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hm-intestazione {
+  text-align: center;
+  flex-shrink: 0;
+  padding: 0 16px 8px;
+}
+
+.hm-titolo {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  background: linear-gradient(135deg, $green 0%, $blue 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin: 0;
+}
+
+.hm-sottotitolo {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: $mid;
+  margin: 2px 0 0;
+}
+
+// ── Loading ─────────────────────────────────────────────
+.hm-caricamento {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hm-spinner {
+  width: 28px; height: 28px;
+  border: 3px solid rgba($green, 0.1);
+  border-top-color: $green;
+  border-radius: 50%;
+  animation: hm-spin 0.7s linear infinite;
+}
+@keyframes hm-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Empty state ─────────────────────────────────────────
+.hm-vuoto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+
+  svg {
+    width: 48px; height: 48px;
+    stroke: rgba($mid, 0.25);
+  }
+}
+.hm-vuoto-testo {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: $mid;
+  margin: 0;
+}
+.hm-vuoto-btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: $white;
+  background: linear-gradient(135deg, $green 0%, $blue 100%);
+  border: none;
+  border-radius: 100px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba($blue, 0.25);
+  &:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba($blue, 0.35); }
+  &:active { transform: scale(0.96); }
+}
+
+// ── Box list ────────────────────────────────────────────
+.hm-lista {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 8px 8px;
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba($green, 0.12); border-radius: 4px; }
+}
+
+.hm-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    0 2px 8px rgba(15, 23, 42, 0.03);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+      0 4px 14px rgba(15, 23, 42, 0.06);
+  }
+  &:active { transform: scale(0.98); }
+}
+
+.hm-card-foto {
+  width: 52px; height: 52px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.hm-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hm-card-nome {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: $dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hm-card-oggetti {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.74rem;
+  color: $mid;
+}
+
+.hm-card-chevron {
+  width: 16px; height: 16px;
+  stroke: $mid;
+  flex-shrink: 0;
+  opacity: 0.25;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BOTTOM: PILL NAVIGATION DOCK
+// ═══════════════════════════════════════════════════════════
+.dock-nav {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 32px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 4px 16px rgba(15, 23, 42, 0.04),
+    0 12px 48px rgba(15, 23, 42, 0.08);
+  animation: dock-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both 0.25s;
+}
+
+@keyframes dock-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(24px) scale(0.95); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.dock-btn {
+  position: relative;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $mid;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s,
+              box-shadow 0.25s,
+              color 0.25s;
+
+  .dock-icon {
+    width: 24px; height: 24px;
+    transition: transform 0.3s;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    color: $green-d;
+    .dock-icon { transform: scale(1.08); }
+  }
+  &:active { transform: scale(0.88); }
+}
+
+.dock-btn--home {
+  background: linear-gradient(135deg, $green 0%, $blue 100%);
+  color: $white;
+  box-shadow:
+    0 0 0 3px rgba($green, 0.15),
+    0 4px 14px rgba($blue, 0.3);
+  .dock-icon { stroke: $white; }
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 0 0 4px rgba($green, 0.2),
+      0 8px 24px rgba($blue, 0.35);
+  }
+  &:active { transform: scale(0.92); }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RESPONSIVE
+// ═══════════════════════════════════════════════════════════
+@media (max-width: 640px) {
+  .dock-nav {
+    bottom: 28px;
+    padding: 8px 24px;
+    gap: 16px;
+  }
+  .dock-btn {
+    width: 42px; height: 42px;
+    .dock-icon { width: 22px; height: 22px; }
+  }
+  .btn-scan { top: 20px; right: 20px; }
+  .btn-add { top: calc(20px + 48px + 10px); right: 20px; }
+  .btn-filtri { top: calc(20px + 48px + 10px + 48px + 10px); right: 20px; }
+  .hm-main { inset: 90px 16px 90px 16px; }
+  .hm-card-foto { width: 44px; height: 44px; }
+}
+
+@media (max-width: 400px) {
+  .dock-nav {
+    padding: 6px 18px;
+    gap: 12px;
+  }
+  .dock-btn {
+    width: 36px; height: 36px;
+    .dock-icon { width: 20px; height: 20px; }
+  }
+  .hm-main { inset: 80px 12px 80px 12px; }
+  .hm-card-foto { width: 38px; height: 38px; }
+}

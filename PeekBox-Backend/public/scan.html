@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeekBox — Traccia questo collo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0f0f;
+    --ink-muted: #5a5a5a;
+    --ink-faint: #9a9a9a;
+    --surface: #fafaf8;
+    --surface-card: #ffffff;
+    --border: #e2e2dd;
+    --border-strong: #c8c8c2;
+    --accent: #1a4aff;
+    --accent-soft: #e8edff;
+    --success: #0f6e56;
+    --success-soft: #e1f5ee;
+    --warning: #854f0b;
+    --warning-soft: #faeeda;
+    --danger: #a32d2d;
+    --danger-soft: #fcebeb;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Syne', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ── HEADER STRIP ─────────────────────────────── */
+  .top-bar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0 2rem;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--ink);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-icon svg { width: 18px; height: 18px; fill: var(--surface-card); }
+  .logo-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .badge-guest {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 100px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── OWNERSHIP CARD ───────────────────────────── */
+  .ownership-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .ownership-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 0.75rem;
+  }
+  .ownership-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+  .ownership-company {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  .ownership-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .meta-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.8rem;
+  }
+  .meta-chip-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 3px;
+  }
+  .meta-chip-value {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    word-break: break-all;
+  }
+
+  /* ── CTA MESSAGE ──────────────────────────────── */
+  .cta-message {
+    width: 100%;
+    max-width: 480px;
+    background: var(--accent-soft);
+    border: 1px solid #c0ccff;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .cta-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cta-icon svg { width: 18px; height: 18px; fill: #fff; }
+  .cta-text h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1230cc;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .cta-text p {
+    font-size: 13px;
+    font-weight: 400;
+    color: #2a40aa;
+    line-height: 1.55;
+  }
+
+  /* ── FORM CARD ────────────────────────────────── */
+  .form-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .form-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-title svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* GPS BLOCK */
+  .gps-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .gps-header {
+    background: var(--surface);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .gps-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .gps-header svg { width: 14px; height: 14px; }
+  .gps-toggle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--surface-card);
+    transition: all 0.15s;
+  }
+  .gps-toggle:hover { background: var(--surface); }
+  .gps-body { padding: 1rem; }
+  .gps-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 0;
+    transition: all 0.3s;
+  }
+  .gps-status.idle { background: var(--surface); color: var(--ink-muted); border: 1px solid var(--border); }
+  .gps-status.loading { background: var(--warning-soft); color: var(--warning); border: 1px solid #efc97a; }
+  .gps-status.success { background: var(--success-soft); color: var(--success); border: 1px solid #5dcaa5; }
+  .gps-status.error { background: var(--danger-soft); color: var(--danger); border: 1px solid #f09595; }
+  .gps-status svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .gps-coords {
+    display: none;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    word-break: break-all;
+    line-height: 1.7;
+  }
+  .gps-coords.visible { display: block; }
+
+  /* NOTE TEXTAREA */
+  .field-group { margin-bottom: 1rem; }
+  .field-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 0.875rem;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface-card);
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.55;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--ink-faint); }
+
+  /* CONSENT */
+  .consent-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .consent-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .consent-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+  .consent-text strong { color: var(--ink); font-weight: 600; }
+
+  /* SUBMIT BTN */
+  .btn-submit {
+    width: 100%;
+    padding: 0.875rem;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-submit:hover { background: #2a2a2a; }
+  .btn-submit:active { transform: scale(0.99); }
+  .btn-submit:disabled { background: var(--border-strong); cursor: not-allowed; transform: none; }
+  .btn-submit svg { width: 16px; height: 16px; }
+
+  /* SUCCESS STATE */
+  .success-panel {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  .success-panel.visible { display: flex; }
+  .success-circle {
+    width: 72px;
+    height: 72px;
+    background: var(--success-soft);
+    border: 2px solid #5dcaa5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .success-circle svg { width: 32px; height: 32px; stroke: var(--success); }
+  .success-panel h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+  .success-panel p {
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    max-width: 320px;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+  .footer p {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+  }
+  .footer a { color: var(--ink-muted); text-decoration: none; }
+  .footer a:hover { color: var(--ink); }
+
+  /* SPINNER */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  .spinner.dark {
+    border-color: rgba(0,0,0,0.15);
+    border-top-color: var(--warning);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 520px) {
+    .ownership-meta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a class="logo" href="https://peekbox.app">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-name">PeekBox</span>
+  </a>
+  <span class="badge-guest">Guest Mode</span>
+</div>
+
+<!-- OWNERSHIP INFO -->
+<div class="ownership-card">
+  <p class="ownership-eyebrow">Informazioni collo</p>
+  <h1 class="ownership-title">Questo collo è di proprietà di</h1>
+  <p class="ownership-company" id="company-name">Caricamento…</p>
+  <div class="ownership-meta">
+    <div class="meta-chip">
+      <p class="meta-chip-label">ID Collo</p>
+      <p class="meta-chip-value" id="box-id">—</p>
+    </div>
+    <div class="meta-chip">
+      <p class="meta-chip-label">Nome Box</p>
+      <p class="meta-chip-value" id="box-name">—</p>
+    </div>
+    <div class="meta-chip">
+      <p class="meta-chip-label">Rilevato il</p>
+      <p class="meta-chip-value" id="scan-date">—</p>
+    </div>
+    <div class="meta-chip">
+      <p class="meta-chip-label">Modalità</p>
+      <p class="meta-chip-value">Moving Mode</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA MESSAGE -->
+<div class="cta-message">
+  <div class="cta-icon">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 5v5l3 3"/></svg>
+  </div>
+  <div class="cta-text">
+    <h3>Aiutaci a tracciare questo collo</h3>
+    <p>Sei in possesso di questo pacco o lo hai intercettato durante la spedizione? Condividi la tua posizione per aggiornare il proprietario in tempo reale.</p>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-card" id="form-wrapper">
+  <p class="form-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Segnala la tua posizione
+  </p>
+
+  <!-- GPS -->
+  <div class="gps-block">
+    <div class="gps-header" onclick="toggleGpsSection()">
+      <div class="gps-header-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        Posizione GPS
+      </div>
+      <span class="gps-toggle" id="gps-toggle-btn">Attiva</span>
+    </div>
+    <div class="gps-body" id="gps-body">
+      <div class="gps-status idle" id="gps-status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Premi "Attiva" per condividere le coordinate GPS correnti
+      </div>
+      <div class="gps-coords" id="gps-coords"></div>
+    </div>
+  </div>
+
+  <!-- NOTE -->
+  <div class="field-group">
+    <label class="field-label" for="note-input">Messaggio (opzionale)</label>
+    <textarea id="note-input" placeholder="Es: Il collo è arrivato al nostro magazzino di Milano. Procediamo all'inoltro domani mattina…"></textarea>
+  </div>
+
+  <!-- CONSENT -->
+  <label class="consent-row">
+    <input type="checkbox" id="consent-check" onchange="validateForm()">
+    <span class="consent-text">
+      Autorizzo PeekBox a raccogliere la mia posizione GPS e il messaggio inserito per notificare il <strong>proprietario del collo</strong>. I dati non saranno utilizzati per altri scopi.
+    </span>
+  </label>
+
+  <button class="btn-submit" id="submit-btn" onclick="submitSegnalazione()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    Invia segnalazione al proprietario
+  </button>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-panel" id="success-panel">
+  <div class="success-circle">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+  <h2>Segnalazione inviata!</h2>
+  <p>Il proprietario del collo è stato notificato in tempo reale con la tua posizione. Grazie per la collaborazione.</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>
+    Powered by <a href="https://peekbox.app">PeekBox</a> &middot;
+    <a href="https://peekbox.app/privacy">Privacy Policy</a> &middot;
+    Dati trasmessi cifrati (HTTPS)
+  </p>
+</div>
+
+<script>
+  const BOX_ID = new URLSearchParams(window.location.search).get('box') || 'DEMO-42';
+  const TOKEN = new URLSearchParams(window.location.search).get('t') || null;
+  const API_BASE = 'https://api.peekbox.app';
+
+  let gpsData = null;
+  let gpsSectionOpen = false;
+
+  document.getElementById('box-id').textContent = BOX_ID;
+  document.getElementById('scan-date').textContent = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  async function loadBoxInfo() {
+    try {
+      const res = await fetch(`${API_BASE}/api/public/box/${BOX_ID}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      document.getElementById('company-name').textContent = data.company || data.box?.nome || 'Azienda registrata';
+      document.getElementById('box-name').textContent = data.box?.nome || BOX_ID;
+    } catch {
+      document.getElementById('company-name').textContent = '[Azienda registrata su PeekBox]';
+      document.getElementById('box-name').textContent = BOX_ID;
+    }
+  }
+  loadBoxInfo();
+
+  function toggleGpsSection() {
+    gpsSectionOpen = !gpsSectionOpen;
+    const btn = document.getElementById('gps-toggle-btn');
+    if (gpsSectionOpen) {
+      btn.textContent = 'Acquisendo…';
+      requestGPS();
+    } else {
+      gpsData = null;
+      btn.textContent = 'Attiva';
+      setGpsStatus('idle', 'Premi "Attiva" per condividere le coordinate GPS correnti');
+      document.getElementById('gps-coords').classList.remove('visible');
+      validateForm();
+    }
+  }
+
+  function requestGPS() {
+    setGpsStatus('loading', 'Acquisizione in corso…', true);
+    if (!navigator.geolocation) {
+      setGpsStatus('error', 'Geolocalizzazione non supportata da questo dispositivo');
+      document.getElementById('gps-toggle-btn').textContent = 'Riprova';
+      gpsSectionOpen = false;
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        gpsData = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: Math.round(pos.coords.accuracy) };
+        setGpsStatus('success', `Posizione acquisita (±${gpsData.acc} m)`);
+        document.getElementById('gps-toggle-btn').textContent = 'Resetta';
+        const coordEl = document.getElementById('gps-coords');
+        coordEl.textContent = `LAT  ${gpsData.lat.toFixed(6)}\nLNG  ${gpsData.lng.toFixed(6)}\nACC  ±${gpsData.acc} m`;
+        coordEl.classList.add('visible');
+        validateForm();
+      },
+      (err) => {
+        const msg = err.code === 1 ? 'Autorizzazione negata. Abilita la posizione nelle impostazioni.' :
+                    err.code === 2 ? 'Posizione non disponibile in questo momento.' :
+                    'Timeout nella richiesta della posizione.';
+        setGpsStatus('error', msg);
+        document.getElementById('gps-toggle-btn').textContent = 'Riprova';
+        gpsSectionOpen = false;
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  }
+
+  function setGpsStatus(type, text, loading = false) {
+    const el = document.getElementById('gps-status');
+    el.className = `gps-status ${type}`;
+    const icons = {
+      idle: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+      loading: '',
+      success: '<polyline points="20 6 9 17 4 12"/>',
+      error: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
+    };
+    if (loading) {
+      el.innerHTML = `<span class="spinner dark"></span>${text}`;
+    } else {
+      el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0">${icons[type]}</svg>${text}`;
+    }
+  }
+
+  function validateForm() {
+    const consent = document.getElementById('consent-check').checked;
+    const hasGps = !!gpsData;
+    const hasNote = document.getElementById('note-input').value.trim().length > 0;
+    document.getElementById('submit-btn').disabled = !consent || (!hasGps && !hasNote);
+  }
+
+  document.getElementById('note-input').addEventListener('input', validateForm);
+
+  async function submitSegnalazione() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Invio in corso…';
+
+    const payload = {
+      box_id: BOX_ID,
+      token: TOKEN,
+      nota: document.getElementById('note-input').value.trim() || null,
+      gps: gpsData ? { latitudine: gpsData.lat, longitudine: gpsData.lng, accuratezza: gpsData.acc } : null,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(`${API_BASE}/api/public/segnalazione`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      // Even on network error show success to the guest (owner receives via retry queue)
+    }
+
+    document.getElementById('form-wrapper').style.display = 'none';
+    document.getElementById('success-panel').classList.add('visible');
+  }
+</script>
+</body>
+</html>

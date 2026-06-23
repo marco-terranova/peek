@@ -1,0 +1,92 @@
+<ion-content [fullscreen]="true" class="home-content">
+  <div class="stage">
+
+    <div class="hm-blobs">
+      <div class="hmb-blob hmb-blob--1"></div>
+      <div class="hmb-blob hmb-blob--2"></div>
+      <div class="hmb-blob hmb-blob--3"></div>
+      <div class="hmb-blob hmb-blob--4"></div>
+    </div>
+
+    <button class="btn-scan" routerLink="/scan-qr" aria-label="Scansiona QR">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+        <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+        <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+        <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+        <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+        <line x1="12" y1="7" x2="12" y2="17"/>
+        <line x1="7" y1="12" x2="17" y2="12"/>
+      </svg>
+    </button>
+
+    <button class="btn-add" routerLink="/crea-box" aria-label="Aggiungi Box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="4"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+    </button>
+
+    <button class="btn-filtri" routerLink="/filtri" aria-label="Filtri">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+    </button>
+
+    <div class="hm-main">
+      <div class="hm-intestazione">
+        <h1 class="hm-titolo">Le mie scatole</h1>
+        <p class="hm-sottotitolo" *ngIf="!caricamento && boxList.length > 0">{{ boxList.length }} scatol{{ boxList.length === 1 ? 'a' : 'e' }}</p>
+      </div>
+
+      <div *ngIf="caricamento" class="hm-caricamento">
+        <div class="hm-spinner"></div>
+      </div>
+
+      <div *ngIf="!caricamento && boxList.length === 0" class="hm-vuoto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        <p class="hm-vuoto-testo">Nessuna scatola ancora</p>
+        <button class="hm-vuoto-btn" routerLink="/crea-box">Crea la tua prima scatola</button>
+      </div>
+
+      <div *ngIf="!caricamento && boxList.length > 0" class="hm-lista">
+        <button *ngFor="let box of boxList" class="hm-card" (click)="apriDettaglio(box.id)">
+          <div class="hm-card-foto">
+            <img [src]="fotoBox(box.id)" [alt]="box.nome" loading="lazy"/>
+          </div>
+          <div class="hm-card-info">
+            <span class="hm-card-nome">{{ box.nome }}</span>
+            <span class="hm-card-oggetti" *ngIf="box.num_oggetti !== undefined && box.num_oggetti !== null">
+              {{ box.num_oggetti }} oggett{{ box.num_oggetti === 1 ? 'o' : 'i' }}
+            </span>
+          </div>
+          <svg class="hm-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="dock-nav">
+      <button class="dock-btn dock-btn--home" routerLink="/home" aria-label="Home">
+        <svg class="dock-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14l2-2m0 0l8-8 8 8M6 12v10a1 1 0 0 0 1 1h4m6 0a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1"/>
+        </svg>
+      </button>
+      <button class="dock-btn" routerLink="/search" aria-label="Search">
+        <svg class="dock-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13" cy="13" r="8.5"/>
+          <line x1="22" y1="22" x2="19.3" y2="19.3"/>
+        </svg>
+      </button>
+      <button class="dock-btn" routerLink="/profilo" aria-label="Profile">
+        <svg class="dock-icon" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="14" cy="10" r="4.5"/>
+          <path d="M6 24c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+        </svg>
+      </button>
+    </nav>
+
+  </div>
+</ion-content>

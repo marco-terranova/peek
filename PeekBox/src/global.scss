@@ -1,0 +1,826 @@
+@use './theme/variables' as *;
+@import 'leaflet/dist/leaflet.css';
+
+/*
+ * App Global CSS — PeekBox
+ * ORDINE CRITICO: Ionic PRIMA, Bootstrap DOPO.
+ * Bootstrap reimposta html/body{height:auto} che rompe ion-content.
+ * Mettendolo dopo, i fix Ionic prendono precedenza per ordine di cascata.
+ */
+
+/* ① Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* ② Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* ③ Optional Ionic utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ④ Dark mode palette (commentato per ora) */
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+/* ⑤ Bootstrap DOPO Ionic — così non sovrascrive la catena di altezza */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* ═══════════════════════════════════════════════════════════════════
+   FIX ALTEZZA — Ripristina la catena height:100% che Bootstrap rompe.
+   Necessario perché Bootstrap.reboot imposta html,body { height: auto }.
+   ═══════════════════════════════════════════════════════════════════ */
+html,
+body {
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+}
+
+ion-app {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+ion-router-outlet {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+}
+
+.ion-page {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  contain: layout size style !important;
+}
+
+ion-content {
+  --overflow: auto;
+  flex: 1 1 auto !important;
+}
+
+/* box-sizing uniforme */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+// ===== PEEKBOX — GLOBAL CUSTOM STYLES =====
+
+// Ion-select popover light theme
+ion-popover.select-popover,
+ion-popover[trigger] {
+  --background: #{$white};
+  --border-radius: 16px;
+  --box-shadow: 0 16px 48px rgba($dark, .12);
+  --backdrop-opacity: 0;
+  --min-width: var(--popover-min-width, 260px);
+  --width: auto;
+  --max-width: 90vw;
+
+  &::part(content) {
+    border: 1px solid #{$brd-light};
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  ion-list {
+    background: $white !important;
+    padding: 6px !important;
+  }
+
+  ion-item {
+    --background: transparent;
+    --background-hover: rgba($blue, .08);
+    --color: #{$dark};
+    --border-color: transparent;
+    border-radius: 10px;
+    margin: 2px 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: .93rem;
+    font-weight: 500;
+  }
+
+  ion-radio {
+    --color: rgba($dark, .3);
+    --color-checked: #{$blue};
+  }
+
+  ion-item.item-radio-checked {
+    --background: rgba($blue, .08);
+    ion-label { color: #{$blue} !important; font-weight: 700; }
+  }
+}
+
+ion-select.csr-select {
+  --popover-min-width: 100%;
+}
+
+// Filtri page select popover
+.fsr-popover {
+  --background: #{$white};
+  --border-radius: 16px;
+  --box-shadow: 0 16px 48px rgba($dark, .15);
+
+  &::part(content) {
+    border: 1.5px solid #{$brd-light};
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  ion-list {
+    background: #{$white} !important;
+    padding: 6px !important;
+  }
+
+  ion-item {
+    --background: transparent;
+    --background-hover: rgba($blue, .08);
+    --color: #{$dark};
+    --border-color: transparent;
+    border-radius: 10px;
+    margin: 2px 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: .93rem;
+    font-weight: 500;
+
+    &.item-radio-checked {
+      --background: rgba($blue, .08);
+      ion-label { color: #{$blue} !important; font-weight: 700; }
+    }
+  }
+
+  ion-radio {
+    --color: rgba($dark, .25);
+    --color-checked: #{$blue};
+  }
+}
+
+// ===== ALERT PEEKBOX STYLE =====
+ion-alert {
+  --background: #{$white};
+  --border-radius: 24px;
+  --box-shadow: 0 32px 80px rgba($dark, .2);
+  --backdrop-opacity: 0.6;
+  --min-width: 380px;
+}
+
+ion-alert .alert-wrapper {
+  background: #{$white} !important;
+  border: none !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  box-shadow: 0 0 0 1px rgba($green, .08), 0 32px 80px rgba($dark, .18) !important;
+}
+
+ion-alert .alert-head {
+  background: linear-gradient(135deg, rgba($green, .04) 0%, rgba($blue, .04) 100%) !important;
+  padding: 28px 28px 10px !important;
+  position: relative;
+  &::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, $green, $blue);
+  }
+}
+
+ion-alert .alert-title {
+  color: #{$dark} !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.4px !important;
+}
+
+ion-alert .alert-message {
+  color: #{$mid} !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: .95rem !important;
+  line-height: 1.6 !important;
+  padding: 8px 28px 22px !important;
+  background: #{$white} !important;
+}
+
+ion-alert .alert-input-group {
+  background: #{$white} !important;
+  padding: 0 22px 16px !important;
+}
+
+ion-alert .alert-input {
+  background: rgba($dark, .03) !important;
+  color: #{$dark} !important;
+  border: 1.5px solid #{$brd-light} !important;
+  border-radius: 14px !important;
+  padding: 13px 16px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: .95rem !important;
+  margin: 0 !important;
+  caret-color: #{$blue} !important;
+}
+
+ion-alert .alert-input::placeholder {
+  color: rgba($dark, .35) !important;
+}
+
+ion-alert .alert-button-group {
+  background: #{$page} !important;
+  border-top: 1px solid #{$brd-light} !important;
+  padding: 14px 16px 16px !important;
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+}
+
+ion-alert .alert-button {
+  background: rgba($dark, .04) !important;
+  color: #{$mid} !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: .95rem !important;
+  font-weight: 700 !important;
+  border-radius: 14px !important;
+  flex: 1 !important;
+  min-height: 48px !important;
+  border: none !important;
+  letter-spacing: 0.2px;
+}
+
+ion-alert .alert-button .alert-button-inner {
+  color: #{$mid} !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  justify-content: center !important;
+}
+
+ion-alert .alert-button.alert-button-role-cancel,
+ion-alert .alert-button[data-role="cancel"] {
+  background: rgba($dark, .02) !important;
+  color: rgba($dark, .5) !important;
+}
+
+ion-alert .alert-button.alert-button-role-cancel .alert-button-inner {
+  color: rgba($dark, .5) !important;
+}
+
+ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) {
+  background: linear-gradient(135deg, #{$green} 0%, #{$blue} 100%) !important;
+  box-shadow: 0 6px 20px rgba($green, .28) !important;
+  transition: transform .2s, box-shadow .2s;
+}
+
+ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive):active {
+  transform: scale(.97);
+}
+
+ion-alert .alert-button:not(.alert-button-role-cancel):not(.alert-button-role-destructive) .alert-button-inner {
+  color: #{$white} !important;
+}
+
+ion-alert .alert-button.alert-button-role-destructive {
+  background: rgba(220,60,60,.08) !important;
+  border: 1px solid rgba(220,60,60,.15) !important;
+}
+
+ion-alert .alert-button.alert-button-role-destructive .alert-button-inner {
+  color: #f87171 !important;
+}
+
+// ===== ALERT PEEKBOX — SLIM VARIANT =====
+ion-alert.peekbox-alert--slim {
+  --min-width: 320px;
+
+  .alert-wrapper {
+    border-radius: 18px !important;
+  }
+
+  .alert-head {
+    padding: 18px 20px 6px !important;
+
+    &::after { height: 2px; }
+  }
+
+  .alert-title {
+    font-size: 1.1rem !important;
+  }
+
+  .alert-message {
+    padding: 4px 20px 12px !important;
+    font-size: .85rem !important;
+  }
+
+  .alert-input-group {
+    padding: 0 16px 12px !important;
+  }
+
+  .alert-input {
+    padding: 10px 14px !important;
+    font-size: .85rem !important;
+  }
+
+  .alert-button-group {
+    padding: 10px 14px 12px !important;
+    gap: 8px !important;
+  }
+
+  .alert-button {
+    min-height: 32px !important;
+    padding: 4px 14px !important;
+    font-size: .8rem !important;
+    border-radius: 10px !important;
+  }
+}
+
+// ===== TOAST PEEKBOX STYLE =====
+ion-toast {
+  --background: #{$white};
+  --color: #{$dark};
+  --border-radius: 14px;
+  --box-shadow: 0 8px 32px rgba($dark, .08);
+  --border: 1px solid #{$brd-light};
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+}
+
+ion-toast::part(message) {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: $mid;
+}
+
+ion-toast::part(header) {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: $dark;
+}
+
+ion-toast.peekbox-toast {
+  --border: none;
+  --box-shadow: 0 12px 40px rgba($dark, 0.12);
+  padding-left: 0;
+  overflow: hidden;
+
+  &::part(container) {
+    border-left: 4px solid $mid;
+    border-radius: 14px;
+    padding-left: 14px;
+  }
+
+  &--success::part(container) {
+    border-left-color: $green;
+  }
+
+  &--danger::part(container) {
+    border-left-color: $red;
+  }
+
+  &--warning::part(container) {
+    border-left-color: $amber;
+  }
+
+  &--info::part(container) {
+    border-left-color: $blue;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+//  FLOATING BOTTOM NAV — Componente globale condiviso tra le pagine
+// ═══════════════════════════════════════════════════════════════════
+.floating-nav {
+  position: fixed;
+  bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 520px; height: 66px;
+  background: rgba($white, 0.78);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-radius: 40px;
+  border: 1px solid rgba($white, 0.95);
+  box-shadow: 0 8px 32px rgba($blue, 0.13), 0 2px 8px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 8px; z-index: 1000;
+
+  .nav-glow {
+    position: absolute; bottom: -12px; left: 50%;
+    transform: translateX(-50%);
+    width: 55%; height: 22px;
+    background: radial-gradient(ellipse, rgba($blue, 0.22), transparent 70%);
+    pointer-events: none; z-index: -1;
+  }
+
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    cursor: pointer; padding: 5px 10px; border-radius: 18px;
+    color: $slate;
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+
+    ion-icon { font-size: 1.35rem; transition: color 0.2s; }
+    span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: rgba($blue, 0.55);
+    }
+
+    &.active {
+      color: $blue;
+      ion-icon { color: $blue; }
+      span { color: $blue; }
+    }
+    &:not(.active):hover { background: rgba(0,0,0,0.04); }
+  }
+
+  .nav-fab-wrapper {
+    display: flex; align-items: center;
+    justify-content: center; margin-top: -26px;
+
+    .nav-fab {
+      width: 58px; height: 58px;
+      border-radius: 50%; border: none !important;
+      background: linear-gradient(135deg, $green-l, $green) !important;
+      color: $white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 25px rgba($green, 0.4) !important;
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      ion-icon { font-size: 1.7rem; color: $white !important; }
+
+      &:hover {
+        transform: scale(1.1) translateY(-3px);
+        box-shadow: 0 15px 30px rgba($green, 0.5) !important;
+      }
+      &:active { transform: scale(0.95); }
+    }
+  }
+
+  .avatar-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, $blue, $green);
+    color: $white; font-size: 0.8rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba($blue, 0.3);
+  }
+
+  // Variante avatar per area-personale (stato attivo con gradiente)
+  .avatar-circle-nav {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #E2EAF0;
+    color: $slate;
+    font-size: 0.8rem; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+
+    &.active {
+      background: linear-gradient(135deg, $blue, $green);
+      color: $white;
+      box-shadow: 0 2px 8px rgba($blue, 0.4);
+    }
+  }
+}
+// ═══════════════════════════════════════════════════════════════════
+//  FIX DEFINITIVI — Icone azzurre nav + Avatar profilo azzurro
+// ═══════════════════════════════════════════════════════════════════
+
+/* Fix 3: Forza TUTTE le icone e label della floating nav in azzurro */
+.floating-nav .nav-item ion-icon {
+  color: $blue !important;
+}
+
+.floating-nav .nav-item span {
+  color: $blue !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 700 !important;
+}
+
+.floating-nav .nav-item:not(.active) ion-icon {
+  color: rgba($blue, 0.5) !important;
+}
+
+.floating-nav .nav-item:not(.active) span {
+  color: rgba($blue, 0.5) !important;
+}
+
+/* Fix 4: Avatar profilo — solo azzurro, niente gradiente verde */
+.floating-nav .avatar-circle {
+  background: rgba($blue, 0.15) !important;
+  color: $blue !important;
+  border: 2px solid $blue !important;
+  box-shadow: 0 2px 8px rgba($blue, 0.25) !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FIX TAB BAR — Opacità forzata 100%, azzurro solido su tutto
+// ═══════════════════════════════════════════════════════════════════
+
+ion-tab-button {
+  opacity: 1 !important;
+}
+
+ion-tab-button ion-icon,
+ion-tab-button ion-label {
+  color: $sky !important;
+  opacity: 1 !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FIX DEFINITIVO TAB BAR — Variabili Ionic native + forza bruta
+// ═══════════════════════════════════════════════════════════════════
+
+ion-tab-bar {
+  --color: $blue !important;
+  --color-selected: $blue !important;
+}
+
+ion-tab-button {
+  --color: $blue !important;
+  --color-selected: $blue !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button::part(native) {
+  color: $blue !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button ion-icon,
+ion-tab-button ion-label {
+  opacity: 1 !important;
+  color: $blue !important;
+  fill: $blue !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  FIX NUCLEARE TAB BAR — Shadow DOM + variabili Ionic + forza bruta
+// ═══════════════════════════════════════════════════════════════════
+
+ion-tab-bar {
+  --color: $sky !important;
+  --color-selected: $sky !important;
+}
+
+ion-tab-button {
+  --color: $sky !important;
+  --color-selected: $sky !important;
+  --opacity: 1 !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button::part(native) {
+  color: $sky !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button ion-icon {
+  color: $sky !important;
+  fill: $sky !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button ion-label {
+  color: $sky !important;
+  opacity: 1 !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PEEKBOX — ACTION SHEET CUSTOM FOTO (Premium Design)
+// ═══════════════════════════════════════════════════════════════════
+
+.peekbox-photo-sheet {
+  // Contenitore principale
+  .action-sheet-container {
+    padding: 0 12px 16px;
+  }
+
+  .action-sheet-group {
+    background: $white !important;
+    border-radius: 20px !important;
+    margin-bottom: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 32px rgba($dark, 0.12) !important;
+    border: 1px solid rgba($blue, 0.15) !important;
+  }
+
+  // Header del sheet
+  .action-sheet-title {
+    background: $white !important;
+    color: $blue-dk !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    padding: 18px 20px 14px !important;
+    border-bottom: 1px solid rgba($blue, 0.12) !important;
+    font-family: 'Poppins', sans-serif !important;
+    letter-spacing: -0.2px !important;
+  }
+
+  // Pulsante Scatta Foto
+  .sheet-btn-camera {
+    .action-sheet-button-inner {
+      color: $blue !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: rgba($blue, 0.04) !important;
+    border-bottom: 1px solid rgba($blue, 0.08) !important;
+
+    &:hover, &:active {
+      background: rgba($blue, 0.10) !important;
+    }
+  }
+
+  // Pulsante Galleria
+  .sheet-btn-gallery {
+    .action-sheet-button-inner {
+      color: $blue-d !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: $white !important;
+
+    &:hover, &:active {
+      background: rgba($blue, 0.06) !important;
+    }
+  }
+
+  // Pulsante Annulla
+  .sheet-btn-cancel {
+    .action-sheet-button-inner {
+      color: $mid !important;
+      font-weight: 600 !important;
+      font-size: 0.88rem !important;
+      font-family: 'Poppins', sans-serif !important;
+    }
+    background: $white !important;
+  }
+
+  // Backdrop scuro ma non troppo
+  .action-sheet-backdrop {
+    opacity: 0.45 !important;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PEEKBOX — FIX EMOJI GLOBALE
+//  Le emoji vengono renderizzate con il font di sistema corretto
+//  su tutte le piattaforme (iOS, Android, Web).
+// ═══════════════════════════════════════════════════════════════════
+
+.empty-icon,
+.empty-emoji,
+.action-emoji,
+.inventory-emoji,
+.item-emoji,
+.item-fragile-badge,
+.photo-emoji,
+.sat-emoji,
+.notes-header span:first-child,
+.geo-info-bullet {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+               'Android Emoji', 'EmojiSymbols', sans-serif !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  line-height: 1 !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RESPONSIVE GLOBALE — Adattamento adattivo per tutte le pagine
+//  Gestisce elementi condivisi: floating-nav, floating-nav, font base
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Mobile piccolo (< 400px) ──────────────────────────────────────
+@media (max-width: 399px) {
+  // Floating nav più compatta su schermi molto piccoli
+  .floating-nav {
+    height: 58px !important;
+    width: calc(100% - 20px) !important;
+    bottom: 12px !important;
+    .nav-item {
+      padding: 4px 8px !important;
+      ion-icon { font-size: 1.2rem !important; }
+      span { font-size: 0.58rem !important; }
+    }
+    .nav-fab-wrapper .nav-fab {
+      width: 50px !important;
+      height: 50px !important;
+      ion-icon { font-size: 1.5rem !important; }
+    }
+  }
+  // Ion modal più compatto
+  ion-modal {
+    --border-radius: 16px;
+  }
+  // Toast più piccolo
+  ion-toast {
+    --min-width: 80vw;
+  }
+}
+
+// ── Tablet (≥ 768px) ──────────────────────────────────────────────
+@media (min-width: 768px) {
+  // Floating nav — più ampia su tablet
+  .floating-nav {
+    max-width: min(85vw, 700px) !important;
+    .nav-item {
+      padding: 6px 14px !important;
+      ion-icon { font-size: 1.45rem !important; }
+      span { font-size: 0.7rem !important; }
+    }
+  }
+  // Ion modal più ampio
+  ion-modal {
+    --width: 80vw;
+    --max-width: min(85vw, 800px);
+    --border-radius: 24px;
+  }
+}
+
+// ── Desktop (≥ 1024px) ────────────────────────────────────────────
+@media (min-width: 1024px) {
+  // Floating nav — si espande proporzionalmente
+  .floating-nav {
+    max-width: min(75vw, 800px) !important;
+    height: 70px !important;
+    .nav-item {
+      padding: 8px 18px !important;
+      ion-icon { font-size: 1.5rem !important; }
+      span { font-size: 0.72rem !important; }
+    }
+    .nav-fab-wrapper .nav-fab {
+      width: 62px !important;
+      height: 62px !important;
+    }
+  }
+  // Ion modal desktop
+  ion-modal {
+    --width: 60vw;
+    --max-width: min(75vw, 1000px);
+    --border-radius: 28px;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CREA-BOX: Select popover — stessa larghezza del trigger, discesa lineare, compatto
+// ═══════════════════════════════════════════════════════════
+
+ion-popover.select-popover.csr-select-popover {
+  --min-width: var(--popover-trigger-width, 100%);
+  --width: var(--popover-trigger-width, 100%);
+  --max-width: var(--popover-trigger-width, 100%);
+  --backdrop-opacity: 0;
+
+  &::part(content) {
+    border-radius: 10px !important;
+    box-shadow: 0 16px 48px rgba(15,23,42,0.14), 0 0 0 1px rgba(58,171,219,0.10) !important;
+    overflow: hidden;
+    transform-origin: left top;
+    left: 0;
+    top: 4px;
+  }
+
+  ion-list {
+    padding: 4px 0 !important;
+    background: rgba(255,255,255,0.96) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  ion-item {
+    --background: transparent;
+    --color: #0F172A;
+    --border-color: rgba(15,23,42,0.04);
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --min-height: 30px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    &:hover {
+      --background: rgba(125,199,64,0.06);
+    }
+
+    &.item-radio-checked {
+      --background: rgba(125,199,64,0.09);
+      --color: #5A9E2A;
+      font-weight: 700;
+    }
+  }
+
+  ion-radio {
+    --color-checked: #7DC740;
+  }
+}

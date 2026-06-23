@@ -1,0 +1,373 @@
+<ion-content [fullscreen]="true" class="login-content" [scrollY]="false">
+
+  <div #stageRef class="login-stage">
+
+    <!-- Split Layout -->
+    <div class="split-layout">
+
+      <!-- ───── LEFT: HERO PANEL ───── -->
+      <div class="hero-panel">
+
+        <!-- Animated blob background -->
+        <div class="hp-blobs">
+          <div class="hpb-blob hpb-blob--1"></div>
+          <div class="hpb-blob hpb-blob--2"></div>
+          <div class="hpb-blob hpb-blob--3"></div>
+          <div class="hpb-blob hpb-blob--4"></div>
+        </div>
+
+        <!-- Subtle grid pattern -->
+        <div class="hp-grid"></div>
+
+        <!-- Decorative organic curve -->
+        <svg class="hp-arc" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M-50 350 Q150 200 320 100 Q420 40 550 20" stroke="url(#arcGrad)" stroke-width="1.5" opacity="0.15"/>
+          <path d="M-50 420 Q180 260 350 140 Q440 70 550 40" stroke="url(#arcGrad)" stroke-width="0.8" opacity="0.08"/>
+          <defs><linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7DC740" stop-opacity="0"/><stop offset="50%" stop-color="#7DC740"/><stop offset="100%" stop-color="#3AABDB" stop-opacity="0"/></linearGradient></defs>
+        </svg>
+
+        <!-- Floating testimonial cards -->
+        <div class="hp-testimonial hp-testimonial--1">
+          <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
+          <p class="hp-t-text">&ldquo;Da quando usiamo PeekBox abbiamo ridotto i tempi di ricerca del 70%. Straordinario.&rdquo;</p>
+          <div class="hp-t-author">
+            <span class="hp-t-name">Laura Bianchi</span>
+            <span class="hp-t-role">Warehouse Coordinator, LogiCorp</span>
+          </div>
+        </div>
+
+        <div class="hp-testimonial hp-testimonial--2">
+          <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
+          <p class="hp-t-text">&ldquo;La geolocalizzazione ci ha cambiato la vita. Ogni scatola &egrave; sempre al suo posto.&rdquo;</p>
+          <div class="hp-t-author">
+            <span class="hp-t-name">Alessandro Conti</span>
+            <span class="hp-t-role">Operations Manager, MoveFast</span>
+          </div>
+        </div>
+
+        <div class="hp-stat hp-stat--3">
+          <div class="hp-stat-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#7DC740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="hp-stat-body">
+            <span class="hp-stat-num"><span class="hp-stat-num-accent">99.9</span>%</span>
+            <span class="hp-stat-label">Uptime garantito</span>
+          </div>
+        </div>
+
+        <!-- Floating testimonial -->
+        <div class="hp-testimonial">
+          <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
+          <p class="hp-t-text">"Finalmente un sistema che rende la gestione dell'inventario semplice e veloce"</p>
+          <div class="hp-t-author">
+            <span class="hp-t-name">Marco Rossi</span>
+            <span class="hp-t-role">Logistics Manager, TechLog</span>
+          </div>
+        </div>
+
+        <!-- Floating dots -->
+        <div class="hp-dot hp-dot--1"></div>
+        <div class="hp-dot hp-dot--2"></div>
+        <div class="hp-dot hp-dot--3"></div>
+        <div class="hp-dot hp-dot--4"></div>
+        <div class="hp-dot hp-dot--5"></div>
+        <div class="hp-dot hp-dot--6"></div>
+        <div class="hp-dot hp-dot--7"></div>
+        <div class="hp-dot hp-dot--8"></div>
+
+        <!-- Main brand -->
+        <div class="hp-brand">
+          <div class="hp-brand-icon">
+            <div class="hp-bi-glow"></div>
+            <img src="assets/icon/logoTitolo1.png" alt="" />
+            <div class="hp-bi-ring"></div>
+          </div>
+          <h1 class="hp-title">
+            <span class="hp-t-light">Peek</span><span class="hp-t-accent">Box</span>
+          </h1>
+          <p class="hp-desc">Il tuo inventario digitale.<br>Organizzato, tracciato, sempre con te.</p>
+          <div class="hp-badges">
+            <div class="hp-badge">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M8 1.5 2.5 4.5v4c0 4.5 5.5 7 5.5 7s5.5-2.5 5.5-7v-4L8 1.5z"/><path d="m6 8.5 1.5 1.5 3-3"/></svg>
+              <span>GDPR</span>
+            </div>
+            <div class="hp-badge">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#3AABDB" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5v4l3 2"/></svg>
+              <span>24/7 Supporto</span>
+            </div>
+            <div class="hp-badge">
+              <svg viewBox="0 0 16 16" fill="none" stroke="#7DC740" stroke-width="1.5"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M6 8.5 7.5 10 10 6.5"/></svg>
+              <span>SSL</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ───── RIGHT: LOGIN / REGISTER CARD ───── -->
+      <div class="form-panel">
+        <div class="fp-blobs">
+          <div class="fpb-blob fpb-blob--1"></div>
+          <div class="fpb-blob fpb-blob--2"></div>
+          <div class="fpb-blob fpb-blob--3"></div>
+          <div class="fpb-blob fpb-blob--4"></div>
+        </div>
+
+        <!-- ── RECUPERO PASSWORD OVERLAY ── -->
+        <div class="fp-overlay" *ngIf="showRecupero">
+          <div class="fp-overlay-back" (click)="chiudiRecupero()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            <span>Torna indietro</span>
+          </div>
+          <ng-container *ngIf="!recuperoInviato; else ricInviato">
+            <div #overlayCard class="fp-overlay-card">
+              <div class="card-glare"></div>
+              <div class="card-pattern"></div>
+              <div class="card-bubble card-bubble--1"></div>
+              <div class="card-bubble card-bubble--2"></div>
+              <div class="card-bubble card-bubble--3"></div>
+              <div class="card-header card-header--center">
+                <div class="fp-overlay-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <h1 class="card-title">Recupero Password</h1>
+                <p class="card-sub">Inserisci la tua email per ricevere assistenza dal nostro team.</p>
+              </div>
+              <div class="card-body">
+                <div class="field-group">
+                  <label class="field-label" for="recuperoEmailInput">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    Email
+                  </label>
+                  <div class="field-input-wrap">
+                    <ion-input id="recuperoEmailInput" class="login-input" type="text" inputmode="email" autocomplete="off" placeholder="nome@azienda.com" [(ngModel)]="recuperoEmail"></ion-input>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="recuperoMsgInput">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Messaggio <span style="font-weight:400;opacity:.5;">(opzionale)</span>
+                  </label>
+                  <div class="field-input-wrap">
+                    <textarea id="recuperoMsgInput" class="fp-overlay-textarea" placeholder="Descrivi brevemente il problema..." [(ngModel)]="recuperoMessaggio" rows="3"></textarea>
+                  </div>
+                </div>
+                <button class="btn-accedi" [disabled]="!recuperoValido" (click)="inviaRichiesta()">
+                  <span>Invia Richiesta</span>
+                  <span class="btn-shimmer"></span>
+                </button>
+              </div>
+              <p class="fp-overlay-footer">Ti risponderemo via email entro 24 ore.</p>
+            </div>
+          </ng-container>
+          <ng-template #ricInviato>
+            <div #overlayCard class="fp-overlay-card">
+              <div class="card-glare"></div>
+              <div class="card-pattern"></div>
+              <div class="card-bubble card-bubble--1"></div>
+              <div class="card-bubble card-bubble--2"></div>
+              <div class="card-bubble card-bubble--3"></div>
+              <div class="card-header card-header--center">
+                <div class="fp-overlay-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <h1 class="card-title">Richiesta Inviata</h1>
+                <p class="card-sub">Ti risponderemo via email a <strong>{{ recuperoEmail }}</strong> entro 24 ore.</p>
+                <p class="card-sub" style="margin-top: 3px; font-size: 0.78rem;">Il nostro team di assistenza esaminerà la tua richiesta.</p>
+              </div>
+              <div class="card-body">
+                <button class="btn-accedi" (click)="tornaBenvenuto()">
+                  <span>Torna alla home</span>
+                  <span class="btn-shimmer"></span>
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- ── REGISTRATION SUCCESS OVERLAY ── -->
+        <div class="fp-overlay" *ngIf="registerSuccess">
+          <div class="fp-overlay-back" (click)="tornaBenvenuto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+              <polyline points="10 17 15 12 10 7"/>
+              <line x1="15" y1="12" x2="3" y2="12"/>
+            </svg>
+            <span>Torna indietro</span>
+          </div>
+          <div class="fp-overlay-card">
+            <div class="card-glare"></div>
+            <div class="card-pattern"></div>
+            <div class="card-bubble card-bubble--1"></div>
+            <div class="card-bubble card-bubble--2"></div>
+            <div class="card-bubble card-bubble--3"></div>
+            <div class="card-header card-header--center">
+              <div class="fp-overlay-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <h1 class="card-title">Registrazione completata</h1>
+              <p class="card-sub">Account {{ tipoProfilo === 'personal' ? 'Personale' : 'Business' }} creato con successo.</p>
+              <p class="card-sub" style="margin-top: 3px; font-size: 0.78rem;">Ora puoi accedere e iniziare a organizzare il tuo inventario.</p>
+            </div>
+            <div class="card-body">
+              <button class="btn-accedi" (click)="vaiAlLoginDaReg()">
+                <span>Accedi</span>
+                <span class="btn-shimmer"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="back-to-home" *ngIf="!showRecupero && !registerSuccess" (click)="isRegister ? toggleMode() : tornaBenvenuto()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <span>Torna indietro</span>
+        </div>
+
+        <div #tiltCard class="login-card" *ngIf="!showRecupero && !registerSuccess">
+
+          <div class="card-glare"></div>
+          <div class="card-accent" *ngIf="!showRecupero && !registerSuccess"></div>
+          <div class="card-pattern"></div>
+
+          <div class="card-bubble card-bubble--1"></div>
+          <div class="card-bubble card-bubble--2"></div>
+          <div class="card-bubble card-bubble--3"></div>
+
+          <!-- ── LOGIN MODE ── -->
+          <ng-container *ngIf="!isRegister">
+            <div class="card-header card-header--center">
+              <h1 class="card-title">Bentornato</h1>
+              <p class="card-sub">Accedi al tuo inventario digitale</p>
+            </div>
+            <div class="card-body">
+              <div class="field-group">
+                <label class="field-label" for="emailInput">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  Email
+                </label>
+                <div class="field-input-wrap">
+                  <ion-input id="emailInput" class="login-input" type="text" inputmode="email" autocomplete="off" placeholder="nome@azienda.com" [(ngModel)]="email"></ion-input>
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label-row">
+                  <label class="field-label" for="passwordInput">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Password
+                  </label>
+                  <button class="forgot-link" (click)="recuperaPassword($event)">Password dimenticata?</button>
+                </div>
+                <div class="field-input-wrap">
+                  <ion-input id="passwordInput" class="login-input" type="password" placeholder="••••••••" [(ngModel)]="password">
+                    <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                  </ion-input>
+                </div>
+              </div>
+              <div class="card-divider"></div>
+              <button class="btn-accedi" [disabled]="!loginValido" (click)="accedi()">
+                <span>Accedi</span>
+                <span class="btn-shimmer"></span>
+              </button>
+            </div>
+            <div class="card-footer">
+              <p class="register-link" *ngIf="!loginError">Non hai un account?<a class="register-anchor" (click)="toggleMode()">Registrati gratuitamente</a></p>
+              <div class="login-error" *ngIf="loginError">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="10" cy="10" r="9"/>
+                  <line x1="10" y1="6" x2="10" y2="12"/>
+                  <line x1="10" y1="14" x2="10.01" y2="14"/>
+                </svg>
+                <span>Credenziali errate</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- ── REGISTER MODE ── -->
+          <ng-container *ngIf="isRegister">
+            <div class="card-header card-header--center">
+              <h1 class="card-title">Benvenuto</h1>
+              <p class="card-sub">Crea il tuo account PeekBox</p>
+            </div>
+            <div class="card-body card-body--reg">
+              <div class="field-group">
+                <label class="field-label" for="nomeInput">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Nome profilo
+                </label>
+                <div class="field-input-wrap">
+                  <ion-input id="nomeInput" class="login-input" type="text" placeholder="Il tuo nome" [(ngModel)]="nomeProfilo"></ion-input>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="emailRegInput">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  Email
+                </label>
+                <div class="field-input-wrap">
+                  <ion-input id="emailRegInput" class="login-input" type="text" inputmode="email" autocomplete="off" placeholder="nome@azienda.com" [(ngModel)]="emailReg"></ion-input>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="passwordRegInput">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  Password
+                </label>
+                <div class="field-input-wrap">
+                  <ion-input id="passwordRegInput" class="login-input" type="password" placeholder="Min. 8 caratteri" [(ngModel)]="passwordReg">
+                    <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                  </ion-input>
+                </div>
+              </div>
+              <div class="profile-selector">
+                <button class="ps-btn" [class.ps-btn--active]="tipoProfilo === 'personal'" (click)="selezionaProfilo('personal')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <span>Personale</span>
+                </button>
+                <button class="ps-btn" [class.ps-btn--active]="tipoProfilo === 'business'" (click)="selezionaProfilo('business')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                  <span>Business</span>
+                </button>
+              </div>
+              <div class="card-divider"></div>
+              <button class="btn-accedi" [disabled]="!registerValido" (click)="registrati()">
+                <span>Registrati</span>
+                <span class="btn-shimmer"></span>
+              </button>
+              <div class="login-error" *ngIf="registerError">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="10" cy="10" r="9"/>
+                  <line x1="10" y1="6" x2="10" y2="12"/>
+                  <line x1="10" y1="14" x2="10.01" y2="14"/>
+                </svg>
+                <span>Questa email è già associata ad un account.</span>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

@@ -1,0 +1,119 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="peek-toolbar">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-greet">
+          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" />
+          <h1 class="header-greeting">GESTIONE <span class="nome-verde">SPAZI</span></h1>
+        </div>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-wrapper">
+
+    <!-- Aggiungi nuovo spazio -->
+    <div class="add-space-row">
+      <input
+        type="text"
+        class="add-space-input"
+        [(ngModel)]="nuovoNomeSpazio"
+        placeholder="Nome nuovo spazio (es. Garage, Cantina...)"
+      />
+      <button class="btn-add-space" (click)="aggiungiSpazio()" [disabled]="!nuovoNomeSpazio">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Aggiungi
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoadingSpazi" class="loading-state">
+      <div class="spinner"></div>
+      <p>Caricamento spazi...</p>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!isLoadingSpazi && gliArmadi.length === 0" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>Nessuno spazio creato</h3>
+      <p>Crea il tuo primo spazio qui sopra per iniziare a organizzare le box.</p>
+    </div>
+
+    <!-- Spaces list -->
+    <div *ngIf="!isLoadingSpazi && gliArmadi.length > 0" class="spaces-list">
+      <div *ngFor="let spazio of gliArmadi" class="space-card">
+
+        <!-- View mode -->
+        <div *ngIf="spazioInModifica !== spazio.id" class="space-card-view">
+          <div class="space-icon-wrap">
+            <ion-icon name="archive-outline"></ion-icon>
+          </div>
+          <span class="space-nome">{{ spazio.nome }}</span>
+          <div class="space-actions">
+            <button class="btn-edit-space" (click)="avviaModificaSpazio(spazio)">
+              <ion-icon name="pencil-outline"></ion-icon>
+            </button>
+            <button class="btn-delete-space" (click)="confermaEliminaSpazio(spazio)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit mode -->
+        <div *ngIf="spazioInModifica === spazio.id" class="space-card-edit">
+          <input
+            type="text"
+            class="edit-space-input"
+            [(ngModel)]="nomeModificaSpazio"
+            (keyup.enter)="salvaModificaSpazio(spazio)"
+          />
+          <div class="edit-actions">
+            <button class="btn-confirm-edit" (click)="salvaModificaSpazio(spazio)">
+              <ion-icon name="checkmark-outline"></ion-icon>
+            </button>
+            <button class="btn-cancel-edit" (click)="annullaModifica()">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- FLOATING BOTTOM NAV — identica alla homepage -->
+<div class="floating-nav">
+  <div class="nav-glow"></div>
+
+  <div class="nav-item" (click)="vaiHome()">
+    <ion-icon name="home"></ion-icon>
+    <span>Home</span>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/box-ricevute')">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <span>Avvisi</span>
+  </div>
+
+  <div class="nav-fab-wrapper">
+    <button class="nav-fab" (click)="navTo('/crea-box')">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/scan-qr')">
+    <ion-icon name="qr-code-outline"></ion-icon>
+    <span>Scan</span>
+  </div>
+
+  <div class="nav-item" (click)="navTo('/area-personale')">
+    <div class="avatar-circle-nav">
+      {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
+    </div>
+    <span>Profilo</span>
+  </div>
+</div>

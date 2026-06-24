@@ -78,8 +78,8 @@ export class DatabaseService {
     return this.http.get<BoxListResponse>(`${this.apiUrl}/box/${utenteId}`);
   }
 
-  creaBox(nome: string, rif_armadio: string, is_preferito: boolean, moving_mode: boolean = false, descrizione: string = '') {
-    return this.http.post(`${this.apiUrl}/box`, { nome, descrizione: descrizione || null, rif_armadio, is_preferito, moving_mode });
+  creaBox(nome: string, rif_armadio: string, is_preferito: boolean, moving_mode: boolean = false, descrizione: string = '', dimensione: string = 'piccola') {
+    return this.http.post(`${this.apiUrl}/box`, { nome, descrizione: descrizione || null, rif_armadio, is_preferito, moving_mode, dimensione });
   }
 
   updatePreferito(id: number, is_preferito: boolean) {
@@ -196,6 +196,10 @@ export class DatabaseService {
 
   getCatalogoCategorie() {
     return this.http.get(`${this.apiUrl}/catalogo/categorie`);
+  }
+
+  creaCategoria(nome: string) {
+    return this.http.post(`${this.apiUrl}/catalogo/categorie`, { nome });
   }
 
   getCatalogoElementi(filtri: { q?: string; categoria?: string; tag?: string; sort?: string } = {}) {
@@ -366,6 +370,24 @@ export class DatabaseService {
 
   getGeofenceCheckpoints(armadioId: number) {
     return this.http.get(`${this.apiUrl}/geofence/${armadioId}/checkpoints`);
+  }
+
+  // ─── GEOFENCE PER CHECKPOINT ────────────────────────────
+
+  impostaGeofenceCheckpoint(checkpoint_id: number, latitudine: number, longitudine: number, raggio_m: number = 100, attivo: boolean = true) {
+    return this.http.post(`${this.apiUrl}/geofence-checkpoint`, { checkpoint_id, latitudine, longitudine, raggio_m, attivo });
+  }
+
+  getGeofenceCheckpointSingolo(checkpointId: number) {
+    return this.http.get(`${this.apiUrl}/geofence-checkpoint/${checkpointId}`);
+  }
+
+  eliminaGeofenceCheckpoint(checkpointId: number) {
+    return this.http.delete(`${this.apiUrl}/geofence-checkpoint/${checkpointId}`);
+  }
+
+  getGeofenceCheckpointUtente(utenteId: string) {
+    return this.http.get(`${this.apiUrl}/geofence-checkpoint/utente/${utenteId}`);
   }
 
   // ─── EXPORT ───────────────────────────────────────────────

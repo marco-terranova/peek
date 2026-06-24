@@ -29,6 +29,8 @@ export interface Box {
   num_oggetti?: number;
   data_eliminazione?: string;
   data_creazione?: string;
+  contiene_fragili?: number;
+  ruolo_condivisione?: string | null;
 }
 
 export interface BoxListResponse {

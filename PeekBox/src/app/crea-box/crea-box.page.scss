@@ -391,16 +391,14 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .csr-input-wrap {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.65);
+  background: $white;
   border-radius: 12px;
-  border: 1.5px solid rgba(15, 23, 42, 0.04);
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
   overflow: hidden;
-  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-  backdrop-filter: blur(10px);
+  transition: border-color 0.25s, box-shadow 0.25s;
 
   &:focus-within {
     border-color: $green;
-    background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 0 0 3px rgba($green, 0.08);
   }
 
@@ -432,9 +430,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 
 .csr-select-trigger {
+  -webkit-appearance: none;
+  appearance: none;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   width: 100%; padding: 12px 14px;
-  border: none; outline: none; background: transparent;
+  border: none; outline: none; background: none;
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 500; color: $dark;
   cursor: pointer;
 
@@ -443,13 +443,21 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 
 .csr-dropdown {
-  position: absolute; top: 100%; left: 0; right: 0; z-index: 999;
-  margin-top: 4px;
+  position: fixed;
+  z-index: 10001;
   background: $white;
   border-radius: 12px;
   box-shadow: 0 12px 40px rgba(15,23,42,0.12), 0 0 0 1px rgba(15,23,42,0.04);
-  overflow: hidden;
+  max-height: 200px;
+  overflow-y: auto;
   animation: csr-dd-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.csr-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: transparent;
 }
 
 @keyframes csr-dd-in {
@@ -485,6 +493,109 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   svg { width: 15px; height: 15px; }
   &:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba($blue, 0.25); }
   &:active { transform: scale(0.95); }
+}
+
+// ── Dimension selector ──────────────────────────────────
+.csr-dim-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.csr-dim-btn {
+  flex: 1;
+  min-width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  background: $white;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &:hover {
+    border-color: rgba($green, 0.3);
+  }
+
+  &.is-active {
+    border-color: $green;
+    background: rgba($green, 0.06);
+    box-shadow: 0 0 0 3px rgba($green, 0.08);
+  }
+}
+
+.csr-dim-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $dark;
+
+  .is-active & { color: $green-d; }
+}
+
+.csr-dim-cap {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: $mid;
+  opacity: 0.7;
+
+  .is-active & { color: $green-d; opacity: 1; }
+}
+
+// ── Toggle tracking ─────────────────────────────────────
+.csr-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.csr-toggle {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  input { position: absolute; opacity: 0; width: 0; height: 0; }
+}
+
+.csr-toggle-track {
+  display: block;
+  width: 44px; height: 24px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.12);
+  transition: background 0.25s;
+  position: relative;
+}
+
+.csr-toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: $white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.csr-toggle input:checked + .csr-toggle-track {
+  background: linear-gradient(135deg, $green 0%, $blue 100%);
+}
+
+.csr-toggle input:checked + .csr-toggle-track .csr-toggle-thumb {
+  transform: translateX(20px);
+}
+
+.csr-toggle-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: $mid;
 }
 
 // ── Register button ──────────────────────────────────────

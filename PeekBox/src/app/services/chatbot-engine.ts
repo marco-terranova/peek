@@ -191,7 +191,7 @@ export class ChatbotEngineService {
     // 🔍 COME SI FA
     if (this.hasAny(lower, ['come si fa', 'come faccio', 'come posso', 'come si', 'si può', 'è possibile', 'vorrei'])) {
       if (this.hasAny(lower, ['condivid', 'condivis', 'invit', 'ospit'])) {
-        return '🤝 **Come condividere una box**\n\nVai su "Condividi Archivio" dal profilo. Scegli la box, seleziona il permesso (Visualizzatore/Editor), inserisci l\'email dell\'ospite e clicca "Invita". L\'ospite riceverà una notifica per accettare o rifiutare.';
+        return '🤝 **Come condividere una box**\n\nVai su "Condividi Box" dal profilo. Scegli la box, seleziona il permesso (Visualizzatore/Editor), inserisci l\'email dell\'ospite e clicca "Invita". L\'ospite riceverà una notifica per accettare o rifiutare.';
       }
       if (this.hasAny(lower, ['scansion', 'qr', 'scan', 'leggere', 'inquadr'])) {
         return '📷 **Come scansionare un QR code**\n\nVai su "Scansiona QR" dal menu principale. Inquadra il QR code della box con la fotocamera. La box verrà aperta automaticamente per visualizzarne o modificarne il contenuto.';

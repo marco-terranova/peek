@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { IonContent, AlertController, ToastController } from '@ionic/angular/standalone';
 import { DatabaseService } from '../services/database';
-import { PbDropdownComponent } from '../components/pb-dropdown/pb-dropdown.component';
+import { MapService } from '../services/map';
+
 import * as QRCode from 'qrcode';
+import * as L from 'leaflet';
 
 interface CategoriaCatalogo {
   id: number;
@@ -18,19 +20,35 @@ interface CategoriaCatalogo {
   templateUrl: './dettaglio-box.page.html',
   styleUrls: ['./dettaglio-box.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonContent, PbDropdownComponent]
+  imports: [CommonModule, FormsModule, RouterModule, IonContent]
 })
 export class DettaglioBoxPage implements OnInit {
 
-  readonly MAX_OGGETTI = 20;
+  private readonly capacitaMap: { [key: string]: number } = { piccola: 10, media: 20, grande: 30, pallet: 100 };
+
+  get MAX_OGGETTI(): number {
+    return this.capacitaMap[this.box?.dimensione] || 10;
+  }
+
+  get isBoxPiena(): boolean {
+    return this.totaleElementi >= this.MAX_OGGETTI;
+  }
 
   boxId!: number;
   box: any = null;
   oggetti: any[] = [];
   isLoading = true;
   isViewer = false;
+  tipoProfilo = 'personal';
+  ultimoCheckpoint: any = null;
 
-  sezioneAttiva: 'oggetti' | 'info' | 'qr' = 'oggetti';
+  @ViewChild('detMapContainer') detMapContainer!: ElementRef<HTMLElement>;
+  @ViewChild('catTrigger') catTrigger!: ElementRef<HTMLElement>;
+  @ViewChild('qrCanvas') qrCanvas!: ElementRef<HTMLCanvasElement>;
+  private map: L.Map | null = null;
+
+  mostraCatDropdown = false;
+  catDropdownStyle: { [key: string]: string } = {};
 
   searchQuery = '';
 
@@ -53,11 +71,17 @@ export class DettaglioBoxPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dbService: DatabaseService,
+    private mapService: MapService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
   ) {}
 
   ngOnInit() {
+    this.caricaCategorie();
+  }
+
+  ionViewWillEnter() {
+    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
     const id = this.route.snapshot.paramMap.get('id');
     const parsed = id ? Number(id) : NaN;
     if (!parsed || isNaN(parsed) || parsed <= 0) {
@@ -66,8 +90,14 @@ export class DettaglioBoxPage implements OnInit {
       return;
     }
     this.boxId = parsed;
+    this.qrGenerato = false;
+    this.isLoadingQr = false;
+    this.ultimoCheckpoint = null;
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
     this.caricaDati();
-    this.caricaCategorie();
   }
 
   private caricaCategorie() {
@@ -84,9 +114,61 @@ export class DettaglioBoxPage implements OnInit {
         this.box = res.box;
         this.isViewer = this.box?.ruolo_condivisione === 'viewer';
         this.caricaOggetti();
+        setTimeout(() => this.generaQr(), 300);
+        if (this.box?.moving_mode && this.tipoProfilo === 'business') {
+          this.caricaCheckpoints();
+        }
       },
       error: () => { this.isLoading = false; this.toast('Impossibile caricare il box.', 'danger'); }
     });
+  }
+
+  private caricaCheckpoints() {
+    this.dbService.getCheckpoints(this.boxId).subscribe({
+      next: (res: any) => {
+        const cps = res.checkpoints || [];
+        this.ultimoCheckpoint = cps.length > 0 ? cps[cps.length - 1] : null;
+        if (this.ultimoCheckpoint) {
+          setTimeout(() => this.inizializzaMappa(cps), 300);
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  private inizializzaMappa(checkpoints: any[]) {
+    if (!this.detMapContainer?.nativeElement || this.map) return;
+    const ultimo = checkpoints[checkpoints.length - 1];
+    this.map = this.mapService.inizializzaMappa(
+      this.detMapContainer.nativeElement,
+      [ultimo.latitudine, ultimo.longitudine],
+      14
+    );
+    this.mapService.creaTileLayer(this.map, {
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attr: '&copy; OpenStreetMap'
+    });
+
+    const coords: L.LatLngExpression[] = [];
+    checkpoints.forEach((cp, i) => {
+      const latlng: L.LatLngExpression = [cp.latitudine, cp.longitudine];
+      coords.push(latlng);
+      const isLast = i === checkpoints.length - 1;
+      const color = isLast ? '#7DC740' : '#3AABDB';
+      L.circleMarker(latlng, {
+        radius: isLast ? 10 : 7,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.9,
+      }).addTo(this.map!)
+        .bindPopup(`<b>${isLast ? 'Posizione attuale' : 'Checkpoint ' + (i + 1)}</b><br>${cp.label || ''}<br><small>${cp.timestamp || ''}</small>`);
+    });
+
+    if (coords.length > 1) {
+      L.polyline(coords, { color: '#3AABDB', weight: 3, opacity: 0.6, dashArray: '8, 6' }).addTo(this.map!);
+      this.map!.fitBounds(L.latLngBounds(coords), { padding: [40, 40] });
+    }
   }
 
   caricaOggetti() {
@@ -255,7 +337,7 @@ export class DettaglioBoxPage implements OnInit {
         const url = this.dbService.buildQrUrl(this.boxId, res.token);
         setTimeout(async () => {
           try {
-            const canvas = document.getElementById('db-qr-canvas') as HTMLCanvasElement;
+            const canvas = this.qrCanvas?.nativeElement;
             if (canvas) {
               await QRCode.toCanvas(canvas, url, {
                 width: 200, margin: 2,
@@ -274,7 +356,7 @@ export class DettaglioBoxPage implements OnInit {
   }
 
   scaricaQr() {
-    const canvas = document.getElementById('db-qr-canvas') as HTMLCanvasElement;
+    const canvas = this.qrCanvas?.nativeElement;
     if (!canvas) return;
     const link = document.createElement('a');
     link.href = canvas.toDataURL('image/png');
@@ -304,6 +386,71 @@ export class DettaglioBoxPage implements OnInit {
 
   apriTracking() {
     this.router.navigate(['/tracking-box', this.boxId]);
+  }
+
+  toggleCatDropdown() {
+    this.mostraCatDropdown = !this.mostraCatDropdown;
+    if (this.mostraCatDropdown) {
+      this.updateCatDropdownPosition();
+    }
+  }
+
+  chiudiCatDropdown() {
+    this.mostraCatDropdown = false;
+  }
+
+  selezionaCategoria(nome: string) {
+    this.formTipo = nome;
+    this.mostraCatDropdown = false;
+  }
+
+  async aggiungiCategoria(event: Event) {
+    event.preventDefault();
+    const alert = await this.alertCtrl.create({
+      cssClass: ['peekbox-alert', 'peekbox-alert--slim'],
+      header: 'Nuova Categoria',
+      inputs: [{ name: 'nome', type: 'text', placeholder: 'Es. Elettronica, Vestiti...' }],
+      buttons: [
+        { text: 'Annulla', role: 'cancel' },
+        {
+          text: 'Aggiungi',
+          handler: (dati) => {
+            if (dati.nome?.trim()) {
+              this.dbService.creaCategoria(dati.nome.trim()).subscribe({
+                next: (res: any) => {
+                  this.caricaCategorie();
+                  this.formTipo = res.nome || dati.nome.trim();
+                },
+                error: (err: any) => this.toast(err.error?.error || 'Errore creazione categoria.', 'danger')
+              });
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private updateCatDropdownPosition() {
+    if (!this.catTrigger) return;
+    const rect = this.catTrigger.nativeElement.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const menuMaxH = 200;
+    if (spaceBelow < menuMaxH && rect.top > spaceBelow) {
+      this.catDropdownStyle = {
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        bottom: (window.innerHeight - rect.top + 4) + 'px',
+        top: 'auto',
+      };
+    } else {
+      this.catDropdownStyle = {
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        top: (rect.bottom + 4) + 'px',
+        bottom: 'auto',
+      };
+    }
   }
 
   tornaIndietro() {

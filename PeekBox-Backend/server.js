@@ -723,6 +723,72 @@ app.get('/api/geofence/:armadioId/checkpoints', verificaToken, (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// GEOFENCE PER CHECKPOINT
+// ─────────────────────────────────────────────
+
+app.post('/api/geofence-checkpoint', verificaToken, (req, res) => {
+    const { checkpoint_id, latitudine, longitudine, raggio_m = 100, attivo = true } = req.body;
+    if (!checkpoint_id || latitudine == null || longitudine == null) {
+        return res.status(400).json({ error: 'checkpoint_id, latitudine e longitudine obbligatori.' });
+    }
+    if (raggio_m < 0 || raggio_m > 5000) {
+        return res.status(400).json({ error: 'Raggio deve essere tra 0 e 5000 metri.' });
+    }
+    db.get('SELECT c.id FROM checkpoint_gps c WHERE c.id = ? AND c.rif_utente = ?',
+        [checkpoint_id, req.user.id], (err, cp) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (!cp) return res.status(403).json({ error: 'Checkpoint non trovato o non autorizzato.' });
+            db.run(`INSERT INTO geofence_checkpoint (rif_checkpoint, latitudine, longitudine, raggio_m, attivo)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON CONFLICT(rif_checkpoint) DO UPDATE SET
+                    latitudine = excluded.latitudine, longitudine = excluded.longitudine,
+                    raggio_m = excluded.raggio_m, attivo = excluded.attivo`,
+                [checkpoint_id, latitudine, longitudine, raggio_m, attivo ? 1 : 0],
+                function(err2) {
+                    if (err2) return res.status(500).json({ error: err2.message });
+                    res.json({ id: this.lastID || checkpoint_id, message: 'Geofence checkpoint salvato.' });
+                }
+            );
+        }
+    );
+});
+
+app.get('/api/geofence-checkpoint/:checkpointId', verificaToken, (req, res) => {
+    db.get('SELECT gc.* FROM geofence_checkpoint gc JOIN checkpoint_gps c ON gc.rif_checkpoint = c.id WHERE gc.rif_checkpoint = ? AND c.rif_utente = ?',
+        [req.params.checkpointId, req.user.id], (err, row) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ geofence: row || null });
+        }
+    );
+});
+
+app.delete('/api/geofence-checkpoint/:checkpointId', verificaToken, (req, res) => {
+    db.run(`DELETE FROM geofence_checkpoint WHERE rif_checkpoint = ? AND rif_checkpoint IN (SELECT id FROM checkpoint_gps WHERE rif_utente = ?)`,
+        [req.params.checkpointId, req.user.id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Geofence checkpoint eliminato.' });
+        }
+    );
+});
+
+app.get('/api/geofence-checkpoint/utente/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId)) {
+        return res.status(403).json({ error: 'Non autorizzato.' });
+    }
+    db.all(`SELECT gc.*, c.latitudine as cp_lat, c.longitudine as cp_lng, c.label as cp_label,
+            c.timestamp as cp_timestamp, b.nome as box_nome, b.id as box_id
+            FROM geofence_checkpoint gc
+            JOIN checkpoint_gps c ON gc.rif_checkpoint = c.id
+            JOIN box b ON c.rif_box = b.id
+            WHERE c.rif_utente = ? AND b.data_eliminazione IS NULL`,
+        [req.params.utenteId], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ geofences: rows || [] });
+        }
+    );
+});
+
+// ─────────────────────────────────────────────
 // CATALOGO ELEMENTI PREDEFINITI
 // ─────────────────────────────────────────────
 
@@ -733,14 +799,30 @@ app.get('/api/catalogo/categorie', verificaToken, (req, res) => {
         LEFT JOIN catalogo_elementi e
           ON e.categoria_slug = c.slug
          AND e.attivo = 1
+        WHERE c.rif_utente = ?
         GROUP BY c.id
         ORDER BY c.ordine ASC, c.nome ASC
     `;
 
-    db.all(sql, [], (err, rows) => {
+    db.all(sql, [req.user.id], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ categorie: rows || [] });
     });
+});
+
+app.post('/api/catalogo/categorie', verificaToken, (req, res) => {
+    const { nome } = req.body;
+    if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome categoria obbligatorio.' });
+    const slug = nome.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    db.run(`INSERT INTO catalogo_categorie (slug, nome, rif_utente) VALUES (?, ?, ?)`,
+        [slug, nome.trim(), req.user.id], function(err) {
+            if (err) {
+                if (err.message.includes('UNIQUE')) return res.status(400).json({ error: 'Categoria già esistente.' });
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(201).json({ id: this.lastID, slug, nome: nome.trim() });
+        }
+    );
 });
 
 app.get('/api/catalogo/elementi', verificaToken, (req, res) => {
@@ -845,15 +927,14 @@ app.post('/api/box/:boxId/catalogo/:catalogoId/aggiungi', verificaToken, (req, r
 
                             db.run(
                                 `INSERT INTO oggetti
-                                  (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                                  (nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
                                 [
                                     catalogo.nome,
                                     catalogo.descrizione,
                                     catalogo.categoria_slug,
                                     catalogo.fragile ? 1 : 0,
                                     quantita,
-                                    catalogo.foto,
                                     boxId,
                                     catalogoId
                                 ],
@@ -912,13 +993,8 @@ function verificaCapienzaBox(boxId, nuovaQuantita, callback) {
 
 app.post('/api/oggetti', verificaToken, (req, res) => {
     try {
-        const bodySize = JSON.stringify(req.body).length;
-        if (req.body && req.body.foto) {
-            console.log(`POST /api/oggetti - foto length: ${req.body.foto.length}, total body size: ${bodySize}`);
-        }
-        const { nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo = null } = req.body || {};
+        const { nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo = null } = req.body || {};
         if (!nome || !rif_box) return res.status(400).json({ error: "nome e rif_box obbligatori." });
-        if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
         verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
             verificaCapienzaBox(rif_box, quantita || 1, (err, consentito, maxCap, totAttuale) => {
                 if (err) return res.status(500).json({ error: err.message });
@@ -927,8 +1003,8 @@ app.post('/api/oggetti', verificaToken, (req, res) => {
                         error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi qualche oggetto prima di aggiungerne altri.`
                     });
                 }
-                db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-                    [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto, rif_box, rif_catalogo], function(err2) {
+                db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, rif_box, rif_catalogo], function(err2) {
                     if (err2) return res.status(500).json({ error: err2.message });
                     inserisciLogBox(rif_box, 'oggetto_aggiunto', `Aggiunto "${nome}" (q.tà: ${quantita || 1})`, { oggetto_id: this.lastID, nome, quantita: quantita || 1 });
                     res.status(201).json({ id: this.lastID });
@@ -994,8 +1070,7 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
 
         verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
-            const { nome, descrizione, tipo, fragile, quantita, foto } = req.body;
-            if (foto && foto.length > 10000000) return res.status(400).json({ error: "Foto troppo grande (max 10MB)." });
+            const { nome, descrizione, tipo, fragile, quantita } = req.body;
             const nuovaQuantita = quantita !== undefined ? Number(quantita) : (oggetto.quantita || 1);
             const delta = nuovaQuantita - (oggetto.quantita || 1);
             if (delta > 0) {
@@ -1015,11 +1090,11 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
                 db.run(
                     `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
                      tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
-                     quantita = COALESCE(?, quantita), foto = COALESCE(?, foto)
+                     quantita = COALESCE(?, quantita)
                      WHERE id = ?`,
                     [nome || null, descrizione || null, tipo || null,
                      fragile !== undefined ? (fragile ? 1 : 0) : null,
-                     quantita || null, foto || null, req.params.id],
+                     quantita || null, req.params.id],
                     function(err) {
                         if (err) return res.status(500).json({ error: err.message });
                         inserisciLogBox(oggetto.rif_box, 'oggetto_modificato', `Modificato "${nome || oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
@@ -1075,6 +1150,21 @@ app.delete('/api/oggetti/:id/definitivo', verificaToken, (req, res) => {
                 res.json({ message: "Oggetto eliminato definitivamente!" });
             });
         });
+    });
+});
+
+// ─── Svuota box: soft-delete di tutti gli oggetti ────────────
+app.delete('/api/box/:boxId/oggetti', verificaToken, (req, res) => {
+    const boxId = req.params.boxId;
+    verificaAccessoBoxScrittura(boxId, req.user.id, res, () => {
+        const now = new Date().toISOString();
+        db.run(`UPDATE oggetti SET data_eliminazione = ? WHERE rif_box = ? AND data_eliminazione IS NULL`,
+            [now, boxId], function(err) {
+                if (err) return res.status(500).json({ error: err.message });
+                inserisciLogBox(boxId, 'box_svuotata', `Svuotati ${this.changes} oggetti`, { count: this.changes });
+                res.json({ message: `${this.changes} oggetti rimossi.` });
+            }
+        );
     });
 });
 

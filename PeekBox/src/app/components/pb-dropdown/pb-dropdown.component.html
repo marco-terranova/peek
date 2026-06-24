@@ -1,5 +1,6 @@
 <div class="pb-dropdown-wrapper">
   <div class="pb-dropdown"
+       #triggerEl
        [class.is-open]="isOpen"
        [class.is-disabled]="disabled"
        (click)="toggleOpen()"
@@ -13,7 +14,7 @@
       <polyline points="6 9 12 15 18 9"></polyline>
     </svg>
   </div>
-  <div class="pb-dropdown-menu" *ngIf="isOpen">
+  <div class="pb-dropdown-menu" *ngIf="isOpen" [ngStyle]="menuStyle">
     <div class="pb-dropdown-option"
          *ngFor="let opt of options"
          [class.is-selected]="isSelected(opt)"

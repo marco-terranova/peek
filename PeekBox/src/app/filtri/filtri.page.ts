@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -8,7 +8,6 @@ import {
 import { RouterModule } from '@angular/router';
 import { NavigationHistoryService } from '../services/navigation-history';
 import { DatabaseService } from '../services/database';
-import { PbDropdownComponent } from '../components/pb-dropdown/pb-dropdown.component';
 
 @Component({
   selector: 'app-filtri',
@@ -19,7 +18,6 @@ import { PbDropdownComponent } from '../components/pb-dropdown/pb-dropdown.compo
     CommonModule, FormsModule, RouterModule,
     IonContent, IonFooter,
     IonTabBar, IonTabButton,
-    PbDropdownComponent,
   ]
 })
 export class FiltriPage {
@@ -31,10 +29,45 @@ export class FiltriPage {
   soloPreferiti: boolean = false;
   erroreFiltri: string = '';
 
+  mostraCatDd = false;
+  mostraArmDd = false;
+  catDdStyle: { [key: string]: string } = {};
+  armDdStyle: { [key: string]: string } = {};
+
+  @ViewChild('catTrigger') catTrigger!: ElementRef<HTMLElement>;
+  @ViewChild('armTrigger') armTrigger!: ElementRef<HTMLElement>;
+
   constructor(
     private navHistory: NavigationHistoryService,
     private dbService: DatabaseService
   ) {}
+
+  toggleCatDd() {
+    this.mostraArmDd = false;
+    this.mostraCatDd = !this.mostraCatDd;
+    if (this.mostraCatDd && this.catTrigger) {
+      const r = this.catTrigger.nativeElement.getBoundingClientRect();
+      this.catDdStyle = { position: 'fixed', left: r.left + 'px', width: r.width + 'px', top: (r.bottom + 4) + 'px' };
+    }
+  }
+
+  toggleArmDd() {
+    this.mostraCatDd = false;
+    this.mostraArmDd = !this.mostraArmDd;
+    if (this.mostraArmDd && this.armTrigger) {
+      const r = this.armTrigger.nativeElement.getBoundingClientRect();
+      this.armDdStyle = { position: 'fixed', left: r.left + 'px', width: r.width + 'px', top: (r.bottom + 4) + 'px' };
+    }
+  }
+
+  selCat(c: string) { this.selectedCategoria = c; this.mostraCatDd = false; }
+  selArm(a: any) { this.selectedArmadio = a.id; this.mostraArmDd = false; }
+  getNomeArmadio(): string {
+    if (!this.selectedArmadio) return '';
+    const a = this.armadiDisponibili.find(x => x.id === this.selectedArmadio || String(x.id) === String(this.selectedArmadio));
+    return a?.nome || '';
+  }
+  chiudiDd() { this.mostraCatDd = false; this.mostraArmDd = false; }
 
   ionViewWillEnter() {
     const utenteId = localStorage.getItem('utente_id');

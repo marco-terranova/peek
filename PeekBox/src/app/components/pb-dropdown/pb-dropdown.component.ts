@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -23,9 +23,12 @@ export class PbDropdownComponent implements ControlValueAccessor {
   @Input() labelKey: string = 'nome';
   @Input() valueKey: string = 'id';
 
+  @ViewChild('triggerEl') triggerEl!: ElementRef<HTMLElement>;
+
   isOpen = false;
   internalValue: any = null;
   disabled = false;
+  menuStyle: { [key: string]: string } = {};
 
   onChange: any = () => {};
   onTouched: any = () => {};
@@ -44,10 +47,39 @@ export class PbDropdownComponent implements ControlValueAccessor {
   toggleOpen() {
     if (this.disabled) return;
     this.isOpen = !this.isOpen;
+    if (this.isOpen) {
+      this.updateMenuPosition();
+    }
   }
 
   close() {
     this.isOpen = false;
+  }
+
+  private updateMenuPosition() {
+    if (!this.triggerEl) return;
+    const rect = this.triggerEl.nativeElement.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const menuMaxH = 200;
+    const openAbove = spaceBelow < menuMaxH && rect.top > spaceBelow;
+
+    if (openAbove) {
+      this.menuStyle = {
+        position: 'fixed',
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        bottom: (window.innerHeight - rect.top + 4) + 'px',
+        top: 'auto',
+      };
+    } else {
+      this.menuStyle = {
+        position: 'fixed',
+        left: rect.left + 'px',
+        width: rect.width + 'px',
+        top: (rect.bottom + 4) + 'px',
+        bottom: 'auto',
+      };
+    }
   }
 
   selectOption(opt: any) {

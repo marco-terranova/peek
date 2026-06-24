@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AlertController, ToastController } from '@ionic/angular/standalone';
 import { DatabaseService } from '../services/database';
 import { GpsService } from '../services/gps';
+import { MapService } from '../services/map';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-tracking-box',
@@ -14,195 +16,182 @@ import { GpsService } from '../services/gps';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class TrackingBoxPage implements OnInit {
-  boxId!: number;
+export class TrackingBoxPage implements OnInit, AfterViewInit, OnDestroy {
   utenteId = '';
   tipoProfilo = 'personal';
-
-  boxInfo: any = null;
-  checkpoints: any[] = [];
-  distanzaTotale = 0;
+  allCheckpoints: any[] = [];
   isLoading = false;
 
-  showStats = false;
-  statsList: { label: string; value: string }[] = [];
-  showSearch = false;
-  searchQuery = '';
-  searchedCheckpoints: any[] = [];
-  get timelineCheckpoints(): any[] { return this.searchedCheckpoints; }
+  @ViewChild('mapContainer') mapContainerRef!: ElementRef<HTMLElement>;
+  private leafletMap: L.Map | null = null;
+  private geofenceCircles: Map<number, L.Circle> = new Map();
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private dbService: DatabaseService,
     private gpsService: GpsService,
+    private mapService: MapService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
   ) {}
 
   ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const parsed = idParam ? Number(idParam) : NaN;
-    this.boxId = !isNaN(parsed) ? parsed : 0;
     this.utenteId = localStorage.getItem('utente_id') || '';
     this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
-    if (this.tipoProfilo === 'business' && this.boxId > 0) {
-      this.caricaBoxInfo();
-      this.caricaCheckpoints();
+  }
+
+  private geofenceListener = ((e: CustomEvent) => {
+    const { id, lat, lng, nome } = e.detail;
+    this.apriGeofenceDialog(id, lat, lng, nome);
+  }) as EventListener;
+
+  ngAfterViewInit() {
+    if (this.tipoProfilo === 'business' && this.utenteId) {
+      setTimeout(() => {
+        this.inizializzaMappa();
+        this.caricaTuttiCheckpoints();
+      }, 200);
+    }
+    window.addEventListener('tb-geofence', this.geofenceListener);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('tb-geofence', this.geofenceListener);
+    if (this.leafletMap) {
+      this.leafletMap.remove();
+      this.leafletMap = null;
     }
   }
 
-  vai(route: string) {
-    this.router.navigateByUrl(route, { replaceUrl: true });
-  }
-
-  caricaBoxInfo() {
-    if (!this.boxId) return;
-    this.dbService.getBoxSingola(this.boxId).subscribe({
-      next: (res: any) => { this.boxInfo = res.box; },
-    });
-  }
-
-  caricaCheckpoints() {
-    if (!this.boxId) return;
-    this.isLoading = true;
-    this.dbService.getCheckpoints(this.boxId).subscribe({
-      next: (res: any) => {
-        this.checkpoints = res.checkpoints || [];
-        this.isLoading = false;
-        this.aggiornaStatistiche();
-        this.aggiornaFiltroRicerca();
-      },
-      error: () => { this.isLoading = false; },
-    });
-  }
-
-  aggiornaStatistiche() {
-    const cps = this.checkpoints;
-    this.distanzaTotale = 0;
-    for (let i = 1; i < cps.length; i++) {
-      this.distanzaTotale += this.calcolaDistanza(
-        cps[i - 1].latitudine, cps[i - 1].longitudine,
-        cps[i].latitudine, cps[i].longitudine
-      );
-    }
-    this.statsList = [
-      { label: 'Checkpoint', value: String(cps.length) },
-      { label: 'Distanza percorsa', value: this.formatDistanza(this.distanzaTotale) },
-      { label: 'Ultimo aggiornamento', value: cps.length ? this.formatData(cps[cps.length - 1].timestamp) : '—' },
-    ];
-  }
-
-  aggiornaFiltroRicerca() {
-    const q = this.searchQuery?.toLowerCase().trim() || '';
-    if (!q) {
-      this.searchedCheckpoints = [...this.checkpoints];
-      return;
-    }
-    this.searchedCheckpoints = this.checkpoints.filter((cp) =>
-      (cp.label || '').toLowerCase().includes(q) ||
-      (cp.timestamp || '').toLowerCase().includes(q) ||
-      String(cp.latitudine).includes(q) ||
-      String(cp.longitudine).includes(q)
+  private inizializzaMappa() {
+    if (!this.mapContainerRef?.nativeElement) return;
+    this.leafletMap = this.mapService.inizializzaMappa(
+      this.mapContainerRef.nativeElement,
+      [41.9028, 12.4964],
+      6
     );
+    this.mapService.creaTileLayer(this.leafletMap, {
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attr: '&copy; OpenStreetMap'
+    });
   }
 
-  onSearchChange() {
-    this.aggiornaFiltroRicerca();
+  caricaTuttiCheckpoints() {
+    if (!this.utenteId) return;
+    this.isLoading = true;
+    this.dbService.getTuttiCheckpoint(this.utenteId).subscribe({
+      next: (res: any) => {
+        this.allCheckpoints = res.checkpoints || [];
+        this.isLoading = false;
+        this.posizionaMarkers();
+        this.caricaGeofenceEsistenti();
+      },
+      error: () => { this.isLoading = false; }
+    });
   }
 
-  async aggiungiCheckpointManuale() {
-    if (!this.boxId || this.boxId <= 0) return;
-    try {
-      const pos = await this.gpsService.getPosizione();
-      const alert = await this.alertCtrl.create({
-        cssClass: 'tb-alert', header: 'Etichetta posizione',
-        message: 'Aggiungi una descrizione opzionale per questo checkpoint.',
-        inputs: [{ name: 'label', type: 'text', placeholder: 'Es. Magazzino Milano' }],
-        buttons: [
-          { text: 'Annulla', role: 'cancel' },
-          {
-            text: 'Salva', handler: (data: any) => {
-              this.dbService.salvaCheckpointSicuro(this.boxId, pos.latitudine, pos.longitudine, pos.accuratezza, data.label || undefined).subscribe({
-                next: async (res: any) => {
-                  this.caricaCheckpoints();
-                  if (res.geofence_alert) {
-                    (await this.alertCtrl.create({
-                      cssClass: 'tb-alert tb-alert--danger', header: 'Eccezione di sicurezza',
-                      message: res.geofence_alert.messaggio, buttons: ['OK'],
-                    })).present();
-                  } else {
-                    (await this.toastCtrl.create({
-                      message: 'Posizione registrata', duration: 2000, color: 'success', position: 'bottom',
-                    })).present();
-                  }
-                },
-              });
-            },
-          },
-        ],
-      });
-      await alert.present();
-    } catch (err: any) {
-      (await this.alertCtrl.create({
-        cssClass: 'tb-alert', header: 'GPS non disponibile',
-        message: err.message || 'Impossibile ottenere la posizione.', buttons: ['OK'],
-      })).present();
+  private posizionaMarkers() {
+    if (!this.leafletMap || this.allCheckpoints.length === 0) return;
+    const bounds = L.latLngBounds([]);
+    this.allCheckpoints.forEach((cp, i) => {
+      const latlng = L.latLng(cp.latitudine, cp.longitudine);
+      bounds.extend(latlng);
+      const marker = this.mapService.creaMarkerNumerato(
+        latlng, i + 1, '#3AABDB'
+      );
+      marker.addTo(this.leafletMap!);
+      const boxNome = cp.box_nome || cp.nome_box || `Box #${cp.rif_box}`;
+      const label = cp.label || '';
+      const ts = cp.timestamp ? new Date(cp.timestamp).toLocaleDateString('it-IT', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+      }) : '';
+
+      marker.bindPopup(`
+        <div style="font-family:Outfit,sans-serif;min-width:160px">
+          <strong style="font-size:0.9rem">${boxNome}</strong>
+          ${label ? `<br><span style="color:#4A7A94;font-size:0.78rem">${label}</span>` : ''}
+          ${ts ? `<br><span style="color:#94A3B8;font-size:0.72rem">${ts}</span>` : ''}
+          <br><button onclick="window.dispatchEvent(new CustomEvent('tb-geofence',{detail:{id:${cp.id},lat:${cp.latitudine},lng:${cp.longitudine},nome:'${boxNome.replace(/'/g, "\\'")}'}}))"
+            style="margin-top:8px;padding:6px 14px;border:none;border-radius:8px;background:linear-gradient(135deg,#7DC740,#3AABDB);color:#fff;font-family:Outfit,sans-serif;font-size:0.75rem;font-weight:700;cursor:pointer">
+            Imposta Geofence
+          </button>
+        </div>
+      `);
+    });
+    if (bounds.isValid()) {
+      this.leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
     }
   }
 
-  apriGoogleMaps(lat: number, lng: number) {
-    window.open(this.gpsService.buildGoogleMapsUrl(lat, lng), '_blank');
+  private caricaGeofenceEsistenti() {
+    if (!this.utenteId) return;
+    this.dbService.getGeofenceCheckpointUtente(this.utenteId).subscribe({
+      next: (res: any) => {
+        const geofences = res.geofences || [];
+        geofences.forEach((gf: any) => {
+          if (gf.attivo && this.leafletMap) {
+            const circle = this.mapService.creaCerchioGeofence(
+              [gf.latitudine, gf.longitudine],
+              gf.raggio_m
+            );
+            circle.addTo(this.leafletMap!);
+            this.geofenceCircles.set(gf.rif_checkpoint, circle);
+          }
+        });
+      },
+      error: () => {}
+    });
   }
 
-  apriPercorsoCompleto() {
-    if (this.checkpoints.length < 2) return;
-    window.open(this.gpsService.buildPercorsoUrl(this.checkpoints), '_blank');
-  }
-
-  async confermaResetTracking() {
-    if (!this.boxId || this.boxId <= 0) return;
+  async apriGeofenceDialog(cpId: number, lat: number, lng: number, nome: string) {
     const alert = await this.alertCtrl.create({
-      cssClass: 'tb-alert', header: 'Eliminare tutti i checkpoint?',
-      message: 'Questa operazione è irreversibile.',
+      cssClass: 'tb-alert',
+      header: `Geofence: ${nome}`,
+      message: 'Imposta il raggio del geofence per questo checkpoint (0 - 5 km).',
+      inputs: [{
+        name: 'raggio',
+        type: 'number',
+        placeholder: 'Raggio in metri (es. 500)',
+        min: 0,
+        max: 5000,
+        value: 500,
+      }],
       buttons: [
         { text: 'Annulla', role: 'cancel' },
         {
-          text: 'Elimina storico', role: 'destructive',
-          handler: () => {
-            this.dbService.eliminaCheckpoints(this.boxId).subscribe({
-              next: () => {
-                this.checkpoints = [];
-                this.aggiornaStatistiche();
-                this.aggiornaFiltroRicerca();
+          text: 'Salva',
+          handler: (data: any) => {
+            const raggio = Math.min(5000, Math.max(0, Number(data.raggio) || 100));
+            this.dbService.impostaGeofenceCheckpoint(cpId, lat, lng, raggio, true).subscribe({
+              next: async () => {
+                if (this.geofenceCircles.has(cpId)) {
+                  this.leafletMap?.removeLayer(this.geofenceCircles.get(cpId)!);
+                }
+                if (this.leafletMap && raggio > 0) {
+                  const circle = this.mapService.creaCerchioGeofence([lat, lng], raggio);
+                  circle.addTo(this.leafletMap);
+                  this.geofenceCircles.set(cpId, circle);
+                }
+                const t = await this.toastCtrl.create({
+                  message: `Geofence impostato: ${raggio}m`, duration: 2000, color: 'success', position: 'bottom'
+                });
+                await t.present();
               },
+              error: async () => {
+                const t = await this.toastCtrl.create({
+                  message: 'Errore nel salvare il geofence.', duration: 2000, color: 'danger', position: 'bottom'
+                });
+                await t.present();
+              }
             });
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
     await alert.present();
   }
 
-  formatData(ts: string): string {
-    if (!ts) return '—';
-    return new Date(ts).toLocaleDateString('it-IT', {
-      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
-    });
-  }
-
-  formatDistanza(m: number): string {
-    if (m < 1000) return `${m.toFixed(0)} m`;
-    return `${(m / 1000).toFixed(2)} km`;
-  }
-
-  private calcolaDistanza(lat1: number, lng1: number, lat2: number, lng2: number): number {
-    const R = 6371000;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) ** 2 +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLng / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  tornaIndietro() {
+    this.router.navigate(['/home']);
   }
 }

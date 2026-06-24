@@ -57,6 +57,110 @@ $red: #EF4444; $amber: #F59E0B;
   border-radius: 2px;
 }
 
+// ─────────────────────────────────────────────
+//  SEZIONE ELEMENTI — layout orizzontale
+// ─────────────────────────────────────────────
+
+.db-section-elementi {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  background: $white;
+}
+
+.db-split {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.db-split-left {
+  flex: 0 0 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 32px;
+  background: linear-gradient(160deg, $page 0%, #E8F4F8 40%, #F0F7EE 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.db-info-card {
+  text-align: center;
+  max-width: 280px;
+}
+
+.db-info-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 24px;
+
+  span {
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba($green, 0.08);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: $green-d;
+  }
+}
+
+.db-add-btn--full {
+  width: 100%;
+  justify-content: center;
+}
+
+.db-full-badge {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.db-split-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 40px 40px;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.db-obj-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+@media (max-width: 899px) {
+  .db-split {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .db-split-left {
+    flex: none;
+    padding: 60px 24px 32px;
+  }
+  .db-split-right {
+    flex: none;
+    padding: 24px;
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
 .ia-tips-card {
   max-width: 700px;
   margin: 0 auto;
@@ -200,6 +304,12 @@ $red: #EF4444; $amber: #F59E0B;
   svg { width: 40px; height: 40px; stroke: rgba(74,122,148,0.12); }
   p { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: $mid; margin: 0; }
   .db-add-btn { margin-top: 4px; }
+
+  &--center {
+    flex: 1;
+    justify-content: center;
+    padding: 0 16px;
+  }
 }
 
 .db-grid {
@@ -370,6 +480,158 @@ $red: #EF4444; $amber: #F59E0B;
   animation: db-spin 0.65s linear infinite;
 }
 @keyframes db-spin { to { transform: rotate(360deg); } }
+
+// ─────────────────────────────────────────────
+//  MAP + BUSINESS MESSAGE
+// ─────────────────────────────────────────────
+
+.db-section-mappa {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $white;
+  padding: 80px 48px 48px;
+}
+
+.db-mappa-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.db-map-container {
+  width: 100%;
+  flex: 1;
+  min-height: 70vh;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.db-business-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.02);
+  border-radius: 14px;
+  margin-top: 12px;
+
+  svg { width: 32px; height: 32px; color: rgba(74, 122, 148, 0.4); }
+  p {
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(74, 122, 148, 0.7);
+  }
+}
+
+.db-card-obj-fragile-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+// ─────────────────────────────────────────────
+//  CATEGORY DROPDOWN (outside modal)
+// ─────────────────────────────────────────────
+
+.db-select-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-select-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.db-btn-add-cat {
+  width: 34px; height: 34px; border: none; border-radius: 9px;
+  background: linear-gradient(135deg, #7DC740 0%, #3AABDB 100%);
+  color: #fff; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(58, 171, 219, 0.15);
+  svg { width: 15px; height: 15px; }
+  &:hover { transform: scale(1.08); box-shadow: 0 4px 14px rgba(58, 171, 219, 0.25); }
+  &:active { transform: scale(0.95); }
+}
+
+.db-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0F172A;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba(125, 199, 64, 0.3); }
+
+  .placeholder { color: #4A7A94; opacity: 0.4; }
+  svg { width: 16px; height: 16px; color: #4A7A94; flex-shrink: 0; }
+}
+
+.db-cat-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: transparent;
+}
+
+.db-cat-dropdown {
+  position: fixed;
+  z-index: 10001;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 4px;
+  animation: db-dd-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes db-dd-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.db-cat-item {
+  padding: 10px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0F172A;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(125, 199, 64, 0.06); }
+}
+
+.db-cat-empty {
+  padding: 14px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #4A7A94;
+}
 
 // ─────────────────────────────────────────────
 //  MODAL

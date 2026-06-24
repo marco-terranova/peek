@@ -365,6 +365,25 @@ ion-toast::part(header) {
   color: $dark;
 }
 
+ion-toast[color="danger"] {
+  --color: #{$white};
+}
+ion-toast[color="danger"]::part(message) {
+  color: $white;
+}
+ion-toast[color="danger"]::part(header) {
+  color: $white;
+}
+ion-toast[color="warning"] {
+  --color: #{$white};
+}
+ion-toast[color="warning"]::part(message) {
+  color: $white;
+}
+ion-toast[color="warning"]::part(header) {
+  color: $white;
+}
+
 ion-toast.peekbox-toast {
   --border: none;
   --box-shadow: 0 12px 40px rgba($dark, 0.12);

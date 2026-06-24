@@ -106,22 +106,48 @@
             </label>
             <div class="csr-input-wrap csr-input-wrap--row">
               <div class="csr-select-wrap">
-                <button type="button" class="csr-select-trigger" (click)="mostraDropdown = !mostraDropdown">
+                <div #selectTrigger class="csr-select-trigger" (click)="toggleDropdown()">
                   <span [class.placeholder]="!rif_armadio">{{ rif_armadio ? getNomeArmadio(rif_armadio) : 'Seleziona uno spazio' }}</span>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <div class="csr-dropdown" *ngIf="mostraDropdown">
-                  <button type="button" class="csr-dropdown-item" *ngFor="let armadio of armadi_disponibili" (click)="selezionaArmadio(armadio.id)">
-                    {{ armadio.nome }}
-                  </button>
-                  <div class="csr-dropdown-empty" *ngIf="armadi_disponibili.length === 0">
-                    <span>Nessuno spazio disponibile</span>
-                  </div>
                 </div>
               </div>
               <button type="button" class="csr-btn-add" (click)="aggiungiArmadio($event)" title="Nuovo spazio">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </button>
+            </div>
+          </div>
+
+          <div class="csr-field">
+            <label class="csr-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              Dimensione
+            </label>
+            <div class="csr-dim-row">
+              <button type="button"
+                      class="csr-dim-btn"
+                      *ngFor="let d of dimensioniDisponibili"
+                      [class.is-active]="dimensione === d.value"
+                      (click)="dimensione = d.value">
+                <span class="csr-dim-label">{{ d.label }}</span>
+                <span class="csr-dim-cap">{{ d.cap }} oggetti</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="csr-field">
+            <label class="csr-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Tracking GPS
+            </label>
+            <div class="csr-toggle-row">
+              <label class="csr-toggle">
+                <input type="checkbox" [checked]="movingMode" (change)="toggleMovingMode()" />
+                <span class="csr-toggle-track"><span class="csr-toggle-thumb"></span></span>
+              </label>
+              <span class="csr-toggle-label">{{ movingMode ? 'Attivo' : 'Disattivo' }}</span>
             </div>
           </div>
 
@@ -132,6 +158,17 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Dropdown rendered outside the glass card to avoid backdrop-filter clipping -->
+<div class="csr-dropdown-backdrop" *ngIf="mostraDropdown" (click)="chiudiDropdown()"></div>
+<div class="csr-dropdown" *ngIf="mostraDropdown" [ngStyle]="dropdownStyle">
+  <button type="button" class="csr-dropdown-item" *ngFor="let armadio of armadi_disponibili" (click)="selezionaArmadio(armadio.id)">
+    {{ armadio.nome }}
+  </button>
+  <div class="csr-dropdown-empty" *ngIf="armadi_disponibili.length === 0">
+    <span>Nessuno spazio disponibile</span>
   </div>
 </div>
 

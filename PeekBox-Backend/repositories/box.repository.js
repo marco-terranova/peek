@@ -17,10 +17,11 @@ module.exports = (db) => ({
                    GROUP_CONCAT(DISTINCT oggetti.tipo) as categorie_presenti,
                    MAX(oggetti.fragile) as contiene_fragili,
                    COUNT(oggetti.id) as num_oggetti,
+                   COALESCE(SUM(oggetti.quantita), 0) as totale_pezzi,
                    NULL as ruolo_condivisione
             FROM box
             JOIN armadi ON box.rif_armadio = armadi.id
-            LEFT JOIN oggetti ON oggetti.rif_box = box.id
+            LEFT JOIN oggetti ON oggetti.rif_box = box.id AND oggetti.data_eliminazione IS NULL
             WHERE armadi.rif_utente = ?
               AND box.data_eliminazione IS NULL
             GROUP BY box.id
@@ -33,11 +34,12 @@ module.exports = (db) => ({
                    GROUP_CONCAT(DISTINCT oggetti.tipo) as categorie_presenti,
                    MAX(oggetti.fragile) as contiene_fragili,
                    COUNT(oggetti.id) as num_oggetti,
+                   COALESCE(SUM(oggetti.quantita), 0) as totale_pezzi,
                    c.ruolo as ruolo_condivisione
             FROM box
             JOIN armadi ON box.rif_armadio = armadi.id
             JOIN condivisioni c ON c.rif_box = box.id
-            LEFT JOIN oggetti ON oggetti.rif_box = box.id
+            LEFT JOIN oggetti ON oggetti.rif_box = box.id AND oggetti.data_eliminazione IS NULL
             WHERE c.rif_ospite = ?
               AND box.data_eliminazione IS NULL
             GROUP BY box.id

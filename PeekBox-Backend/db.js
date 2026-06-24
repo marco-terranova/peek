@@ -115,11 +115,17 @@ db.serialize(() => {
   // Catalogo elementi predefiniti
   db.run(`CREATE TABLE IF NOT EXISTS catalogo_categorie (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slug TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL,
     nome TEXT NOT NULL,
     descrizione TEXT,
-    ordine INTEGER NOT NULL DEFAULT 0
+    ordine INTEGER NOT NULL DEFAULT 0,
+    rif_utente INTEGER,
+    UNIQUE(slug, rif_utente)
   )`);
+
+  db.run(`ALTER TABLE catalogo_categorie ADD COLUMN rif_utente INTEGER`, (err) => {
+    if (err && !err.message.includes('duplicate column')) console.error("Migrazione rif_utente categorie:", err.message);
+  });
 
   db.run(`CREATE TABLE IF NOT EXISTS catalogo_elementi (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -177,6 +183,18 @@ db.serialize(() => {
     attivo INTEGER NOT NULL DEFAULT 1,
     creato_il TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY(rif_armadio) REFERENCES armadi(id) ON DELETE CASCADE
+  )`);
+
+  // 8b. GEOFENCE PER CHECKPOINT
+  db.run(`CREATE TABLE IF NOT EXISTS geofence_checkpoint (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rif_checkpoint INTEGER NOT NULL UNIQUE,
+    latitudine REAL NOT NULL,
+    longitudine REAL NOT NULL,
+    raggio_m REAL NOT NULL DEFAULT 100,
+    attivo INTEGER NOT NULL DEFAULT 1,
+    creato_il TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY(rif_checkpoint) REFERENCES checkpoint_gps(id) ON DELETE CASCADE
   )`);
 
   // 9. SMART QR

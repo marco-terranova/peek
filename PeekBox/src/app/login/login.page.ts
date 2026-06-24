@@ -9,6 +9,7 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { switchMap, catchError, EMPTY, forkJoin } from 'rxjs';
 import { DatabaseService } from '../services/database';
 import { LoginResponse } from '../../types/models';
+import tlds from 'tlds';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +35,9 @@ export class LoginPage implements OnInit {
 
   loginError: boolean = false;
   registerError: boolean = false;
+  emailRegSubmitted: boolean = false;
+  passwordRegSubmitted: boolean = false;
+  dominioRegError: boolean = false;
   showRecupero: boolean = false;
   recuperoEmail: string = '';
   recuperoMessaggio: string = '';
@@ -44,9 +48,9 @@ export class LoginPage implements OnInit {
   }
 
   get loginValido(): boolean {
-    return this.emailValida(this.email) && !!this.password?.trim();
+    return this.emailValida(this.email) && !!this.password?.trim() && this.password.length >= 8;
   }
-  private emailValida(email: string): boolean {
+  emailValida(email: string): boolean {
     const e = email.trim();
     if (!e) return false;
 
@@ -92,16 +96,35 @@ export class LoginPage implements OnInit {
     // Solo lettere, numeri, trattini e punti
     if (!/^[a-zA-Z0-9.-]+$/.test(domain)) return false;
 
-    // TLD deve essere almeno 2 lettere
-    const tld = domain.slice(domain.lastIndexOf('.') + 1);
+    // TLD deve essere almeno 2 lettere e valido
+    const tld = domain.slice(domain.lastIndexOf('.') + 1).toLowerCase();
     if (tld.length < 2) return false;
+    if (!tlds.includes(tld)) return false;
 
     return true;
   }
 
+  async dominioEsiste(domain: string): Promise<boolean> {
+    try {
+      const res = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+      const data: any = await res.json();
+      return !!data.Answer?.length;
+    } catch {
+      return true;
+    }
+  }
+
+  passwordValida(pw: string): boolean {
+    return pw.length >= 8
+        && /[A-Z]/.test(pw)
+        && /[a-z]/.test(pw)
+        && /[0-9]/.test(pw)
+        && /[!?@#$]/.test(pw);
+  }
+
   get registerValido(): boolean {
     return !!this.nomeProfilo?.trim()
-        && this.emailValida(this.emailReg)
+        && !!this.emailReg?.trim()
         && !!this.passwordReg?.trim() && this.passwordReg.length >= 8;
   }
 
@@ -233,33 +256,23 @@ export class LoginPage implements OnInit {
   }
 
   async registrati() {
-    if (!this.nomeProfilo?.trim() || !this.emailReg?.trim() || !this.passwordReg?.trim()) {
-      (await this.alertController.create({
-        cssClass: 'peekbox-alert',
-        header: 'Errore',
-        message: 'Tutti i campi sono obbligatori!',
-        buttons: ['OK']
-      })).present();
-      return;
-    }
+    this.emailRegSubmitted = false;
+    this.passwordRegSubmitted = false;
+    this.dominioRegError = false;
+    let valid = true;
     if (!this.emailValida(this.emailReg)) {
-      (await this.alertController.create({
-        cssClass: 'peekbox-alert',
-        header: 'Email non valida',
-        message: 'Inserisci un indirizzo email valido (es. nome@dominio.com).',
-        buttons: ['OK']
-      })).present();
+      this.emailRegSubmitted = true;
+      valid = false;
+    }
+    if (valid && !await this.dominioEsiste(this.emailReg.split('@')[1])) {
+      this.dominioRegError = true;
       return;
     }
-    if (this.passwordReg.length < 8) {
-      (await this.alertController.create({
-        cssClass: 'peekbox-alert',
-        header: 'Password troppo corta',
-        message: 'La password deve contenere almeno 8 caratteri.',
-        buttons: ['OK']
-      })).present();
-      return;
+    if (!this.passwordValida(this.passwordReg)) {
+      this.passwordRegSubmitted = true;
+      valid = false;
     }
+    if (!valid) return;
     this.dbService.registraUtente(this.nomeProfilo, this.emailReg, this.passwordReg, this.tipoProfilo).subscribe({
       next: async () => {
         this.registerSuccess = true;

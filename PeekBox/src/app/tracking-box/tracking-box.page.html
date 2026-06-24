@@ -1,387 +1,233 @@
-<ion-content [fullscreen]="true" class="ia-content">
-  <div class="ia-stage">
+<ion-content [fullscreen]="true" class="tb-content">
 
-    <button class="ia-back-btn" (click)="tornaIndietro()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-        <polyline points="10 17 15 12 10 7"/>
-        <line x1="15" y1="12" x2="3" y2="12"/>
-      </svg>
-      <span>Torna indietro</span>
-    </button>
+  <ng-container *ngIf="tipoProfilo === 'business'; else personalMsg">
 
-    <ng-container *ngIf="tipoProfilo === 'business'; else personalMsg">
+    <!-- ═══════════════════════════════════ HERO ══════════════════════ -->
+    <section class="about-section about-section--hero">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <button class="tb-back" (click)="vai('/home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            <span>Indietro</span>
+          </button>
 
-      <!-- ═══════════════ SEZIONE 1: DATI BOX ══════ -->
-      <section class="about-section">
-        <div class="about-bg"></div>
-        <div class="about-inner about-inner--rows">
-          <div class="about-content-full">
-            <div class="ia-tips-card">
-              <div class="ia-tips-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="tb-hero">
+            <div class="tb-hero-info">
+              <div class="tb-hero-badge" *ngIf="boxInfo">{{ boxInfo.nome_armadio || 'Nessun armadio' }}</div>
+              <h1 class="ac-title ac-title--hero">{{ boxInfo ? boxInfo.nome : 'Tracking Box' }}</h1>
+              <p class="ac-text" *ngIf="boxInfo?.descrizione">{{ boxInfo.descrizione }}</p>
+              <p class="ac-text" *ngIf="!boxInfo && isLoading">Caricamento dati box...</p>
+              <p class="ac-text" *ngIf="!boxInfo && !isLoading && boxId === 0">Seleziona una box per visualizzare il tracking.</p>
+            </div>
+            <div class="tb-hero-stats">
+              <div class="tb-hs-card" *ngIf="checkpoints.length > 0">
+                <span class="tb-hs-n">{{ checkpoints.length }}</span>
+                <span class="tb-hs-d">Checkpoint</span>
               </div>
-              <h2 class="ac-title">Tracking Box</h2>
-              <p class="ac-text ia-pw-text">
-                Monitora la posizione della tua box in tempo reale. Ogni volta che la box viene scansionata o registri manualmente un checkpoint, la posizione viene salvata sulla mappa. Attiva il <strong>Moving Mode</strong> per abilitare la registrazione automatica del GPS a ogni scansione QR e ricevere notifiche geofence se la box esce dal perimetro consentito.
-              </p>
-
-              <div class="tb-box-card" *ngIf="boxInfo">
-                <div class="tb-box-header">
-                  <div class="tb-box-nome">{{ boxInfo.nome }}</div>
-                  <div class="tb-box-armadio">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                    {{ boxInfo.nome_armadio || 'Nessun armadio' }}
-                  </div>
-                </div>
-                <div class="tb-box-desc" *ngIf="boxInfo.descrizione">{{ boxInfo.descrizione }}</div>
-
-                <div class="tb-moving-row">
-                  <div class="tb-moving-info">
-                    <div class="tb-moving-label">Moving Mode</div>
-                    <div class="tb-moving-sub" *ngIf="!movingModeAttivo">Registrazione GPS manuale</div>
-                    <div class="tb-moving-sub tb-moving-sub--on" *ngIf="movingModeAttivo">GPS automatico a ogni scansione QR</div>
-                  </div>
-                  <button class="tb-toggle" [class.tb-toggle--on]="movingModeAttivo" (click)="toggleMovingMode()" [attr.aria-label]="movingModeAttivo ? 'Disattiva moving mode' : 'Attiva moving mode'">
-                    <div class="tb-toggle-knob"></div>
-                  </button>
-                </div>
-
-                <div class="tb-stats" *ngIf="checkpoints.length > 0 || distanzaTotale > 0">
-                  <div class="tb-stat">
-                    <span class="tb-stat-num">{{ checkpoints.length }}</span>
-                    <span class="tb-stat-lbl">Checkpoint</span>
-                  </div>
-                  <div class="tb-stat" *ngIf="distanzaTotale > 0">
-                    <span class="tb-stat-num">{{ formatDistanza(distanzaTotale) }}</span>
-                    <span class="tb-stat-lbl">Percorso</span>
-                  </div>
-                  <div class="tb-stat" *ngIf="checkpoints.length > 0">
-                    <span class="tb-stat-num">{{ formatData(checkpoints[checkpoints.length - 1].timestamp) }}</span>
-                    <span class="tb-stat-lbl">Ultimo aggiornamento</span>
-                  </div>
-                </div>
-
-                <!-- Weather widget -->
-                <div class="tb-widget-row" *ngIf="checkpoints.length > 0">
-                  <div class="tb-widget tb-widget--meteo" *ngIf="meteo" (click)="mostraMeteoDetail()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-                    <span>{{ meteo.temperatura }}°C</span>
-                    <span class="tb-widget-sub">{{ meteo.vento }} km/h</span>
-                  </div>
-                  <div class="tb-widget tb-widget--meteo tb-widget--loading" *ngIf="caricoMeteo">
-                    <div class="tb-widget-spinner"></div>
-                    <span>Meteo...</span>
-                  </div>
-                </div>
-
-                <!-- Stats toggle -->
-                <button class="tb-collapse-btn" (click)="showStats = !showStats" *ngIf="statsList.length > 0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-                  <span>{{ showStats ? 'Nascondi statistiche' : 'Statistiche avanzate' }}</span>
-                  <svg class="tb-chevron" [class.tb-chevron--open]="showStats" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <div class="tb-stats-panel" *ngIf="showStats">
-                  <div class="tb-sp-item" *ngFor="let s of statsList">
-                    <span class="tb-sp-label">{{ s.label }}</span>
-                    <span class="tb-sp-value">{{ s.value }}</span>
-                  </div>
-                </div>
+              <div class="tb-hs-card" *ngIf="distanzaTotale > 0">
+                <span class="tb-hs-n">{{ formatDistanza(distanzaTotale) }}</span>
+                <span class="tb-hs-d">Percorso</span>
+              </div>
+              <div class="tb-hs-card" *ngIf="checkpoints.length > 0">
+                <span class="tb-hs-n tb-hs-n--sm">{{ formatData(checkpoints[checkpoints.length - 1].timestamp) }}</span>
+                <span class="tb-hs-d">Ultimo agg.</span>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <div class="section-divider"></div>
+    <div class="section-divider"></div>
 
-      <!-- ═══════════════ SEZIONE 2: MAPPA ══════ -->
-      <section class="about-section">
-        <div class="about-bg"></div>
-        <div class="about-inner about-inner--rows">
-          <div class="about-content-full">
-            <div class="ia-tips-card">
-              <div class="ia-tips-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    <!-- ═══════════════════════════════════ STATS ═════════════════════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--alt">
+        <div class="about-content">
+          <h2 class="ac-title">Monitoraggio in tempo reale</h2>
+          <p class="ac-text">
+            Il tracciamento GPS registra ogni spostamento della box con data, coordinate
+            e accuratezza del segnale. La distanza totale viene calcolata automaticamente
+            tra ogni checkpoint consecutivo, dandoti una visione chiara del percorso effettuato.
+          </p>
+          <p class="ac-text" *ngIf="checkpoints.length === 0">
+            Nessun checkpoint registrato. Usa <strong>Registra posizione</strong> per
+            aggiungere il primo punto di monitoraggio.
+          </p>
+          <button class="ac-btn" (click)="showStats = !showStats" *ngIf="statsList.length > 0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            {{ showStats ? 'Nascondi' : 'Vedi' }} statistiche dettagliate
+          </button>
+
+          <div class="tb-panel" *ngIf="showStats && statsList.length > 0">
+            <div class="tb-pi-item" *ngFor="let s of statsList">
+              <span class="tb-pi-label">{{ s.label }}</span>
+              <span class="tb-pi-value">{{ s.value }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="av-frame">
+            <div class="tb-vis-stats">
+              <div class="tb-vs-card">
+                <div class="tb-vs-icon tb-vs-icon--green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <span class="tb-vs-n">{{ checkpoints.length }}</span>
+                <span class="tb-vs-d">Checkpoint</span>
               </div>
-              <h2 class="ac-title">Mappa dei checkpoint</h2>
-              <p class="ac-text ia-pw-text">
-                I punti numerati sulla mappa rappresentano la cronologia delle posizioni registrate per questa box. Clicca su un marcatore per vedere i dettagli della posizione.
-              </p>
-
-              <div class="tb-map-section">
-                <!-- Layer switcher + tool row -->
-                <div class="tb-map-tools">
-                  <div class="tb-layer-pills">
-                    <button *ngFor="let l of tileLayers; let li = index" class="tb-pill-btn" [class.tb-pill-btn--active]="currentLayer === li" (click)="cambiaLayer(li)">{{ l.name }}</button>
-                  </div>
-                  <div class="tb-map-actions">
-                    <button class="tb-tool-btn tb-tool-btn--live" [class.tb-tool-btn--active]="liveAttivo" (click)="toggleLiveTracking()" title="Posizione in tempo reale">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
-                      <span>{{ liveAttivo ? 'Spegni live' : 'Live GPS' }}</span>
-                    </button>
-                    <button class="tb-tool-btn" (click)="toggleFullscreen()" title="Schermo intero">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-                    </button>
-
-                    <button class="tb-tool-btn" (click)="caricaCheckpoints()" title="Aggiorna mappa">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    </button>
-                  </div>
+              <div class="tb-vs-card">
+                <div class="tb-vs-icon tb-vs-icon--blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
-
-                <!-- Time filter -->
-                <button class="tb-collapse-btn tb-collapse-btn--sm" (click)="showTimeFilter = !showTimeFilter" *ngIf="checkpoints.length > 1">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                  <span>Filtro temporale</span>
-                  <svg class="tb-chevron" [class.tb-chevron--open]="showTimeFilter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                <div class="tb-time-filter" *ngIf="showTimeFilter">
-                  <label>Da: <input type="date" [(ngModel)]="timeRangeStart" class="tb-date-input" (change)="aggiornaMappa()" /></label>
-                  <label>A: <input type="date" [(ngModel)]="timeRangeEnd" class="tb-date-input" (change)="aggiornaMappa()" /></label>
-                  <button class="tb-tool-btn" (click)="timeRangeStart = ''; timeRangeEnd = ''; aggiornaTimeRange(); aggiornaMappa()">Reset</button>
+                <span class="tb-vs-n">{{ formatDistanza(distanzaTotale) }}</span>
+                <span class="tb-vs-d">Distanza</span>
+              </div>
+              <div class="tb-vs-card">
+                <div class="tb-vs-icon tb-vs-icon--green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><polyline points="12 7 12 12 15 15"/></svg>
                 </div>
-
-                <!-- Measure bar -->
-                <div class="tb-measure-bar" *ngIf="measuring">
-                  <span>Clicca sulla mappa per aggiungere punti. Distanza: <strong>{{ measureDistance < 1000 ? (measureDistance.toFixed(0) + ' m') : ((measureDistance / 1000).toFixed(2) + ' km') }}</strong></span>
-                  <button class="tb-measure-stop" (click)="annullaMisurazione()">Ferma</button>
+                <span class="tb-vs-n">{{ checkpoints.length > 0 ? formatData(checkpoints[checkpoints.length - 1].timestamp) : '—' }}</span>
+                <span class="tb-vs-d">Ultimo aggiornamento</span>
+              </div>
+              <div class="tb-vs-card">
+                <div class="tb-vs-icon tb-vs-icon--blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-
-                <!-- Map container -->
-                <div #mapContainer class="tb-map-container" [class.tb-map-container--fs]="fullscreen" [style.position]="fullscreen ? 'fixed' : ''" [style.inset]="fullscreen ? '0' : ''" [style.zIndex]="fullscreen ? '9999' : ''"></div>
-
-                <!-- Ambient tour indicator -->
-                <div class="tb-tour-indicator" *ngIf="ambientTour">
-                  <div class="tb-tour-spinner"></div>
-                  <span>Tour ambientale in corso...</span>
-                  <button class="tb-tour-stop-btn" (click)="fermaTour()">Ferma</button>
-                </div>
-
-                <!-- Route playback + tool bar -->
-                <div class="tb-playback-bar" *ngIf="checkpoints.length >= 2">
-                  <div class="tb-pb-label">Strumenti mappa</div>
-                  <div class="tb-pb-controls">
-                    <button class="tb-pb-btn" [class.tb-pb-btn--play]="!playing" [class.tb-pb-btn--stop]="playing" (click)="playing ? fermaPlayback() : avviaPlayback()" title="Riproduci / Ferma">
-                      <svg *ngIf="!playing" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-                      <svg *ngIf="playing" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                    </button>
-                    <button class="tb-pb-btn tb-pb-btn--speed" (click)="decrementSpeed()" title="Rallenta">−</button>
-                    <span class="tb-pb-speed">{{ playSpeed }}x</span>
-                    <button class="tb-pb-btn tb-pb-btn--speed" (click)="incrementSpeed()" title="Accelera">+</button>
-                    <button class="tb-pb-btn" [class.tb-pb-btn--active]="ambientTour" (click)="toggleTour()" title="Tour ambientale">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 4 1 20 11 12 1 4"/><polygon points="11 4 11 20 21 12 11 4"/></svg>
-                    </button>
-                    <button class="tb-pb-btn tb-pb-btn--ruler" [class.tb-pb-btn--active]="measuring" (click)="toggleMeasure()" title="Misura distanza">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    </button>
-                    <button class="tb-pb-btn tb-pb-btn--opt" (click)="ottimizzaPercorso()" title="Ottimizza percorso" *ngIf="checkpoints.length >= 3">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="16 8 8 8 8 16"/></svg>
-                    </button>
-                    <button class="tb-pb-btn tb-pb-btn--reset" (click)="nascondiOttimizzazione()" title="Ripristina percorso originale">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                    </button>
-                    <div class="tb-export-group">
-                      <button class="tb-pb-btn tb-pb-btn--export" (click)="showExportMenu = !showExportMenu" title="Esporta">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      </button>
-                      <div class="tb-export-menu" *ngIf="showExportMenu" (mouseleave)="showExportMenu = false">
-                        <button (click)="esportaGeoJSON(); showExportMenu = false">GeoJSON</button>
-                        <button (click)="esportaGPX(); showExportMenu = false">GPX</button>
-                        <button (click)="esportaCSV(); showExportMenu = false">CSV</button>
-                        <button (click)="esportaKML(); showExportMenu = false">KML</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Geofence -->
-                <div class="tb-gf-section">
-                  <div class="tb-gf-head" *ngIf="geofence && !editingGeofence">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-                    <span>Geofence: {{ gfRaggio >= 1000 ? (gfRaggio / 1000).toFixed(1) + ' km' : gfRaggio + ' m' }}</span>
-                    <span class="tb-gf-status" [class.tb-gf-status--on]="gfAttivo">{{ gfAttivo ? 'Attivo' : 'Disattivo' }}</span>
-                    <button class="tb-gf-edit-btn" (click)="avviaEditGeofence()">Modifica</button>
-                    <button class="tb-gf-del-btn" (click)="eliminaGeofenceConfirm()">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                  </div>
-
-                  <div class="tb-gf-editor" *ngIf="editingGeofence">
-                    <div class="tb-gf-editor-title">Modifica geofence</div>
-                    <div class="tb-gf-editor-hint">Clicca sulla mappa per posizionare il centro oppure trascina il marcatore blu.</div>
-                    <div class="tb-gf-slider-row">
-                      <label>Raggio: <strong>{{ gfRaggio >= 1000 ? (gfRaggio / 1000).toFixed(1) + ' km' : gfRaggio + ' m' }}</strong></label>
-                      <input type="range" min="20" max="5000" step="10" [(ngModel)]="gfRaggio" class="tb-gf-slider" />
-                    </div>
-                    <div class="tb-gf-toggle-row">
-                      <label>Geofence attivo</label>
-                      <button class="tb-toggle tb-toggle--small" [class.tb-toggle--on]="gfAttivo" (click)="gfAttivo = !gfAttivo">
-                        <div class="tb-toggle-knob"></div>
-                      </button>
-                    </div>
-                    <div class="tb-gf-btn-row">
-                      <button class="tb-action-btn tb-action-btn--primary tb-action-btn--small" (click)="salvaGeofence()" [disabled]="isSavingGeofence">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        <span>Salva geofence</span>
-                      </button>
-                      <button class="tb-action-btn tb-action-btn--secondary tb-action-btn--small" (click)="annullaEditGeofence()">Annulla</button>
-                    </div>
-                  </div>
-
-                  <button class="tb-tool-btn tb-tool-btn--gf-new" (click)="avviaEditGeofence()" *ngIf="!geofence && !editingGeofence">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-                    <span>Configura geofence</span>
-                  </button>
-                </div>
+                <span class="tb-vs-n">{{ boxInfo?.moving_mode ? 'Attiva' : 'Inattiva' }}</span>
+                <span class="tb-vs-d">Modalità movimento</span>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <div class="section-divider"></div>
+    <div class="section-divider"></div>
 
-      <!-- ═══════════════ SEZIONE 3: AZIONI ══════ -->
-      <section class="about-section">
-        <div class="about-bg"></div>
-        <div class="about-inner about-inner--rows">
-          <div class="about-content-full">
-            <div class="ia-tips-card">
-              <div class="ia-tips-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </div>
-              <h2 class="ac-title">Azioni rapide</h2>
-              <p class="ac-text ia-pw-text">
-                Registra manualmente la posizione corrente della box, oppure visualizza l&rsquo;intero percorso su Google Maps.
-              </p>
-
-              <div class="tb-actions">
-                <button class="tb-action-btn tb-action-btn--primary" (click)="aggiungiCheckpointManuale()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                  <span>Registra posizione</span>
-                </button>
-                <button class="tb-action-btn tb-action-btn--secondary" (click)="apriPercorsoCompleto()" [class.tb-action-btn--disabled]="checkpoints.length < 2">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-                  <span>Vedi percorso completo</span>
-                </button>
-              </div>
-            </div>
+    <!-- ═══════════════════════════════════ MAPPA + AZIONI ═════════════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner">
+        <div class="about-visual">
+          <div class="av-frame av-frame--map">
+            <div #mapContainer class="tb-map"></div>
           </div>
         </div>
-      </section>
+        <div class="about-content">
+          <h2 class="ac-title">Mappa e azioni rapide</h2>
+          <p class="ac-text">
+            Visualizza la posizione della box sulla mappa oppure registra manualmente
+            un nuovo checkpoint per aggiornare la timeline. Puoi anche tracciare il
+            percorso completo su Google Maps o resettare lo storico.
+          </p>
+          <div class="tb-actions">
+            <button class="ac-btn" (click)="aggiungiCheckpointManuale()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Registra posizione
+            </button>
+            <button class="ac-btn ac-btn--outline" (click)="apriPercorsoCompleto()" [class.ac-btn--disabled]="checkpoints.length < 2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              Percorso completo
+            </button>
+            <button class="ac-btn ac-btn--outline ac-btn--danger" (click)="confermaResetTracking()" *ngIf="checkpoints.length > 0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Reset storico
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <div class="section-divider"></div>
+    <div class="section-divider"></div>
 
-      <!-- ═══════════════ SEZIONE 4: TIMELINE ══════ -->
-      <section class="about-section">
-        <div class="about-bg"></div>
-        <div class="about-inner about-inner--rows">
-          <div class="about-content-full">
-            <div class="ia-tips-card">
-              <div class="ia-tips-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <!-- ═══════════════════════════════════ TIMELINE ═══════════════════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <div class="tb-tl-head">
+            <h2 class="ac-title">Timeline posizioni</h2>
+            <div class="tb-tl-actions">
+              <button class="ac-btn ac-btn--sm ac-btn--outline" (click)="showSearch = !showSearch">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                {{ showSearch ? 'Chiudi ricerca' : 'Cerca' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="tb-tl-search" *ngIf="showSearch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+                   placeholder="Cerca per etichetta, data o coordinate..." class="tb-inp" />
+          </div>
+
+          <!-- Loading -->
+          <div class="tb-tl-empty" *ngIf="isLoading">
+            <div class="tb-spin"></div>
+            <p>Caricamento checkpoint...</p>
+          </div>
+
+          <!-- Empty -->
+          <div class="tb-tl-empty" *ngIf="!isLoading && checkpoints.length === 0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>Nessun checkpoint registrato. Usa <strong>Registra posizione</strong> per aggiungere il primo punto.</p>
+          </div>
+
+          <!-- Timeline -->
+          <div class="tb-tl-list" *ngIf="!isLoading && searchedCheckpoints.length > 0">
+            <div class="tb-tl-item" *ngFor="let cp of timelineCheckpoints; let i = index; let first = first; let last = last">
+              <div class="tb-tl-line-wrap">
+                <div class="tb-tl-dot" [class.tb-tl-dot--f]="first" [class.tb-tl-dot--l]="last"></div>
+                <div class="tb-tl-line" *ngIf="!last"></div>
               </div>
-              <h2 class="ac-title">Timeline posizioni</h2>
-              <p class="ac-text ia-pw-text">
-                Cronologia completa di tutti i checkpoint registrati per questa box. Clicca sul pulsante <strong>Apri in Maps</strong> per visualizzare un punto su Google Maps.
-              </p>
-
-              <div class="tb-search-bar" *ngIf="checkpoints.length > 0">
-                <button class="tb-search-toggle" (click)="showSearch = !showSearch" *ngIf="!showSearch">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <span>Cerca</span>
-                </button>
-                <div class="tb-search-field" *ngIf="showSearch">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per etichetta, data o coordinate..." class="tb-search-input" />
+              <div class="tb-tl-card" (click)="apriGoogleMaps(cp.latitudine, cp.longitudine)">
+                <div class="tb-tl-card-head">
+                  <span class="tb-tl-label">{{ cp.label || ('Posizione #' + (searchedCheckpoints.length - i)) }}</span>
+                  <span class="tb-tl-time">{{ formatData(cp.timestamp) }}</span>
+                </div>
+                <div class="tb-tl-coords">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <span>{{ cp.latitudine | number:'1.5-5' }}, {{ cp.longitudine | number:'1.5-5' }}</span>
+                  <span class="tb-tl-acc" *ngIf="cp.accuratezza">±{{ cp.accuratezza | number:'1.0-0' }}m</span>
                 </div>
               </div>
-
-              <div class="tb-loading" *ngIf="isLoading">
-                <div class="tb-spinner"></div>
-                <span>Caricamento checkpoint...</span>
-              </div>
-
-              <div class="tb-empty" *ngIf="!isLoading && checkpoints.length === 0">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p>Nessun checkpoint registrato. Usa il pulsante <strong>Registra posizione</strong> per aggiungere il primo punto.</p>
-              </div>
-
-              <div class="tb-empty tb-empty--filtered" *ngIf="!isLoading && checkpoints.length > 0 && searchedCheckpoints.length === 0">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <p>Nessun checkpoint corrisponde ai criteri di ricerca o filtro.</p>
-              </div>
-
-              <div class="tb-timeline" *ngIf="!isLoading && searchedCheckpoints.length > 0">
-                <div class="tb-timeline-item" *ngFor="let cp of timelineCheckpoints; let i = index; let first = first; let last = last">
-                  <div class="tb-tl-connector">
-                    <div class="tb-tl-dot" [class.tb-tl-dot--first]="first" [class.tb-tl-dot--last]="last"></div>
-                    <div class="tb-tl-line" *ngIf="!last"></div>
-                  </div>
-                  <div class="tb-tl-card">
-                    <div class="tb-tl-head">
-                      <span class="tb-tl-label">{{ cp.label || ('Posizione #' + (searchedCheckpoints.length - i)) }}</span>
-                      <span class="tb-tl-time">{{ formatData(cp.timestamp) }}</span>
-                    </div>
-                    <div class="tb-tl-coords">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                      <span>{{ cp.latitudine | number:'1.5-5' }}, {{ cp.longitudine | number:'1.5-5' }}</span>
-                      <span class="tb-tl-acc" *ngIf="cp.accuratezza">±{{ cp.accuratezza | number:'1.0-0' }}m</span>
-                    </div>
-                    <div class="tb-tl-edit-label" *ngIf="showSearch">
-                      <input type="text" [value]="cp.label || ''" #labelInput placeholder="Modifica etichetta..." class="tb-tl-label-input" (keyup.enter)="modificaLabelCheckpoint(cp, labelInput.value)" />
-                      <button class="tb-tl-save-label" (click)="modificaLabelCheckpoint(cp, labelInput.value)" *ngIf="labelInput.value !== (cp.label || '')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                      </button>
-                    </div>
-                    <div class="tb-tl-actions">
-                      <button class="tb-tl-map-btn" (click)="apriGoogleMaps(cp.latitudine, cp.longitudine)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        Apri in Maps
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tb-timeline-count" *ngIf="searchedCheckpoints.length > 0">
-                {{ searchedCheckpoints.length }} di {{ checkpoints.length }} checkpoint
-              </div>
-
-              <div class="tb-reset-row" *ngIf="checkpoints.length > 0">
-                <button class="tb-reset-btn" (click)="confermaResetTracking()">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                  Elimina tutto lo storico
-                </button>
-              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-    </ng-container>
-
-    <ng-template #personalMsg>
-      <section class="about-section">
-        <div class="about-bg"></div>
-        <div class="about-inner about-inner--rows">
-          <div class="about-content-full">
-            <div class="ia-tips-card">
-              <div class="ia-tips-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              </div>
-              <h2 class="ac-title">Funzione non disponibile</h2>
-              <p class="ac-text ia-pw-text">
-                Il tracking box con mappa interattiva e geofence egrave; disponibile esclusivamente per account <strong>Business</strong>. 
-                Se sei interessato a questa funzionalit&agrave;, aggiorna il tuo piano dalla sezione Profilo per sbloccare il monitoraggio GPS 
-                avanzato, le notifiche geofence e la cronologia completa dei movimenti delle tue box.
-              </p>
-            </div>
+          <div class="tb-tl-count" *ngIf="searchedCheckpoints.length > 0">
+            {{ searchedCheckpoints.length }} di {{ checkpoints.length }} checkpoint
           </div>
         </div>
-      </section>
-    </ng-template>
+      </div>
+    </section>
 
-  </div>
+    <div class="section-divider"></div>
+
+  </ng-container>
+
+  <!-- ═══════════════════════════════════ PERSONAL ════════════════════ -->
+  <ng-template #personalMsg>
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <div class="tb-personal">
+            <div class="tb-personal-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h2 class="ac-title">Funzione non disponibile</h2>
+            <p class="ac-text">Il tracking box è disponibile esclusivamente per account <strong>Business</strong>. Aggiorna il tuo piano dalla sezione Profilo per sbloccare il monitoraggio GPS avanzato.</p>
+            <button class="ac-btn" (click)="vai('/home')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Torna alla home
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </ng-template>
+
 </ion-content>

@@ -58,7 +58,10 @@
               </div>
             </div>
             <div class="ia-badge-row">
-              <span class="ia-badge" [class.ia-badge--business]="tipoProfilo === 'business'">{{ tipoProfilo === 'business' ? 'Business' : 'Personale' }}</span>
+              <span class="ia-badge" [class.ia-badge--business]="tipoProfilo === 'business'">
+                <svg *ngIf="tipoProfilo === 'business'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ia-badge-icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                {{ tipoProfilo === 'business' ? 'Business' : 'Personale' }}
+              </span>
               <span class="ia-badge ia-badge--admin" *ngIf="isAdmin">Amministratore</span>
             </div>
           </div>
@@ -79,7 +82,7 @@
             </div>
             <h2 class="ac-title">Suggerimenti per la password</h2>
             <p class="ac-text ia-pw-text">
-              Una password sicura &egrave; il primo baluardo a protezione del tuo account. Per essere considerata robusta deve contenere almeno 8 caratteri, ma ti consigliamo di puntare a 12 o pi&ugrave;. Alterna lettere maiuscole e minuscole, includi almeno un numero e un carattere speciale come !, ?, @, # o $. Evita parole comuni, il tuo nome, date di nascita o sequenze banali come &ldquo;123456&rdquo; o &ldquo;password&rdquo;. Usa una frase facile da ricordare ma difficile da indovinare, oppure affidati a un gestore di password che ne generi una casuale per te. Non riutilizzare mai la stessa password su piattaforme diverse: se una viene compromessa, tutte le altre sarebbero a rischio. Ti suggeriamo di cambiare la password periodicamente, almeno ogni tre mesi, e di non comunicarla a nessuno. PeekBox non ti chieder&agrave; mai la password via email o messaggio. Se sospetti che qualcuno possa averla intercettata, cambiala immediatamente.
+               Una password sicura &egrave; il primo baluardo a protezione del tuo account. Per essere considerata robusta deve contenere almeno 8 caratteri, ma ti consigliamo di puntare a 12 o pi&ugrave;. Alterna lettere maiuscole e minuscole, includi almeno un numero e un carattere speciale come !, ?, @, # o $. Evita parole comuni, il tuo nome, date di nascita o sequenze banali come &ldquo;123456&rdquo; o &ldquo;password&rdquo;. Usa una frase facile da ricordare ma difficile da indovinare, oppure affidati a un gestore di password che ne generi una casuale per te. Non riutilizzare mai la stessa password su piattaforme diverse: se una viene compromessa, tutte le altre sarebbero a rischio. Ti suggeriamo di cambiare la password periodicamente, almeno ogni tre mesi, e di non comunicarla a nessuno. PeekBox non ti chieder&agrave; mai la password via email o messaggio. Se sospetti che qualcuno possa averla intercettata, cambiala immediatamente.
             </p>
           </div>
         </div>

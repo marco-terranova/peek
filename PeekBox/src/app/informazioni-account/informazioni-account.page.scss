@@ -79,19 +79,27 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   flex-wrap: wrap; margin-top: 20px;
 }
 .ia-badge {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 18px; border-radius: 100px;
   font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700;
   background: rgba(125,199,64,0.08); color: $green-d;
   border: 1px solid rgba(125,199,64,0.15);
   &--business {
-    background: rgba(58,171,219,0.08); color: $blue-d;
-    border-color: rgba(58,171,219,0.15);
+    background: linear-gradient(135deg, $green 0%, $blue 100%);
+    color: $white;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba($blue, 0.2);
   }
   &--admin {
     background: rgba(239,68,68,0.08); color: #b91c1c;
     border-color: rgba(239,68,68,0.15);
   }
+}
+
+.ia-badge-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 // ═══════════════════════════════════════════════════════════════════

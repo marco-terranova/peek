@@ -211,6 +211,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
     line-height: 1.55;
     word-break: break-word;
     white-space: pre-line;
+    text-align: justify;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     border: 1px solid rgba($green, 0.08);
   }
@@ -220,6 +221,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
     color: $white;
     border-radius: 16px 16px 4px 16px;
     border: none;
+    text-align: justify;
     box-shadow: 0 2px 12px rgba($green, 0.25);
   }
 }

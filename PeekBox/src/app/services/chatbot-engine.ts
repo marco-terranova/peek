@@ -9,10 +9,17 @@ interface CercaRisultato {
   contesto: string;
 }
 
+interface Contesto {
+  intent: string;
+  dati?: any;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ChatbotEngineService {
+
+  private ultimoContesto: Contesto | null = null;
 
   constructor(private dbService: DatabaseService) {}
 
@@ -26,103 +33,191 @@ export class ChatbotEngineService {
       return 'Sembra che tu non abbia effettuato l\'accesso. Accedi per usare l\'assistente.';
     }
 
-    if (lower === 'aiuto' || lower === 'help' || lower === 'cosa sai fare' || lower === 'comandi' || lower === 'cosa puoi fare' || lower === 'comando' || lower === 'funzioni' || lower === 'help!') {
+    const risposta = await this.matchIntent(lower, utenteId);
+    return risposta;
+  }
+
+  private async matchIntent(lower: string, utenteId: string): Promise<string> {
+    if (this.is(lower, ['aiuto', 'help', 'cosa sai fare', 'comandi', 'cosa puoi fare', 'comando', 'funzioni', 'help!', 'cosa fai', 'che sai fare'])) {
       return this.helpResponse();
     }
 
-    if (lower.includes('ciao') || lower.includes('salve') || lower.includes('buongiorn') || lower.includes('buonasera') || lower.includes('buona sera') || lower.includes('hey') || lower.includes('ehi') || lower === 'ciao' || lower === 'salve') {
-      const hour = new Date().getHours();
-      let greeting = 'Ciao';
-      if (hour < 12) greeting = 'Buongiorno';
-      else if (hour < 18) greeting = 'Buon pomeriggio';
-      else greeting = 'Buonasera';
-      return `${greeting}! 👋 Come posso aiutarti? Digita "aiuto" per vedere cosa posso fare.`;
+    if (this.is(lower, ['ciao', 'salve', 'buongiorno', 'buonasera', 'buona sera', 'hey', 'ehi', 'buona giornata', 'buona serata'])) {
+      return this.greetingResponse();
     }
 
-    if (lower.includes('grazie') || lower.includes('grazie mille') || lower.includes('ti ringrazio') || lower.includes('grazie tante') || lower.includes('thanks') || lower.includes('thank')) {
+    if (this.hasAny(lower, ['grazie mille', 'ti ringrazio', 'grazie tante', 'grazie', 'thanks', 'thank', 'sei gentile', 'sei unico'])) {
       return 'Prego! 😊 Sono qui per aiutarti. Se hai altre domande, chiedi pure!';
     }
 
-    if (lower.includes('come stai') || lower.includes('come va') || lower.includes('tutto bene') || lower.includes('come butta')) {
+    if (this.hasAny(lower, ['come stai', 'come va', 'tutto bene', 'come butta', 'come ti senti', 'tutto ok'])) {
       return 'Tutto bene, grazie! 🚀 Pronto ad aiutarti con le tue box e i tuoi oggetti. Tu come stai?';
     }
 
-    if (lower.includes('chi sei') || lower.includes('chi ti ha creato') || lower.includes('che sei')) {
+    if (this.hasAny(lower, ['chi sei', 'chi ti ha creato', 'che sei', 'chi sei tu', 'cosa sei'])) {
       return 'Sono l\'assistente virtuale di PeekBox 🤖\n\nSono stato creato per aiutarti a gestire il tuo profilo, le tue box, i tuoi oggetti e molto altro. Sono sempre qui quando hai bisogno!';
     }
 
-    if (lower.includes('messaggi') || lower.includes('centro messaggi') || lower.includes('supporto') || lower.includes('contatta') || lower.includes('assistenza') || lower.includes('aiut') && lower.includes('contatt')) {
-      return '📬 **Centro Messaggi**\n\nPuoi trovare tutti i tuoi messaggi, le risposte rapide e il modulo di contatto supporto nella sezione "Messaggi" del tuo profilo.\n\nVai su Profilo → Messaggi per:\n- Leggere la posta in arrivo\n- Gestire messaggi importanti\n- Contattare il supporto\n- Usare le risposte rapide\n\nVuoi che ti dica di più?';
+    // Messaggi / Supporto
+    if (this.hasAny(lower, ['messaggi', 'centro messaggi', 'supporto', 'contatta', 'assistenza', 'parlare con', 'contattare', 'servizio clienti', 'reclamo', 'problema']) ||
+        (lower.includes('aiut') && lower.includes('contatt'))) {
+      this.ultimoContesto = { intent: 'messaggi' };
+      return this.messaggiResponse();
     }
 
+    // Ricerca (cerca / dove si trova)
     const cercaMatch = this.estraiTermineRicerca(lower);
     if (cercaMatch) {
-      if (lower.includes('dov') || lower.includes('posizione') || lower.includes('dove sta')) {
+      if (this.hasAny(lower, ['dov', 'posizione', 'dove sta', 'dov\''])) {
+        this.ultimoContesto = { intent: 'dove', dati: { termine: cercaMatch } };
         return await this.doveSiTrovaOggettoResponse(utenteId, cercaMatch);
       }
+      this.ultimoContesto = { intent: 'cerca', dati: { termine: cercaMatch } };
       return await this.cercaOggettiResponse(utenteId, cercaMatch);
     }
 
-    if (lower.includes('cestin') || lower.includes('eliminat') || lower.includes('cancell') || lower.includes('cestino') || lower.includes('cancellat')) {
+    // 📦 BOX
+    if (this.hasAny(lower, ['cestin', 'eliminat', 'cancell', 'cestino', 'cancellat', 'cancellato', 'eliminato', 'eliminate', 'cancellate'])) {
+      this.ultimoContesto = { intent: 'cestino' };
       return await this.cestinoResponse(utenteId);
     }
 
-    if (lower.includes('preferit') || lower.includes('preferite') || lower.includes('preferiti') || lower.includes('preferito')) {
+    if (this.hasAny(lower, ['preferit', 'preferite', 'preferiti', 'preferito', 'stelle', 'star', 'preferenze', 'preferita'])) {
+      this.ultimoContesto = { intent: 'preferite' };
       return await this.preferiteResponse(utenteId);
     }
 
-    if (lower.includes('transit') || lower.includes('moving') || lower.includes('in moviment') || lower.includes('spostament')) {
+    if (this.hasAny(lower, ['transit', 'moving', 'in moviment', 'spostament', 'spostate', 'spostato', 'viaggio', 'in viaggio', 'in corso'])) {
+      this.ultimoContesto = { intent: 'transito' };
       return await this.transitResponse(utenteId);
     }
 
-    if ((lower.includes('box') || lower.includes('scatol')) && (lower.includes('quant') || lower.includes('conta') || lower.includes('total') || lower.includes('ho') || lower === 'box')) {
+    // "mostra/elenco/lista/voglio vedere..."
+    if (this.hasAny(lower, ['mostra', 'elenco', 'lista', 'voglio vedere', 'fammi vedere', 'apri', 'visualizza'])) {
+      if (this.hasAny(lower, ['preferit', 'preferit'])) {
+        this.ultimoContesto = { intent: 'preferite' };
+        return await this.preferiteResponse(utenteId);
+      }
+      if (this.hasAny(lower, ['cestin', 'eliminat', 'cancell'])) {
+        this.ultimoContesto = { intent: 'cestino' };
+        return await this.cestinoResponse(utenteId);
+      }
+      if (this.hasAny(lower, ['transit', 'spostament', 'moviment'])) {
+        this.ultimoContesto = { intent: 'transito' };
+        return await this.transitResponse(utenteId);
+      }
+      if (this.hasAny(lower, ['condivis', 'condivid'])) {
+        this.ultimoContesto = { intent: 'condivisioni' };
+        return await this.condivisioniResponse(utenteId);
+      }
+    }
+
+    if ((this.hasAny(lower, ['box', 'scatol']) && (this.hasAny(lower, ['quant', 'conta', 'total', 'ho', 'quante', 'quanti', 'numero', 'conteggio']))) || lower === 'box' || lower === 'scatole') {
+      this.ultimoContesto = { intent: 'box' };
       return await this.boxResponse(utenteId);
     }
 
-    if (lower.includes('oggett') || lower.includes('articol') || lower.includes('cose che ho') || lower.includes('quanti') || (lower.includes('quanti') && !lower.includes('box'))) {
+    // 📋 OGGETTI
+    if (this.hasAny(lower, ['oggett', 'articol', 'cose che ho', 'cose', 'elementi', 'pezzi', 'beni', 'prodotti', 'merce'])) {
+      this.ultimoContesto = { intent: 'oggetti' };
+      return await this.oggettiResponse(utenteId);
+    }
+    if (lower.includes('quanti') && !this.hasAny(lower, ['box', 'scatol', 'spazi', 'armadi', 'giorni', 'tempo', 'mesi'])) {
+      this.ultimoContesto = { intent: 'oggetti' };
       return await this.oggettiResponse(utenteId);
     }
 
-    if (lower.includes('condivis') || lower.includes('condivid') || lower.includes('con chi') || lower.includes('condivision') || lower.includes('in comune')) {
+    // 🤝 CONDIVISIONI
+    if (this.hasAny(lower, ['condivis', 'condivid', 'con chi', 'condivision', 'in comune', 'ospiti', 'inviti', 'invitato', 'chi condivide', 'condivisa', 'condivise', 'condiviso'])) {
+      this.ultimoContesto = { intent: 'condivisioni' };
       return await this.condivisioniResponse(utenteId);
     }
 
-    if (lower.includes('spazi') || lower.includes('armadi') || lower.includes('archivi') || lower.includes('luoghi') || lower.includes('dove tengo') || lower.includes('miei spazi') || lower.includes('miei armadi') || lower.includes('miei archivi')) {
+    // 🏠 SPAZI
+    if (this.hasAny(lower, ['spazi', 'armadi', 'archivi', 'luoghi', 'dove tengo', 'miei spazi', 'miei armadi', 'miei archivi', 'scaffali', 'ripiani', 'locali', 'stanze', 'magazzini', 'depositi'])) {
+      this.ultimoContesto = { intent: 'spazi' };
       return await this.spaziResponse(utenteId);
     }
 
-    if (lower.includes('profilo') || lower.includes('account') || lower.includes('miei dati') || lower.includes('informazioni')) {
+    // 👤 PROFILO
+    if (this.hasAny(lower, ['profilo', 'account', 'miei dati', 'informazioni', 'informazioni account', 'impostazioni', 'impostazione'])) {
+      this.ultimoContesto = { intent: 'profilo' };
       return '👤 **Il tuo profilo**\n\nNella sezione Profilo puoi:\n- Modificare nome, email e password\n- Cambiare foto profilo\n- Regolare le notifiche\n- Vedere i tuoi messaggi\n- Gestire le condivisioni\n- Monitorare lo spazio utilizzato\n\nVai su Profilo per gestire tutto!';
     }
 
-    if (lower.includes('notific') || lower.includes('notifica') || lower.includes('alert') || lower.includes('avvis')) {
+    if (this.hasAny(lower, ['notific', 'notifica', 'alert', 'avvis', 'avviso', 'promemoria', 'notifiche', 'notificato', 'notificata'])) {
+      this.ultimoContesto = { intent: 'notifiche' };
       return '🔔 **Notifiche**\n\nPuoi gestire le tue notifiche dalla pagina "Informazioni Account" nel tuo profilo. Lì puoi scegliere quali notifiche ricevere.\n\nAl momento sono disponibili notifiche per:\n- Movimenti delle box\n- Condivisioni\n- Messaggi dal supporto\n- Promemoria';
     }
 
-    if (lower.includes('nome') && (lower.includes('mio') || lower.includes('utente') || lower.includes('username') || lower.includes('visualizz')) || lower === 'nome' || lower === 'nome utente') {
+    if ((this.hasAny(lower, ['nome', 'username', 'utente', 'user']) && this.hasAny(lower, ['mio', 'come mi', 'qual è', 'qual\'è', 'visualizz', 'vedere', 'mostra'])) ||
+        lower === 'nome' || lower === 'nome utente' || lower === 'username' || lower === 'il mio nome') {
+      this.ultimoContesto = { intent: 'nome' };
       return await this.nomeUtenteResponse(utenteId);
     }
 
-    if (lower.includes('buio') || lower.includes('tema') || lower.includes('dark') || lower.includes('modalit') || lower.includes('scur') || lower.includes('tema scuro') || lower.includes('dark mode')) {
+    // 🎨 TEMA
+    if (this.hasAny(lower, ['buio', 'tema', 'dark', 'modalit', 'scur', 'tema scuro', 'dark mode', 'tema chiaro', 'light', 'tema scura', 'colori'])) {
+      this.ultimoContesto = { intent: 'tema' };
       return '🎨 **Tema**\n\nPeekBox supporta la modalità scura! Puoi attivarla dalle impostazioni del tuo dispositivo o dall\'app. Il tema scuro riduce l\'affaticamento degli occhi e consuma meno batteria sui display OLED.';
     }
 
-    if (lower.includes('totali') || lower.includes('riepilog') || lower.includes('stat') || lower.includes('dashboard') || lower.includes('sommario') || lower.includes('riassunto') || lower.includes('numeri')) {
+    // 📊 TOTALI
+    if (this.hasAny(lower, ['totali', 'riepilog', 'stat', 'dashboard', 'sommario', 'riassunto', 'numeri', 'statistiche', 'statistico', 'dati', 'report', 'resoconto', 'quadro', 'situazione', 'panoramica'])) {
+      this.ultimoContesto = { intent: 'totali' };
       return await this.totaliResponse(utenteId);
     }
 
-    if (lower.includes('posizion') || lower.includes('checkpoint') || (lower.includes('ultim') && lower.includes('box'))) {
+    // 📍 POSIZIONE
+    if (this.hasAny(lower, ['posizion', 'checkpoint', 'gps', 'coordinate', 'mappa', 'dove sono', 'ultima posizione', 'ultimo']) && this.hasAny(lower, ['box', 'scatol', 'mia', 'mie'])) {
+      this.ultimoContesto = { intent: 'posizione' };
       return await this.posizioneBoxResponse(utenteId);
     }
 
-    if (lower.includes('recuper') || lower.includes('ripristin') || lower.includes('tornare') || (lower.includes('box') && lower.includes('eliminate'))) {
-      return '🗑️ **Box eliminate**\n\nLe box eliminate vengono conservate nel cestino per 30 giorni prima della rimozione definitiva.\n\nPer visualizzarle: "Cestino?"\n\nSe vuoi ripristinare una box, vai nella sezione "Cestino" dal menu principale e clicca sul pulsante di ripristino.';
+    // 🗑️ RECUPERO
+    if (this.hasAny(lower, ['recuper', 'ripristin', 'tornare', 'ripristina', 'recupera', 'annulla', 'undo']) && this.hasAny(lower, ['box', 'scatol', 'cancell', 'eliminat'])) {
+      return '🗑️ **Recuperare una box**\n\nLe box eliminate vengono conservate nel cestino per 30 giorni prima della rimozione definitiva.\n\nPer visualizzarle: "Cestino?"\n\nSe vuoi ripristinare una box, vai nella sezione "Cestino" dal menu principale e clicca sul pulsante di ripristino.';
     }
 
-    if (lower === 'box' || (lower.includes('box') && !lower.includes('quant') && !lower.includes('preferit'))) {
+    // 🆕 CREAZIONE
+    if (this.hasAny(lower, ['crea', 'creare', 'nuova', 'aggiungi', 'aggiungere', 'nuovo', 'creazione']) && this.hasAny(lower, ['box', 'scatol', 'archivi', 'armadi'])) {
+      return '📦 **Creare una nuova box**\n\nPer creare una nuova box:\n1. Vai nella sezione "Crea Box" dal menu\n2. Scegli un nome e una descrizione\n3. Seleziona l\'armadio dove archiviarła\n4. Clicca "Registra nel Sistema"\n\nVai su "Crea Box" per iniziare!';
+    }
+
+    if (this.hasAny(lower, ['crea', 'creare', 'nuovo', 'aggiungi', 'aggiungere', 'creazione']) && this.hasAny(lower, ['spazi', 'armadi', 'archivi', 'spazio'])) {
+      return '🏠 **Creare un nuovo spazio**\n\nPer creare un nuovo armadio:\n1. Vai su "Gestione Spazi" dal menu\n2. Clicca il pulsante "+" in basso\n3. Inserisci il nome dell\'armadio\n4. Conferma la creazione\n\nVai su "Gestione Spazi" per iniziare!';
+    }
+
+    // 🔍 COME SI FA
+    if (this.hasAny(lower, ['come si fa', 'come faccio', 'come posso', 'come si', 'si può', 'è possibile', 'vorrei'])) {
+      if (this.hasAny(lower, ['condivid', 'condivis', 'invit', 'ospit'])) {
+        return '🤝 **Come condividere una box**\n\nVai su "Condividi Archivio" dal profilo. Scegli la box, seleziona il permesso (Visualizzatore/Editor), inserisci l\'email dell\'ospite e clicca "Invita". L\'ospite riceverà una notifica per accettare o rifiutare.';
+      }
+      if (this.hasAny(lower, ['scansion', 'qr', 'scan', 'leggere', 'inquadr'])) {
+        return '📷 **Come scansionare un QR code**\n\nVai su "Scansiona QR" dal menu principale. Inquadra il QR code della box con la fotocamera. La box verrà aperta automaticamente per visualizzarne o modificarne il contenuto.';
+      }
+      if (this.hasAny(lower, ['cerc', 'trov', 'cerca'])) {
+        return '🔍 **Come cercare oggetti**\n\nPuoi cercare oggetti in due modi:\n- Usa la barra di ricerca nella home\n- Chiedimi direttamente: "Cerca [nome oggetto]"\nTi mostrerò dove si trova ogni oggetto!';
+      }
+      if (this.hasAny(lower, ['cancell', 'elimin', 'rimuov', 'cestin'])) {
+        return '🗑️ **Come eliminare una box**\n\nApri la box che vuoi eliminare, clicca sul menu (tre puntini) e seleziona "Elimina". La box finirà nel cestino, dove resterà per 30 giorni prima della rimozione definitiva.';
+      }
+      return this.helpResponse();
+    }
+
+    // Context-aware follow-ups
+    if (this.ultimoContesto) {
+      const ctxRisposta = await this.handleContext(lower, utenteId);
+      if (ctxRisposta) return ctxRisposta;
+    }
+
+    // Fallback: check for just "box" or "scatole"
+    if (lower === 'box' || lower === 'scatole' || lower === 'le mie box' || lower === 'le scatole' || lower === 'tutte le box') {
+      this.ultimoContesto = { intent: 'box' };
       return await this.boxResponse(utenteId);
     }
 
+    this.ultimoContesto = null;
     return (
       'Non ho capito la tua richiesta.\n\n' +
       'Prova con una di queste:\n' +
@@ -136,6 +231,51 @@ export class ChatbotEngineService {
     );
   }
 
+  private async handleContext(lower: string, utenteId: string): Promise<string | null> {
+    if (!this.ultimoContesto) return null;
+
+    const ctx = this.ultimoContesto;
+
+    if (this.hasAny(lower, ['preferit', 'preferite', 'preferiti', 'preferito', 'stelle', 'preferenze'])) {
+      this.ultimoContesto = { intent: 'preferite' };
+      return await this.preferiteResponse(utenteId);
+    }
+    if (this.hasAny(lower, ['transit', 'moving', 'spostament', 'in moviment', 'viaggio', 'in corso'])) {
+      this.ultimoContesto = { intent: 'transito' };
+      return await this.transitResponse(utenteId);
+    }
+    if (this.hasAny(lower, ['cestin', 'eliminat', 'cancell', 'cestino', 'cancellat'])) {
+      this.ultimoContesto = { intent: 'cestino' };
+      return await this.cestinoResponse(utenteId);
+    }
+    if (this.hasAny(lower, ['totali', 'riepilog', 'stat', 'numeri', 'sommario', 'riassunto', 'riepilogo'])) {
+      this.ultimoContesto = { intent: 'totali' };
+      return await this.totaliResponse(utenteId);
+    }
+    if (this.hasAny(lower, ['condivis', 'condivid', 'ospiti', 'inviti', 'con chi'])) {
+      this.ultimoContesto = { intent: 'condivisioni' };
+      return await this.condivisioniResponse(utenteId);
+    }
+    if (this.hasAny(lower, ['spazi', 'armadi', 'archivi', 'luoghi', 'locali'])) {
+      this.ultimoContesto = { intent: 'spazi' };
+      return await this.spaziResponse(utenteId);
+    }
+
+    // Context-aware follow-up: "e quelle?" "e questi?" "dimmi di più" etc.
+    if (this.hasAny(lower, ['e quelle', 'e questi', 'e questi?', 'e quelle?', 'dimmi', 'dettagli', 'approfondisci', 'spiega meglio', 'altro', 'ancora', 'inoltre', 'poi'])) {
+      switch (ctx.intent) {
+        case 'box':
+          return 'Ecco cosa puoi approfondire:\n- "Box preferite?" — quelle che hai contrassegnato\n- "Box in transito?" — quelle in movimento\n- "Cestino?" — quelle eliminate\n- "Totali?" — riepilogo completo';
+        case 'oggetti':
+          return 'Per i tuoi oggetti puoi:\n- "Cerca [nome]" — trovare un oggetto specifico\n- "Dove si trova [nome]?" — posizione esatta\n- "Totali?" — statistiche complete';
+        default:
+          return await this.totaliResponse(utenteId);
+      }
+    }
+
+    return null;
+  }
+
   suggerisciDomande(msg: string, risposta: string): string[] {
     const lower = msg.toLowerCase().trim();
 
@@ -143,7 +283,7 @@ export class ChatbotEngineService {
       return ['Aiuto', 'Quante box ho?', 'Totali', 'Messaggi?'];
     }
 
-    if (risposta.includes('grazie') || risposta.includes('Prego')) {
+    if (risposta.includes('Prego') || risposta.includes('grazie')) {
       return ['Quante box ho?', 'Totali?', 'Aiuto'];
     }
 
@@ -155,96 +295,111 @@ export class ChatbotEngineService {
       return ['Quante box ho?', 'Aiuto', 'Totali?'];
     }
 
-    if (risposta.includes('Messaggi') || risposta.includes('supporto')) {
+    if (risposta.includes('Messaggi') || risposta.includes('supporto') || this.ultimoContesto?.intent === 'messaggi') {
       return ['Quante box ho?', 'Spazi?', 'Totali?', 'Aiuto'];
     }
 
-    if (risposta.includes('profilo') || risposta.includes('Informazioni')) {
+    if (risposta.includes('profilo') || risposta.includes('Informazioni') || this.ultimoContesto?.intent === 'profilo') {
       return ['Quante box ho?', 'Notifiche?', 'Aiuto'];
     }
 
-    if (risposta.includes('Notifiche')) {
+    if (risposta.includes('Notifiche') || this.ultimoContesto?.intent === 'notifiche') {
       return ['Profilo?', 'Quante box ho?', 'Totali?'];
     }
 
-    if (risposta.includes('Tema') || risposta.includes('modalità scura')) {
+    if (risposta.includes('Tema') || risposta.includes('modalità scura') || this.ultimoContesto?.intent === 'tema') {
       return ['Quante box ho?', 'Profilo?', 'Aiuto'];
     }
 
-    if (lower === 'aiuto' || lower === 'help' || lower === 'cosa sai fare' || lower === 'comandi') {
+    if (this.ultimoContesto?.intent === 'aiuto' || lower === 'aiuto' || lower === 'help' || lower === 'cosa sai fare' || lower === 'comandi') {
       return ['Quante box ho?', 'Quanti oggetti ho?', 'Condivisioni?', 'Messaggi?'];
     }
 
-    if (lower.includes('ciao') || lower.includes('salve') || lower.includes('buongiorn') || lower.includes('buonasera') || lower.includes('hey') || lower === 'ciao') {
+    if (this.hasAny(lower, ['ciao', 'salve', 'buongiorn', 'buonasera', 'hey', 'buona sera'])) {
       return ['Quante box ho?', 'Aiuto', 'Messaggi?'];
     }
 
-    if (lower.includes('grazie')) {
-      return ['Quante box ho?', 'Spazi?', 'Totali?'];
-    }
-
-    if (lower.includes('cestin') || lower.includes('eliminat') || lower.includes('cancell')) {
+    if (this.ultimoContesto?.intent === 'cestino') {
       return ['Quante box ho?', 'Box preferite?', 'Recuperare box?'];
     }
 
-    if (lower.includes('preferit')) {
+    if (this.ultimoContesto?.intent === 'preferite') {
       return ['Quante box ho?', 'Box in transito?', 'Totali?'];
     }
 
-    if (lower.includes('transit') || lower.includes('moving') || lower.includes('spostament')) {
+    if (this.ultimoContesto?.intent === 'transito') {
       return ['Quante box ho?', 'Box preferite?', 'Cestino?'];
     }
 
-    if (lower.includes('condivis')) {
+    if (this.ultimoContesto?.intent === 'condivisioni') {
       return ['Spazi?', 'Totali?', 'Quante box ho?'];
     }
 
-    if (lower.includes('spazi') || lower.includes('armadi') || lower.includes('archivi') || lower.includes('luoghi')) {
+    if (this.ultimoContesto?.intent === 'spazi') {
       return ['Quante box ho?', 'Totali?', 'Condivisioni?'];
     }
 
-    if (lower.includes('totali') || lower.includes('riepilog') || lower.includes('stat') || lower.includes('riassunto') || lower.includes('sommario') || lower.includes('dashboard')) {
+    if (this.ultimoContesto?.intent === 'totali') {
       return ['Quante box ho?', 'Spazi?', 'Condivisioni?', 'Profilo?'];
     }
 
-    if (lower.includes('dov') || lower.includes('posizion') || lower.includes('checkpoint') || lower.includes('gps')) {
+    if (this.ultimoContesto?.intent === 'posizione' || this.hasAny(lower, ['dov', 'posizion', 'checkpoint', 'gps'])) {
       return ['Quante box ho?', 'Totali?', 'Box in transito?'];
     }
 
-    if (lower.includes('cerca') || lower.includes('trova') || lower.includes('dove trovo')) {
+    if (this.ultimoContesto?.intent === 'cerca' || this.hasAny(lower, ['cerca', 'trova', 'dove trovo'])) {
       return ['Dove si trova?', 'Totali?', 'Aiuto', 'Messaggi?'];
     }
 
-    if (lower.includes('box') || lower.includes('scatol')) {
+    if (this.ultimoContesto?.intent === 'dove' || this.hasAny(lower, ['dove si trova', 'posizione'])) {
+      return ['Cerca altro', 'Totali?', 'Quante box ho?', 'Aiuto'];
+    }
+
+    if (this.ultimoContesto?.intent === 'box' || this.hasAny(lower, ['box', 'scatol'])) {
       return ['Box preferite?', 'Box in transito?', 'Cestino?', 'Totali?'];
     }
 
-    if (lower.includes('oggett') || lower.includes('articol')) {
+    if (this.ultimoContesto?.intent === 'oggetti' || this.hasAny(lower, ['oggett', 'articol'])) {
       return ['Cerca un oggetto', 'Quante box ho?', 'Totali?', 'Aiuto'];
     }
 
-    if (lower.includes('messaggi') || lower.includes('supporto') || lower.includes('assistenza')) {
-      return ['Quante box ho?', 'Spazi?', 'Aiuto'];
-    }
-
-    if (lower.includes('profilo') || lower.includes('account')) {
-      return ['Quante box ho?', 'Notifiche?', 'Aiuto'];
-    }
-
-    if (lower.includes('notific') || lower.includes('notifica')) {
-      return ['Profilo?', 'Quante box ho?', 'Aiuto'];
-    }
-
-    if (lower.includes('nome') && (lower.includes('mio') || lower.includes('utente'))) {
+    if (this.ultimoContesto?.intent === 'nome') {
       return ['Quante box ho?', 'Profilo?', 'Totali?'];
+    }
+
+    if (this.hasAny(lower, ['come si fa', 'come faccio', 'come posso'])) {
+      if (this.hasAny(lower, ['condivid', 'condivis'])) return ['Condivisioni?', 'Quante box ho?', 'Aiuto'];
+      if (this.hasAny(lower, ['qr', 'scansion'])) return ['Quante box ho?', 'Aiuto', 'Messaggi?'];
+      if (this.hasAny(lower, ['cerc', 'trov'])) return ['Cerca un oggetto', 'Quante box ho?', 'Aiuto'];
+      return ['Aiuto', 'Quante box ho?', 'Totali?'];
     }
 
     return ['Aiuto', 'Quante box ho?', 'Totali?', 'Messaggi?'];
   }
 
+  // ─── UTILITY ──────────────────────────────────────────────
+
+  private is(lower: string, matches: string[]): boolean {
+    return matches.some(m => lower === m || lower.startsWith(m + ' ') || lower.startsWith(m + '?') || lower.startsWith(m + ',') || lower.startsWith(m + '.'));
+  }
+
+  private hasAny(lower: string, keywords: string[]): boolean {
+    return keywords.some(k => lower.includes(k));
+  }
+
+  private greetingResponse(): string {
+    const hour = new Date().getHours();
+    let greeting = 'Ciao';
+    if (hour < 12) greeting = 'Buongiorno';
+    else if (hour < 18) greeting = 'Buon pomeriggio';
+    else greeting = 'Buonasera';
+    return `${greeting}! 👋 Come posso aiutarti? Digita "aiuto" per vedere cosa posso fare.`;
+  }
+
   // ─── HELP ─────────────────────────────────────────────────
 
   private helpResponse(): string {
+    this.ultimoContesto = { intent: 'aiuto' };
     return (
       'Ecco tutto ciò che posso fare per te:\n\n' +
       '📦 **Box**\n' +
@@ -255,8 +410,8 @@ export class ChatbotEngineService {
       '  "Posizione box?" — ultima posizione GPS\n\n' +
       '📋 **Oggetti**\n' +
       '  "Quanti oggetti ho?" — totale articoli\n' +
-      '  "Cerca [nome]?" — cerca oggetto o box\n' +
-      '  "Dove si trova [oggetto]?" — posizione esatta\n\n' +
+      '  "Cerca [nome]" — cerca oggetto o box\n' +
+      '  "Dove si trova [nome]?" — posizione esatta\n\n' +
       '🤝 **Condivisioni**\n' +
       '  "Condivisioni?" — chi condivide con te\n\n' +
       '🏠 **Spazi**\n' +
@@ -271,9 +426,14 @@ export class ChatbotEngineService {
       '  "Messaggi?" — centro messaggi e supporto\n\n' +
       '💬 **Altro**\n' +
       '  "Chi sei?" — info sull\'assistente\n' +
-      '  "Tema?" — modalità scura\n\n' +
+      '  "Tema?" — modalità scura\n' +
+      '  "Come si fa...?" — guide rapide\n\n' +
       'Digita una delle domande per iniziare!'
     );
+  }
+
+  private messaggiResponse(): string {
+    return '📬 **Centro Messaggi**\n\nPuoi trovare tutti i tuoi messaggi, le risposte rapide e il modulo di contatto supporto nella sezione "Messaggi" del tuo profilo.\n\nVai su Profilo → Messaggi per:\n- Leggere la posta in arrivo\n- Gestire messaggi importanti\n- Contattare il supporto\n- Usare le risposte rapide\n\nVuoi che ti dica di più?';
   }
 
   // ─── INTENT PARSING ──────────────────────────────────────

@@ -97,7 +97,7 @@ export class FiltriPage {
     });
   }
 
-  resettaFiltri() {
+  ripristinaFiltri() {
     this.selectedCategoria = '';
     this.selectedArmadio = 0;
     this.soloPreferiti = false;

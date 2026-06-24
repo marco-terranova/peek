@@ -427,6 +427,15 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .field-group { display: flex; flex-direction: column; gap: 5px; }
 .field-label-row { display: flex; align-items: center; justify-content: space-between; }
 .field-label { display: flex; align-items: center; gap: 6px; font-size: 0.77rem; font-weight: 700; color: $dark; padding-left: 2px; svg { width: 13px; height: 13px; color: $mid; flex-shrink: 0; } }
+.field-error {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px;
+  background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.2);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600; color: #c0392b;
+  animation: login-error-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  svg { width: 14px; height: 14px; flex-shrink: 0; stroke: #c0392b; }
+}
 .forgot-link {
   font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: $mid;
   text-decoration: none; background: none; border: none; cursor: pointer; padding: 0;

@@ -143,54 +143,32 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .fs-l-info {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
   width: 100%;
 }
 
 .fs-l-info-item {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  width: 100%;
-}
-
-.fs-l-info-num {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, $green 0%, $blue 100%);
-  color: $white;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba($blue, 0.2);
-}
-
-.fs-l-info-text {
-  display: flex;
   flex-direction: column;
   gap: 4px;
-  padding-top: 6px;
-  padding-left: 18px;
+  width: 100%;
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, $green, $blue) 1;
+  padding-left: 16px;
 
   strong {
     font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     color: $dark;
-    text-align: justify;
   }
 
   span {
     font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
     color: $mid;
-    line-height: 1.5;
+    line-height: 1.6;
     text-align: justify;
-    text-indent: 2em;
   }
 }
 

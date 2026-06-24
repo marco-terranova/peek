@@ -1,17 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   AlertController,
   IonContent,
   IonFooter,
-  IonSelect,
-  IonSelectOption,
   IonTabBar,
   IonTabButton,
 } from '@ionic/angular/standalone';
-import { RouterModule, Router } from '@angular/router';
 import { DatabaseService } from '../services/database';
 import { NavigationHistoryService } from '../services/navigation-history';
 
@@ -23,18 +19,13 @@ import { NavigationHistoryService } from '../services/navigation-history';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
     IonContent,
     IonFooter,
-    IonSelect,
-    IonSelectOption,
     IonTabBar,
     IonTabButton,
   ]
 })
 export class CreaBoxPage implements OnInit {
-  @ViewChild('cameraVideo') cameraVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChild('cameraCanvas') cameraCanvas!: ElementRef<HTMLCanvasElement>;
 
   nome_box: string = '';
   descrizione: string = '';
@@ -42,94 +33,15 @@ export class CreaBoxPage implements OnInit {
   is_preferito: boolean = false;
   armadi_disponibili: any[] = [];
   utenteId: string = '';
-  fotoBox: string | null = null;
-
-  showCamera = false;
-  mostraAnteprima = false;
-  cameraErrore = '';
-  stream: MediaStream | null = null;
-  fotoMessage = '';
+  mostraDropdown: boolean = false;
 
   constructor(
     private alertController: AlertController,
-    private router: Router,
     private dbService: DatabaseService,
     private navHistory: NavigationHistoryService,
-    private sanitizer: DomSanitizer
   ) { }
 
-  get safeFotoBox(): SafeResourceUrl | null {
-    return this.fotoBox ? this.sanitizer.bypassSecurityTrustResourceUrl(this.fotoBox) : null;
-  }
-
-  mostraFotoMessage(msg: string) {
-    this.fotoMessage = msg;
-    setTimeout(() => { this.fotoMessage = ''; }, 3000);
-  }
-
-  scegliDaGalleria() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.fotoBox = reader.result as string;
-        if (this.fotoBox) {
-          this.mostraFotoMessage('Immagine caricata con successo!');
-        }
-      };
-      reader.readAsDataURL(file);
-    };
-    input.click();
-  }
-
-  async scattaFoto() {
-    this.showCamera = true;
-    this.cameraErrore = '';
-    setTimeout(() => this.avviaCamera(), 100);
-  }
-
-  async avviaCamera() {
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
-      });
-      if (this.cameraVideo) {
-        this.cameraVideo.nativeElement.srcObject = this.stream;
-      }
-    } catch (err) {
-      this.cameraErrore = 'Impossibile accedere alla fotocamera. Verifica i permessi.';
-    }
-  }
-
-  confermaScatto() {
-    const video = this.cameraVideo?.nativeElement;
-    const canvas = this.cameraCanvas?.nativeElement;
-    if (!video || !canvas) return;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx?.drawImage(video, 0, 0);
-    this.fotoBox = canvas.toDataURL('image/jpeg', 0.85);
-    this.chiudiCamera();
-    if (this.fotoBox) {
-      this.mostraFotoMessage('Foto scattata con successo!');
-    }
-  }
-
-  chiudiCamera() {
-    if (this.stream) {
-      this.stream.getTracks().forEach(t => t.stop());
-      this.stream = null;
-    }
-    this.showCamera = false;
-  }
-
   ngOnInit() {
-    this.mostraAnteprima = false;
     this.utenteId = localStorage.getItem('utente_id') || '';
     if (this.utenteId) {
       this.caricaArmadi();
@@ -176,6 +88,24 @@ export class CreaBoxPage implements OnInit {
       next: () => { this.navHistory.navTo('/home'); },
       error: (err: any) => console.error(err)
     });
+  }
+
+  getNomeArmadio(id: string): string {
+    const a = this.armadi_disponibili.find(a => a.id === id || a.id.toString() === id);
+    return a ? a.nome : '';
+  }
+
+  selezionaArmadio(id: string) {
+    this.rif_armadio = id;
+    this.mostraDropdown = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.csr-select-wrap')) {
+      this.mostraDropdown = false;
+    }
   }
 
   navTo(route: string) { this.navHistory.navTo(route); }

@@ -322,7 +322,23 @@
                   Email
                 </label>
                 <div class="field-input-wrap">
-                  <ion-input id="emailRegInput" class="login-input" type="text" inputmode="email" autocomplete="off" placeholder="nome@azienda.com" [(ngModel)]="emailReg"></ion-input>
+                  <ion-input id="emailRegInput" class="login-input" type="text" inputmode="email" autocomplete="off" placeholder="nome@azienda.com" [(ngModel)]="emailReg" (ionInput)="emailRegSubmitted = false; dominioRegError = false"></ion-input>
+                </div>
+                <div class="field-error" *ngIf="emailRegSubmitted && !emailValida(emailReg)">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="10" r="9"/>
+                    <line x1="10" y1="6" x2="10" y2="12"/>
+                    <line x1="10" y1="14" x2="10.01" y2="14"/>
+                  </svg>
+                  <span>Inserisci un indirizzo email valido (es. nome@dominio.com).</span>
+                </div>
+                <div class="field-error" *ngIf="dominioRegError">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="10" r="9"/>
+                    <line x1="10" y1="6" x2="10" y2="12"/>
+                    <line x1="10" y1="14" x2="10.01" y2="14"/>
+                  </svg>
+                  <span>Il dominio dell'email non esiste.</span>
                 </div>
               </div>
               <div class="field-group">
@@ -331,9 +347,17 @@
                   Password
                 </label>
                 <div class="field-input-wrap">
-                  <ion-input id="passwordRegInput" class="login-input" type="password" placeholder="Min. 8 caratteri" [(ngModel)]="passwordReg">
+                  <ion-input id="passwordRegInput" class="login-input" type="password" placeholder="Min. 8 caratteri" [(ngModel)]="passwordReg" (ionInput)="passwordRegSubmitted = false">
                     <ion-input-password-toggle slot="end"></ion-input-password-toggle>
                   </ion-input>
+                </div>
+                <div class="field-error" *ngIf="passwordRegSubmitted && !passwordValida(passwordReg)">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="10" r="9"/>
+                    <line x1="10" y1="6" x2="10" y2="12"/>
+                    <line x1="10" y1="14" x2="10.01" y2="14"/>
+                  </svg>
+                  <span>La password deve contenere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale (! ? @ # $).</span>
                 </div>
               </div>
               <div class="profile-selector">

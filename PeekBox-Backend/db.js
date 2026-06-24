@@ -254,44 +254,6 @@ db.serialize(() => {
      }
    });
 
-   // Inserisci messaggi di esempio per l'utente di prova
-   db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-     VALUES (1, 1, 'sistema', 'Team PeekBox', 'Benvenuto in PeekBox!',
-       'Grazie per esserti registrato su PeekBox. Qui riceverai notifiche importanti riguardanti le tue box e messaggi dal nostro team di supporto. Buona organizzazione!', 1)`);
-   db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-     VALUES (2, 1, 'supporto', 'Assistenza PeekBox', 'Nuova funzione disponibile',
-       'Ciao! Abbiamo appena attivato la funzione di geolocalizzazione per le tue box. Ora puoi tracciare la posizione delle tue scatole e ricevere notifiche quando vengono spostate.', 0)`);
-   db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-     VALUES (3, 1, 'condivisione', 'Sistema Condivisioni', 'Nuovo archivio condiviso con te',
-       'Un utente ti ha condiviso l''archivio "Elettronica". Vai su Condividi Archivio per accettare o rifiutare.', 0)`);
-   db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-     VALUES (4, 1, 'sistema', 'Team PeekBox', 'Manutenzione programmata',
-       'Nella giornata di Domenica dalle 02:00 alle 04:00 il servizio potrebbe subire brevi interruzioni per manutenzione straordinaria.', 0)`);
-   db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-     VALUES (5, 1, 'supporto', 'Assistenza PeekBox', 'Richiesta presa in carico',
-       'Abbiamo ricevuto la tua segnalazione. Il nostro team verificherà e ti aggiornerà. Tempo stimato: 24 ore.', 1)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-      VALUES (6, 1, 'sistema', 'Team PeekBox', 'Suggerimento: organizza per categorie',
-        'Puoi organizzare le tue box in spazi e armadi personalizzati. Vai su Gestione Spazi per creare la struttura perfetta.', 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante)
-      VALUES (7, 1, 'condivisione', 'Mario Rossi', 'Invito: Archivio Ufficio',
-        'Ciao! Ho condiviso con te l''archivio "Ufficio" in modalità Visualizzatore. Accedi per vedere i dettagli.', 0, 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante)
-      VALUES (8, 1, 'sistema', 'Team PeekBox', 'Backup completato con successo',
-        'Il backup notturno dei tuoi dati è stato completato senza errori. Prossimo backup programmato per stanotte alle 03:00.', 0, 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante)
-      VALUES (9, 1, 'supporto', 'Assistenza PeekBox', 'Il tuo ticket #2847 è stato risolto',
-        'Il problema che hai segnalato relativo alla sincronizzazione delle box è stato risolto. Riavvia l''app per applicare l''aggiornamento.', 1, 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante)
-      VALUES (10, 1, 'condivisione', 'Laura Bianchi', 'Condivisione: Biblioteca Casa',
-        'Laura ha condiviso l''archivio "Biblioteca Casa" con te in modalità Editor. Puoi aggiungere e modificare i libri catalogati.', 1, 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, importante)
-      VALUES (11, 1, 'sistema', 'Team PeekBox', 'Nuovo aggiornamento disponibile v2.4',
-        'È disponibile una nuova versione dell''app con miglioramenti delle prestazioni e nuove funzionalità. Aggiorna dallo store per non perdere le novità.', 0)`);
-    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante)
-      VALUES (12, 1, 'supporto', 'Assistenza PeekBox', 'Riepilogo attività mensile',
-        'Ecco il riepilogo di questo mese: 12 nuovi oggetti catalogati, 3 box create, 2 condivisioni attive. Continua così!', 0, 1)`);
-
    // 15. RISPOSTE RAPIDE (templates)
    db.run(`CREATE TABLE IF NOT EXISTS risposte_rapide (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -302,22 +264,15 @@ db.serialize(() => {
      FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
    )`);
 
-   db.run(`INSERT OR IGNORE INTO risposte_rapide (id, rif_utente, titolo, corpo)
-     VALUES (1, 1, 'Conferma ricezione', 'Grazie per la comunicazione. Ho ricevuto il tuo messaggio e provvederò a breve.')`);
-   db.run(`INSERT OR IGNORE INTO risposte_rapide (id, rif_utente, titolo, corpo)
-     VALUES (2, 1, 'Richiedo chiarimenti', 'Grazie per la segnalazione. Potresti fornirmi ulteriori dettagli per poter risolvere la questione?')`);
-   db.run(`INSERT OR IGNORE INTO risposte_rapide (id, rif_utente, titolo, corpo)
-     VALUES (3, 1, 'Segnalazione ricevuta', 'La tua segnalazione è stata presa in carico dal nostro team. Ti aggiorneremo non appena avremo novità.')`);
-
    // 13. SEGNALAZIONI UTENTI (feedback/report)
    db.run(`CREATE TABLE IF NOT EXISTS segnalazioni_utenti (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      rif_utente INTEGER NOT NULL,
-     tipo TEXT NOT NULL, -- e.g., 'feedback', 'report', 'suggerimento'
+     tipo TEXT NOT NULL,
      titolo TEXT NOT NULL,
      descrizione TEXT,
-     priorita TEXT NOT NULL DEFAULT 'bassa', -- 'bassa', 'media', 'alta'
-     stato TEXT NOT NULL DEFAULT 'nuova', -- 'nuova', 'in_lavorazione', 'risolta', 'chiusa'
+     priorita TEXT NOT NULL DEFAULT 'bassa',
+     stato TEXT NOT NULL DEFAULT 'nuova',
      timestamp TEXT NOT NULL DEFAULT (datetime('now')),
      FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
    )`);
@@ -331,6 +286,35 @@ function popolaCatalogoDefault() {
   console.log("Catalogo elementi lasciato vuoto come richiesto.");
 }
 
+function inserisciDatiEsempio() {
+  const messaggi = [
+    [1, 1, 'sistema', 'Team PeekBox', 'Benvenuto in PeekBox!', 'Grazie per esserti registrato su PeekBox. Qui riceverai notifiche importanti riguardanti le tue box e messaggi dal nostro team di supporto. Buona organizzazione!', null, 1],
+    [2, 1, 'supporto', 'Assistenza PeekBox', 'Nuova funzione disponibile', 'Ciao! Abbiamo appena attivato la funzione di geolocalizzazione per le tue box. Ora puoi tracciare la posizione delle tue scatole e ricevere notifiche quando vengono spostate.', null, 0],
+    [3, 1, 'condivisione', 'Sistema Condivisioni', 'Nuovo archivio condiviso con te', "Un utente ti ha condiviso l'archivio \"Elettronica\". Vai su Condividi Archivio per accettare o rifiutare.", null, 0],
+    [4, 1, 'sistema', 'Team PeekBox', 'Manutenzione programmata', 'Nella giornata di Domenica dalle 02:00 alle 04:00 il servizio potrebbe subire brevi interruzioni per manutenzione straordinaria.', null, 0],
+    [5, 1, 'supporto', 'Assistenza PeekBox', 'Richiesta presa in carico', 'Abbiamo ricevuto la tua segnalazione. Il nostro team verificherà e ti aggiornerà. Tempo stimato: 24 ore.', null, 1],
+    [6, 1, 'sistema', 'Team PeekBox', 'Suggerimento: organizza per categorie', 'Puoi organizzare le tue box in spazi e armadi personalizzati. Vai su Gestione Spazi per creare la struttura perfetta.', null, 0],
+    [7, 1, 'condivisione', 'Mario Rossi', 'Invito: Archivio Ufficio', "Ciao! Ho condiviso con te l'archivio \"Ufficio\" in modalità Visualizzatore. Accedi per vedere i dettagli.", 0, 0],
+    [8, 1, 'sistema', 'Team PeekBox', 'Backup completato con successo', 'Il backup notturno dei tuoi dati è stato completato senza errori. Prossimo backup programmato per stanotte alle 03:00.', 0, 0],
+    [9, 1, 'supporto', 'Assistenza PeekBox', 'Il tuo ticket #2847 è stato risolto', "Il problema che hai segnalato relativo alla sincronizzazione delle box è stato risolto. Riavvia l'app per applicare l'aggiornamento.", 1, 0],
+    [10, 1, 'condivisione', 'Laura Bianchi', 'Condivisione: Biblioteca Casa', "Laura ha condiviso l'archivio \"Biblioteca Casa\" con te in modalità Editor. Puoi aggiungere e modificare i libri catalogati.", 1, 0],
+    [11, 1, 'sistema', 'Team PeekBox', 'Nuovo aggiornamento disponibile v2.4', "È disponibile una nuova versione dell'app con miglioramenti delle prestazioni e nuove funzionalità. Aggiorna dallo store per non perdere le novità.", null, 0],
+    [12, 1, 'supporto', 'Assistenza PeekBox', 'Riepilogo attività mensile', 'Ecco il riepilogo di questo mese: 12 nuovi oggetti catalogati, 3 box create, 2 condivisioni attive. Continua così!', 0, 1],
+  ];
+  for (const m of messaggi) {
+    db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante) VALUES (?, ?, ?, ?, ?, ?, COALESCE(?, 0), ?)`, m);
+  }
+
+  const risposte = [
+    [1, 1, 'Conferma ricezione', 'Grazie per la comunicazione. Ho ricevuto il tuo messaggio e provvederò a breve.'],
+    [2, 1, 'Richiedo chiarimenti', 'Grazie per la segnalazione. Potresti fornirmi ulteriori dettagli per poter risolvere la questione?'],
+    [3, 1, 'Suggerisci correzione', 'Grazie per la segnalazione. Provvederemo a verificare e correggere quanto segnalato.'],
+  ];
+  for (const r of risposte) {
+    db.run(`INSERT OR IGNORE INTO risposte_rapide (id, rif_utente, titolo, corpo) VALUES (?, ?, ?, ?)`, r);
+  }
+}
+
 async function popolaDatiEsempio() {
   try {
     const saltRounds = 10;
@@ -342,6 +326,7 @@ async function popolaDatiEsempio() {
       function(err) {
         if (err) return console.error(err.message);
         if (this.changes > 0) console.log("👤 Utente di prova creato (ema@example.com)");
+        inserisciDatiEsempio();
       }
     );
   } catch (err) {

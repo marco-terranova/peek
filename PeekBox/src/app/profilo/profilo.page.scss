@@ -6,7 +6,7 @@ $blue: #3AABDB; $blue-d: #1A7FA8;
 $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 :host { display: block; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; }
-.prf-content { --background: #ffffff; }
+.prf-content { --background: #ffffff; --padding-top: 0; --padding-bottom: 0; }
 .prf-stage { width: 100%; }
 
 .ia-back-btn {

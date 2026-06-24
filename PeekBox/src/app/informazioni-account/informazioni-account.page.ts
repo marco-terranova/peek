@@ -95,14 +95,19 @@ export class InformazioniAccountPage {
       return;
     }
 
-    if (this.nuovaPassword.length > 0 && this.nuovaPassword !== this.confermaPassword) {
-      await this.mostraToast('Le password non coincidono.', 'warning');
-      return;
-    }
-
-    if (this.nuovaPassword.length > 0 && !this.vecchiaPassword) {
-      await this.mostraToast('Inserisci la password attuale per cambiarla.', 'warning');
-      return;
+    if (this.nuovaPassword.length > 0) {
+      if (!this.passwordValida(this.nuovaPassword)) {
+        await this.mostraToast('La password deve avere almeno 8 caratteri, maiuscole, minuscole, un numero e un carattere speciale (!?@#$).', 'warning');
+        return;
+      }
+      if (this.nuovaPassword !== this.confermaPassword) {
+        await this.mostraToast('Le password non coincidono.', 'warning');
+        return;
+      }
+      if (!this.vecchiaPassword) {
+        await this.mostraToast('Inserisci la password attuale per cambiarla.', 'warning');
+        return;
+      }
     }
 
     this.isSaving = true;
@@ -148,6 +153,14 @@ export class InformazioniAccountPage {
     } finally {
       this.isSaving = false;
     }
+  }
+
+  private passwordValida(pw: string): boolean {
+    return pw.length >= 8
+        && /[A-Z]/.test(pw)
+        && /[a-z]/.test(pw)
+        && /[0-9]/.test(pw)
+        && /[!?@#$]/.test(pw);
   }
 
   private async mostraToast(messaggio: string, color: string) {

@@ -16,9 +16,6 @@
       <div class="about-inner about-inner--rows">
         <div class="about-content-full">
           <div class="ia-tips-card">
-            <div class="ia-tips-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            </div>
             <h2 class="ac-title">Condividi la tua scatola</h2>
             <p class="ac-text ia-pw-text">
               Invita un collaboratore a visualizzare o modificare una delle tue scatole. Scegli quale scatola condividere dal menu a tendina, seleziona il livello di permessi che vuoi assegnare e inserisci l&rsquo;indirizzo email della persona che intendi invitare. <strong>Visualizzatore</strong> pu&ograve; solo vedere il contenuto della scatola, esplorarne gli oggetti e monitorarne lo stato, ma non pu&ograve; apportare modifiche. <strong>Editor</strong> pu&ograve; aggiungere nuovi oggetti, modificarne la posizione, aggiornare le quantit&agrave; e gestire il contenuto della scatola in piena autonomia. La persona ricever&agrave; una notifica via email e, una volta entrata nell&rsquo;app, potr&agrave; accettare o rifiutare l&rsquo;invito. Puoi revocare l&rsquo;accesso in qualsiasi momento dalla sezione &ldquo;I tuoi ospiti&rdquo;.
@@ -119,9 +116,23 @@
               <div *ngFor="let ospite of ospitiMap.get(b.id) || []" class="ca-ospite-row">
                 <div class="ca-ospite-info">
                   <span class="ca-ospite-email">{{ ospite.ospite_email || 'Ospite' }}</span>
+                  <span class="ca-ospite-data" *ngIf="ospite.creato_il">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {{ ospite.creato_il | date:'short' }}
+                  </span>
                   <span class="ca-stato-badge {{ statoClasse(ospite) }}">
                     {{ statoLabel(ospite) }}
                   </span>
+                </div>
+                <div class="ca-ospite-actions" *ngIf="ospite.stato === 'accettata'">
+                  <button class="ca-role-mini-btn"
+                          [class.is-editor]="ospite.ruolo === 'editor'"
+                          (click)="cambiaRuoloOspite(ospite)"
+                          title="Cambia permesso">
+                    <svg *ngIf="ospite.ruolo === 'viewer'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg *ngIf="ospite.ruolo === 'editor'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    {{ ospite.ruolo === 'editor' ? 'Editor' : 'Viewer' }}
+                  </button>
                 </div>
                 <button class="ca-revoke-btn" (click)="revocaOspite(ospite.id)" title="Rimuovi ospite">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -133,7 +144,7 @@
       </div>
     </section>
 
-
+    <div class="section-divider"></div>
 
     <!-- ═══════════════════ SEZIONE 4: CONDIVISI CON TE ══════ -->
     <section class="about-section">
@@ -141,12 +152,9 @@
       <div class="about-inner about-inner--rows">
         <div class="about-content-full">
           <div class="ia-tips-card">
-            <div class="ia-tips-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            </div>
             <h2 class="ac-title">Scatole condivise con te</h2>
             <p class="ac-text ia-pw-text">
-              Queste sono le scatole che altri utenti hanno condiviso con te. Il badge accanto a ciascuna scatola indica il tuo livello di permessi: <strong>Visualizzatore</strong> puoi esplorare il contenuto, vedere gli oggetti e monitorare lo stato della scatola, ma non puoi apportare modifiche. <strong>Editor</strong> puoi aggiungere, modificare o spostare oggetti, aggiornare le quantit&agrave; e contribuire attivamente alla gestione della scatola.
+              Queste sono le scatole che altri utenti hanno condiviso con te. Clicca su una scatola per visualizzarne il contenuto. Il badge accanto a ciascuna scatola indica il tuo livello di permessi: <strong>Visualizzatore</strong> puoi esplorare il contenuto, vedere gli oggetti e monitorare lo stato della scatola, ma non puoi apportare modifiche. <strong>Editor</strong> puoi aggiungere, modificare o spostare oggetti, aggiornare le quantit&agrave; e contribuire attivamente alla gestione della scatola.
             </p>
 
             <div *ngIf="isLoadingArchivi" class="ca-loading">
@@ -157,16 +165,22 @@
               <p class="ac-text">Nessuna scatola &egrave; stata ancora condivisa con te.</p>
             </div>
 
-            <div *ngFor="let ac of archiviCondivisi" class="ca-sha-card">
+            <div *ngFor="let ac of archiviCondivisi" class="ca-sha-card" (click)="vaiScatolaCondivisa(ac)">
               <div class="ca-sha-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
               </div>
               <div class="ca-sha-body">
                 <span class="ca-sha-name">{{ ac.box_nome || ac.nome }}</span>
-                <span class="ca-sha-armadio" *ngIf="ac.armadio_nome">{{ ac.armadio_nome }}</span>
+                <span class="ca-sha-armadio" *ngIf="ac.proprietario_username">
+                  da {{ ac.proprietario_username }}
+                </span>
+                <span class="ca-sha-data" *ngIf="ac.creato_il">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  {{ ac.creato_il | date:'short' }}
+                </span>
               </div>
               <span class="ca-badge" [class.is-editor]="ac.ruolo === 'editor'">
-                {{ ruoloIcon(ac.ruolo) }} {{ ruoloLabel(ac.ruolo) }}
+                {{ ac.ruolo === 'editor' ? '✏️' : '👁️' }} {{ ruoloLabel(ac.ruolo) }}
               </span>
             </div>
           </div>

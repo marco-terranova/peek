@@ -127,12 +127,26 @@ export class CondividiArchivioPage {
     });
   }
 
-  ruoloLabel(ruolo: string): string {
-    return ruolo === 'editor' ? 'Editor' : 'Visualizzatore';
+  cambiaRuoloOspite(ospite: Ospite) {
+    const nuovoRuolo = ospite.ruolo === 'editor' ? 'viewer' : 'editor';
+    this.dbService.aggiornaRuoloCondivisione(ospite.id, nuovoRuolo).subscribe({
+      next: () => {
+        ospite.ruolo = nuovoRuolo;
+        this.mostraToast(`Permesso cambiato a ${nuovoRuolo === 'editor' ? 'Editor' : 'Visualizzatore'}.`, 'success');
+      },
+      error: () => this.mostraToast('Errore durante il cambio di permesso.', 'danger'),
+    });
   }
 
-  ruoloIcon(ruolo: string): string {
-    return ruolo === 'editor' ? '✏️' : '👁️';
+  vaiScatolaCondivisa(ac: any) {
+    const id = ac.box_id || ac.rif_box;
+    if (id) {
+      this.router.navigate(['/dettaglio-box', id]);
+    }
+  }
+
+  ruoloLabel(ruolo: string): string {
+    return ruolo === 'editor' ? 'Editor' : 'Visualizzatore';
   }
 
   get boxConOspiti(): any[] {

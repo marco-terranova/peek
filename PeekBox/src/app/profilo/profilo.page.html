@@ -2,18 +2,17 @@
 
   <div class="prf-stage">
 
-    <button class="ia-back-btn" (click)="vai('/home')" style="position:relative;top:auto;left:auto;margin:52px 0 20px 28px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-        <polyline points="10 17 15 12 10 7"/>
-        <line x1="15" y1="12" x2="3" y2="12"/>
-      </svg>
-      <span>Torna indietro</span>
-    </button>
-
     <!-- ═══════════════════════════════ SEZIONE 1: DATI + CONDIVISIONI ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
+      <button class="ia-back-btn" (click)="vai('/home')" style="position:absolute;top:28px;left:28px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <span>Torna indietro</span>
+      </button>
       <div class="about-inner about-inner--rows">
         <div class="about-content-full">
           <h2 class="ac-title">I tuoi dati, le tue condivisioni</h2>

@@ -255,6 +255,31 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .ca-ospite-email {
   font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: $dark;
 }
+.ca-ospite-data {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: $mid;
+  svg { width: 12px; height: 12px; stroke: $mid; }
+}
+.ca-ospite-actions {
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.ca-role-mini-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px;
+  font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 700;
+  border: 1px solid rgba(125,199,64,0.2); border-radius: 100px;
+  background: rgba(125,199,64,0.06); color: $green-d;
+  cursor: pointer; transition: all 0.2s;
+  svg { width: 13px; height: 13px; stroke: $green-d; }
+  &.is-editor {
+    background: rgba(58,171,219,0.06); color: $blue-d;
+    border-color: rgba(58,171,219,0.2);
+    svg { stroke: $blue-d; }
+  }
+  &:hover { transform: scale(1.05); }
+  &:active { transform: scale(0.95); }
+}
 .ca-stato-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 10px; border-radius: 100px;
@@ -276,60 +301,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.93); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  RICHIESTA CARD
-// ═══════════════════════════════════════════════════════════════════
-.ca-rich-card {
-  text-align: left;
-  display: flex; align-items: center; gap: 16px;
-  padding: 18px 22px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(125,199,64,0.1);
-  margin-bottom: 12px;
-  transition: background 0.2s;
-  &:hover { background: rgba(255,255,255,0.75); }
-}
-.ca-rich-info {
-  display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0;
-}
-.ca-rich-icon {
-  width: 42px; height: 42px; border-radius: 12px;
-  background: rgba(125,199,64,0.08);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  svg { width: 20px; height: 20px; stroke: $green-d; }
-}
-.ca-rich-body {
-  display: flex; flex-direction: column; gap: 3px; min-width: 0;
-}
-.ca-rich-title {
-  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; color: $dark;
-}
-.ca-rich-meta {
-  font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: $mid;
-}
-.ca-rich-actions {
-  display: flex; gap: 8px; flex-shrink: 0;
-}
-.ca-accept-btn, .ca-decline-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 18px;
-  font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 700;
-  border: none; border-radius: 100px; cursor: pointer;
-  transition: all 0.2s;
-  svg { width: 16px; height: 16px; }
-}
-.ca-accept-btn {
-  background: linear-gradient(135deg, $green 0%, $green-d 100%); color: $white;
-  box-shadow: 0 4px 12px rgba(125,199,64,0.25);
-  &:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(125,199,64,0.35); }
-  &:active { transform: scale(0.96); }
-}
-.ca-decline-btn {
-  background: rgba(74,122,148,0.08); color: $mid;
-  &:hover { background: rgba(239,68,68,0.1); color: #b91c1c; }
-  &:active { transform: scale(0.96); }
-}
+
 
 // ═══════════════════════════════════════════════════════════════════
 //  SHARED ARCHIVE CARD (condivisi con te)
@@ -342,8 +314,15 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   background: rgba(125,199,64,0.03);
   border: 1px solid rgba(125,199,64,0.08);
   margin-bottom: 10px;
-  transition: background 0.2s;
-  &:hover { background: rgba(125,199,64,0.06); }
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  &:hover { background: rgba(125,199,64,0.06); box-shadow: 0 4px 16px rgba(125,199,64,0.12); transform: translateY(-1px); }
+  &:active { transform: scale(0.99); }
+}
+.ca-sha-data {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: $mid; margin-top: 3px;
+  svg { width: 11px; height: 11px; stroke: $mid; }
 }
 .ca-sha-icon {
   width: 38px; height: 38px; border-radius: 10px;
@@ -379,8 +358,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ia-pw-text { text-align: justify; }
   .ia-tips-card { padding: 32px 24px; }
   .ca-form-row { flex-direction: column; }
-  .ca-rich-card { flex-direction: column; align-items: stretch; gap: 12px; }
-  .ca-rich-actions { justify-content: flex-end; }
   .ca-ospite-row { flex-wrap: wrap; }
   .ca-arch-head { flex-wrap: wrap; }
 }
@@ -393,7 +370,5 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ac-title { font-size: clamp(1.4rem, 5vw, 1.8rem); }
   .ca-inv-btn { width: 100%; justify-content: center; }
   .ca-role-btn { padding: 12px 8px; font-size: 0.75rem; }
-  .ca-rich-actions { flex-direction: column; }
-  .ca-accept-btn, .ca-decline-btn { width: 100%; justify-content: center; }
   .ia-input { padding: 14px 0; }
 }

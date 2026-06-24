@@ -5,12 +5,12 @@ import { RouterModule, Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonContent, IonIcon,
 } from '@ionic/angular/standalone';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   archiveOutline, addCircleOutline,
   pencilOutline, trashOutline, checkmarkOutline, closeOutline,
-  home, qrCodeOutline, add, chatbubblesOutline,
+  home, qrCodeOutline, add, chatbubblesOutline, alertCircleOutline,
 } from 'ionicons/icons';
 
 import { DatabaseService } from '../services/database';
@@ -32,6 +32,7 @@ export class GestioneSpaziPage implements OnInit {
   utenteId: string | null = null;
 
   gliArmadi: any[] = [];
+  boxOrfane: any[] = [];
   isLoadingSpazi = false;
   nuovoNomeSpazio = '';
   spazioInModifica: number | null = null;
@@ -39,6 +40,7 @@ export class GestioneSpaziPage implements OnInit {
 
   constructor(
     private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
     private dbService: DatabaseService,
     private router: Router,
     private navHistory: NavigationHistoryService,
@@ -50,6 +52,7 @@ export class GestioneSpaziPage implements OnInit {
       'trash-outline': trashOutline,
       'checkmark-outline': checkmarkOutline,
       'close-outline': closeOutline,
+      'alert-circle-outline': alertCircleOutline,
       'home': home,
       'chatbubbles-outline': chatbubblesOutline,
       'qr-code-outline': qrCodeOutline,
@@ -63,6 +66,7 @@ export class GestioneSpaziPage implements OnInit {
     this.utenteId = localStorage.getItem('utente_id');
     this.nomeUtente = (localStorage.getItem('utente_nome') || '').toUpperCase();
     this.caricaSpazi();
+    this.caricaBoxOrfane();
   }
 
   caricaSpazi() {
@@ -78,16 +82,26 @@ export class GestioneSpaziPage implements OnInit {
     });
   }
 
+  caricaBoxOrfane() {
+    if (!this.utenteId) return;
+    this.dbService.getBoxOrfane(this.utenteId).subscribe({
+      next: (res: any) => {
+        this.boxOrfane = (res.box_orfane || []).map((b: any) => ({ ...b, _nuovoSpazio: null }));
+      },
+      error: () => {}
+    });
+  }
+
   aggiungiSpazio() {
     const nome = this.nuovoNomeSpazio.trim();
     if (!nome || !this.utenteId) return;
     this.dbService.creaArmadio(nome, this.utenteId).subscribe({
       next: (res: any) => {
-        const nuovoId = res.id || res.id_armadio || Date.now();
-        this.gliArmadi = [...this.gliArmadi, { id: nuovoId, nome }];
         this.nuovoNomeSpazio = '';
+        this.caricaSpazi();
+        this.toast('Spazio creato!', 'success');
       },
-      error: () => {}
+      error: () => { this.toast('Errore nella creazione dello spazio.', 'danger'); }
     });
   }
 
@@ -110,8 +124,9 @@ export class GestioneSpaziPage implements OnInit {
 
   async confermaEliminaSpazio(spazio: any) {
     const alert = await this.alertCtrl.create({
+      cssClass: 'peekbox-alert',
       header: 'Elimina Spazio',
-      message: `Sei sicuro di voler eliminare "${spazio.nome}"?`,
+      message: `Sei sicuro di voler eliminare "${spazio.nome}"? Le box associate verranno messe in attesa di riallocazione.`,
       buttons: [
         { text: 'Annulla', role: 'cancel' },
         { text: 'Elimina', role: 'destructive', handler: () => this.eliminaSpazio(spazio) }
@@ -122,9 +137,35 @@ export class GestioneSpaziPage implements OnInit {
 
   eliminaSpazio(spazio: any) {
     this.dbService.eliminaArmadio(spazio.id).subscribe({
-      next: () => { this.gliArmadi = this.gliArmadi.filter(a => a.id !== spazio.id); },
-      error: () => {}
+      next: (res: any) => {
+        this.gliArmadi = this.gliArmadi.filter(a => a.id !== spazio.id);
+        const orfane = res.box_orfane || 0;
+        if (orfane > 0) {
+          this.caricaBoxOrfane();
+          this.toast(`Spazio eliminato. ${orfane} box in attesa di riallocazione.`, 'warning');
+        } else {
+          this.toast('Spazio eliminato.', 'medium');
+        }
+      },
+      error: () => { this.toast('Errore durante l\'eliminazione.', 'danger'); }
     });
+  }
+
+  riallocaBox(box: any) {
+    if (!box._nuovoSpazio) return;
+    this.dbService.riallocaBox(box.id, box._nuovoSpazio).subscribe({
+      next: () => {
+        this.boxOrfane = this.boxOrfane.filter(b => b.id !== box.id);
+        this.caricaSpazi();
+        this.toast(`"${box.nome}" riallocata!`, 'success');
+      },
+      error: () => { this.toast('Errore nella riallocazione.', 'danger'); }
+    });
+  }
+
+  private async toast(message: string, color = 'primary') {
+    const t = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
+    await t.present();
   }
 
   goBack() {
@@ -133,5 +174,4 @@ export class GestioneSpaziPage implements OnInit {
 
   vaiHome() { this.navHistory.navTo('/home'); }
   navTo(route: string) { this.navHistory.navTo(route); }
-
 }

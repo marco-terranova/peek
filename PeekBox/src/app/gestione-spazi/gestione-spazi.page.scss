@@ -170,12 +170,24 @@ ion-content {
   ion-icon { font-size: 1.2rem; color: $blue; }
 }
 
-.space-nome {
+.space-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.space-nome {
   font-family: 'Poppins', sans-serif;
   font-size: 0.92rem;
   font-weight: 700;
   color: $text-primary;
+}
+
+.space-box-count {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: $text-muted;
 }
 
 .space-actions {
@@ -398,6 +410,165 @@ ion-content {
   .page-wrapper {
     padding: 18px clamp(20px, 3.5vw, 56px) 24px;
   }
+}
+
+// ═══════════════════════════════════════════════
+//  BOX ORFANE — IN ATTESA DI RIALLOCAZIONE
+// ═══════════════════════════════════════════════
+
+.gs-orfane-section {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(245, 158, 11, 0.04);
+  border: 1.5px solid rgba(245, 158, 11, 0.15);
+}
+
+.gs-orfane-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+
+  ion-icon {
+    font-size: 1.3rem;
+    color: #F59E0B;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: $text-primary;
+    flex: 1;
+  }
+}
+
+.gs-orfane-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background: #F59E0B;
+  color: $white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.gs-orfane-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: $text-muted;
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.gs-orfane-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gs-orfana-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: $white;
+  border-radius: 14px;
+  border: 1px solid $brd-light;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.gs-orfana-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gs-orfana-nome {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: $text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gs-orfana-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gs-orfana-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.gs-orfana-select {
+  padding: 8px 12px;
+  border: 1.5px solid $brd-light;
+  border-radius: 10px;
+  background: $white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text-primary;
+  cursor: pointer;
+  min-width: 140px;
+  appearance: auto;
+
+  &:focus { border-color: $green; outline: none; }
+}
+
+.gs-orfana-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $green, $green-d);
+  color: $white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba($green, 0.25);
+  transition: transform 0.15s;
+
+  ion-icon { font-size: 1rem; }
+  &:active { transform: scale(0.96); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+@media (max-width: 500px) {
+  .gs-orfana-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .gs-orfana-actions {
+    flex-direction: row;
+    justify-content: stretch;
+  }
+  .gs-orfana-select { flex: 1; min-width: 0; }
 }
 
 // ── Desktop (≥ 1024px) ────────────────────────────────────────

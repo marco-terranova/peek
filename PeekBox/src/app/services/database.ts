@@ -68,6 +68,14 @@ export class DatabaseService {
     return this.http.delete(`${this.apiUrl}/armadi/${id}`);
   }
 
+  getBoxOrfane(utenteId: string) {
+    return this.http.get(`${this.apiUrl}/box/orfane/${utenteId}`);
+  }
+
+  riallocaBox(boxId: number, rif_armadio: number) {
+    return this.http.put(`${this.apiUrl}/box/${boxId}/rialloca`, { rif_armadio });
+  }
+
   // ─── BOX ──────────────────────────────────────────────────
 
   getBoxSingola(id: number) {

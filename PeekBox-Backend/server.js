@@ -224,10 +224,13 @@ app.get('/api/armadi/:utenteId', verificaToken, (req, res) => {
         return res.status(403).json({ error: "Non autorizzato." });
 
     const sql = `
-        SELECT a.*, NULL as ruolo_condivisione, u.username as proprietario_username
+        SELECT a.*, NULL as ruolo_condivisione, u.username as proprietario_username,
+               COUNT(b.id) as num_box
         FROM armadi a
         JOIN utenti u ON u.id = a.rif_utente
+        LEFT JOIN box b ON b.rif_armadio = a.id AND b.data_eliminazione IS NULL
         WHERE a.rif_utente = ?
+        GROUP BY a.id
         ORDER BY a.id ASC
     `;
     db.all(sql, [req.params.utenteId], (err, rows) => {
@@ -245,10 +248,49 @@ app.post('/api/armadi', verificaToken, (req, res) => {
 });
 
 app.delete('/api/armadi/:id', verificaToken, (req, res) => {
-    db.run('DELETE FROM armadi WHERE id = ? AND rif_utente = ?', [req.params.id, req.user.id], function(err) {
+    const armadioId = req.params.id;
+    db.get('SELECT id FROM armadi WHERE id = ? AND rif_utente = ?', [armadioId, req.user.id], (err, armadio) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (this.changes === 0) return res.status(403).json({ error: "Non autorizzato o armadio non trovato." });
-        res.json({ message: "Armadio eliminato!" });
+        if (!armadio) return res.status(403).json({ error: "Non autorizzato o armadio non trovato." });
+        db.run('UPDATE box SET rif_armadio = NULL WHERE rif_armadio = ?', [armadioId], function(orfErr) {
+            if (orfErr) return res.status(500).json({ error: orfErr.message });
+            const boxOrfane = this.changes;
+            db.run('DELETE FROM armadi WHERE id = ?', [armadioId], function(delErr) {
+                if (delErr) return res.status(500).json({ error: delErr.message });
+                res.json({ message: "Spazio eliminato!", box_orfane: boxOrfane });
+            });
+        });
+    });
+});
+
+app.get('/api/box/orfane/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+    db.all(`SELECT box.* FROM box
+            JOIN armadi a ON box.rif_armadio = a.id
+            WHERE a.rif_utente = ? AND box.data_eliminazione IS NULL
+            UNION
+            SELECT box.* FROM box
+            WHERE box.rif_armadio IS NULL AND box.data_eliminazione IS NULL
+            AND box.id IN (SELECT b.id FROM box b WHERE b.rif_armadio IS NULL)`,
+        [req.params.utenteId], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            const orfane = (rows || []).filter(b => b.rif_armadio === null);
+            res.json({ box_orfane: orfane });
+        }
+    );
+});
+
+app.put('/api/box/:id/rialloca', verificaToken, (req, res) => {
+    const { rif_armadio } = req.body;
+    if (!rif_armadio) return res.status(400).json({ error: "rif_armadio obbligatorio." });
+    db.get('SELECT id FROM armadi WHERE id = ? AND rif_utente = ?', [rif_armadio, req.user.id], (err, armadio) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!armadio) return res.status(403).json({ error: "Spazio non trovato o non autorizzato." });
+        db.run('UPDATE box SET rif_armadio = ? WHERE id = ?', [rif_armadio, req.params.id], function(upErr) {
+            if (upErr) return res.status(500).json({ error: upErr.message });
+            res.json({ message: "Box riallocata!" });
+        });
     });
 });
 

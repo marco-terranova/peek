@@ -302,17 +302,31 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 .pp-warn { color: #DC2626; }
 
+.about-inner--alt .av-frame {
+  aspect-ratio: auto;
+  align-items: flex-start;
+}
+
 .pp-pos-card {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 8px 0;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .pp-pos-lista {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(15, 23, 42, 0.12); border-radius: 4px; }
 }
 
 .pp-pos-item {
@@ -410,18 +424,62 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 .pp-pos-attesa-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(15, 23, 42, 0.12); border-radius: 4px; }
 }
 
-.pp-pos-attesa-item {
-  padding: 3px 10px;
+.pp-pos-attesa-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
   background: $white;
   border: 1px solid rgba(220, 38, 38, 0.1);
-  border-radius: 6px;
+  border-radius: 8px;
+}
+
+.pp-pos-attesa-nome {
+  flex: 1;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: $dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pp-pos-attesa-sel {
+  padding: 4px 8px;
+  border: 1px solid rgba(58, 171, 219, 0.2);
+  border-radius: 6px;
+  background: $white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: $dark;
+  cursor: pointer;
+  max-width: 120px;
+  &:focus { border-color: $green; outline: none; }
+}
+
+.pp-pos-attesa-btn {
+  width: 28px; height: 28px;
+  border: none; border-radius: 6px;
+  background: $green;
+  color: $white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: transform 0.15s;
+  svg { width: 14px; height: 14px; }
+  &:active { transform: scale(0.9); }
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
 }
 
 .pp-pos-btn {

@@ -34,8 +34,8 @@ export class ProfiloPage implements OnInit {
   loading = true;
 
   boxList: any[] = [];
-  posizioni: { nome: string; ids: number[] }[] = [];
-  boxAttesa: number[] = [];
+  posizioni: any[] = [];
+  boxOrfane: any[] = [];
 
   nuovoNomePos = '';
   nuoveBoxPos: Set<number> = new Set();
@@ -112,93 +112,45 @@ export class ProfiloPage implements OnInit {
   }
 
   private leggiPosizioni() {
-    this.migra();
-    try {
-      const d = localStorage.getItem('peek_pos');
-      if (d) {
-        const arr: any[] = JSON.parse(d);
-        this.posizioni = Array.isArray(arr) ? arr.filter(p => p).map(p => ({ nome: p.nome || p.n || '', ids: Array.isArray(p.ids) ? p.ids : [] })).filter(p => p.nome) : [];
-      } else {
-        this.posizioni = [];
-      }
-    } catch { this.posizioni = []; }
-    try {
-      const r = localStorage.getItem('peek_attesa');
-      this.boxAttesa = r ? JSON.parse(r) : [];
-      if (!Array.isArray(this.boxAttesa)) this.boxAttesa = [];
-    } catch { this.boxAttesa = []; }
-    this.pulisci();
-  }
-
-  private migra() {
-    for (const posKey of ['pb_posizioni', 'pp_posizioni', 'pb_posizione_attuale']) {
-      const raw = localStorage.getItem(posKey);
-      if (!raw) continue;
-      try {
-        let arr: { nome: string; ids: number[] }[] = [];
-        if (posKey === 'pb_posizione_attuale') {
-          const idsRaw = localStorage.getItem('pb_box_ids_posizione');
-          const ids: number[] = idsRaw ? JSON.parse(idsRaw) : [];
-          arr = [{ nome: raw, ids: Array.isArray(ids) ? ids.filter((x: any) => typeof x === 'number') : [] }];
-        } else {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            arr = parsed.map((p: any) => ({ nome: p.nome || p.n || String(p), ids: Array.isArray(p.ids || p.boxIds) ? (p.ids || p.boxIds) : [] }));
-          } else if (typeof parsed === 'object') {
-            arr = Object.entries(parsed).map(([k, v]) => ({ nome: k, ids: Array.isArray(v) ? v.filter((x: any) => typeof x === 'number') : [] }));
-          }
-        }
-        arr = arr.filter(x => x.nome);
-        if (arr.length) {
-          localStorage.setItem('peek_pos', JSON.stringify(arr));
-          break;
-        }
-      } catch {}
-    }
-    for (const attKey of ['pb_in_attesa_ids', 'pp_attesa_ids']) {
-      const attRaw = localStorage.getItem(attKey);
-      if (!attRaw) continue;
-      try {
-        const ids = JSON.parse(attRaw);
-        if (Array.isArray(ids) && ids.length) {
-          localStorage.setItem('peek_attesa', JSON.stringify(ids.filter((x: any) => typeof x === 'number')));
-          break;
-        }
-      } catch {}
-    }
-    for (const k of ['pb_posizioni', 'pb_in_attesa_ids', 'pb_posizione_attuale', 'pb_box_ids_posizione', 'pp_posizioni', 'pp_attesa_ids']) {
-      try { localStorage.removeItem(k); } catch {}
-    }
-  }
-
-  private salva() {
-    localStorage.setItem('peek_pos', JSON.stringify(this.posizioni));
-    localStorage.setItem('peek_attesa', JSON.stringify(this.boxAttesa));
-  }
-
-  private pulisci() {
-    const assegnati = new Set<number>();
-    for (const p of this.posizioni) for (const id of p.ids) assegnati.add(id);
-    this.boxAttesa = this.boxAttesa.filter(id => !assegnati.has(id));
-    this.salva();
+    if (!this.utenteId) return;
+    this.dbService.getArmadi(this.utenteId).subscribe({
+      next: (res: any) => {
+        this.posizioni = (res.armadi || []).map((a: any) => ({
+          id: a.id,
+          nome: a.nome,
+          num_box: a.num_box || 0
+        }));
+      },
+      error: () => { this.posizioni = []; }
+    });
+    this.dbService.getBoxOrfane(this.utenteId).subscribe({
+      next: (res: any) => { this.boxOrfane = res.box_orfane || []; },
+      error: () => { this.boxOrfane = []; }
+    });
   }
 
   get boxAttesaList() {
-    return this.boxList.filter((b: any) => this.boxAttesa.includes(b.id));
+    return this.boxOrfane;
   }
 
   get totAssegnate() {
-    return this.posizioni.reduce((s, p) => s + p.ids.length, 0);
+    return this.posizioni.reduce((s: number, p: any) => s + (p.num_box || 0), 0);
   }
 
-  eliminaPosizione(nome: string) {
-    const pos = this.posizioni.find(p => p.nome === nome);
-    if (!pos) return;
-    for (const id of pos.ids) {
-      if (!this.boxAttesa.includes(id)) this.boxAttesa.push(id);
-    }
-    this.posizioni = this.posizioni.filter(p => p.nome !== nome);
-    this.salva();
+  eliminaPosizione(pos: any) {
+    if (!pos?.id) return;
+    this.dbService.eliminaArmadio(pos.id).subscribe({
+      next: () => { this.leggiPosizioni(); },
+      error: () => {}
+    });
+  }
+
+  assegnaBoxEsistente(box: any) {
+    if (!box._spazio) return;
+    this.dbService.riallocaBox(box.id, box._spazio).subscribe({
+      next: () => { this.leggiPosizioni(); },
+      error: () => {}
+    });
   }
 
   apriCrea() {
@@ -220,13 +172,26 @@ export class ProfiloPage implements OnInit {
 
   creaPosizione() {
     const n = this.nuovoNomePos.trim();
-    if (!n) return;
-    if (this.posizioni.some(p => p.nome === n)) return;
-    const ids = Array.from(this.nuoveBoxPos);
-    this.posizioni.push({ nome: n, ids });
-    this.boxAttesa = this.boxAttesa.filter(id => !ids.includes(id));
-    this.salva();
-    this.chiudiCrea();
+    if (!n || !this.utenteId) return;
+    this.dbService.creaArmadio(n, this.utenteId).subscribe({
+      next: (res: any) => {
+        const nuovoId = res.id;
+        const boxDaAssegnare = Array.from(this.nuoveBoxPos);
+        if (boxDaAssegnare.length > 0 && nuovoId) {
+          let completate = 0;
+          for (const boxId of boxDaAssegnare) {
+            this.dbService.riallocaBox(boxId, nuovoId).subscribe({
+              next: () => { completate++; if (completate === boxDaAssegnare.length) this.leggiPosizioni(); },
+              error: () => { completate++; if (completate === boxDaAssegnare.length) this.leggiPosizioni(); }
+            });
+          }
+        } else {
+          this.leggiPosizioni();
+        }
+        this.chiudiCrea();
+      },
+      error: () => {}
+    });
   }
 
   vai(route: string) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class TrackingBoxPage implements OnInit, AfterViewInit, OnDestroy {
+export class TrackingBoxPage implements OnInit, OnDestroy {
   utenteId = '';
   tipoProfilo = 'personal';
   allCheckpoints: any[] = [];
@@ -35,32 +35,42 @@ export class TrackingBoxPage implements OnInit, AfterViewInit, OnDestroy {
     private toastCtrl: ToastController,
   ) {}
 
-  ngOnInit() {
-    this.utenteId = localStorage.getItem('utente_id') || '';
-    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
-  }
+  ngOnInit() {}
 
   private geofenceListener = ((e: CustomEvent) => {
     const { id, lat, lng, nome } = e.detail;
     this.apriGeofenceDialog(id, lat, lng, nome);
   }) as EventListener;
 
-  ngAfterViewInit() {
+  ionViewWillEnter() {
+    this.utenteId = localStorage.getItem('utente_id') || '';
+    this.tipoProfilo = localStorage.getItem('tipo_profilo') || 'personal';
+    window.addEventListener('tb-geofence', this.geofenceListener);
     if (this.tipoProfilo === 'business' && this.utenteId) {
       setTimeout(() => {
+        this.distruggiMappa();
         this.inizializzaMappa();
         this.caricaTuttiCheckpoints();
-      }, 200);
+      }, 300);
     }
-    window.addEventListener('tb-geofence', this.geofenceListener);
+  }
+
+  ionViewWillLeave() {
+    this.distruggiMappa();
+    window.removeEventListener('tb-geofence', this.geofenceListener);
   }
 
   ngOnDestroy() {
     window.removeEventListener('tb-geofence', this.geofenceListener);
+    this.distruggiMappa();
+  }
+
+  private distruggiMappa() {
     if (this.leafletMap) {
       this.leafletMap.remove();
       this.leafletMap = null;
     }
+    this.geofenceCircles.clear();
   }
 
   private inizializzaMappa() {

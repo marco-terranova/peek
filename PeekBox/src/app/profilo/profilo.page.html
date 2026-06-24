@@ -270,7 +270,7 @@
               <span class="pp-pos-stat-lbl">Box assegnate</span>
             </div>
             <div class="pp-pos-stat">
-              <span class="pp-pos-stat-val" [class.pp-warn]="boxAttesa.length > 0">{{ boxAttesa.length }}</span>
+              <span class="pp-pos-stat-val" [class.pp-warn]="boxOrfane.length > 0">{{ boxOrfane.length }}</span>
               <span class="pp-pos-stat-lbl">In attesa</span>
             </div>
           </div>
@@ -284,9 +284,9 @@
                 <div class="pp-pos-item" *ngFor="let p of posizioni">
                   <div class="pp-pos-item-info">
                     <span class="pp-pos-item-nome">{{ p.nome }}</span>
-                    <span class="pp-pos-item-count">{{ p.ids.length }} box</span>
+                    <span class="pp-pos-item-count">{{ p.num_box }} box</span>
                   </div>
-                  <button class="pp-pos-item-del" (click)="eliminaPosizione(p.nome)" title="Elimina posizione">
+                  <button class="pp-pos-item-del" (click)="eliminaPosizione(p)" title="Elimina posizione">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
                 </div>
@@ -296,13 +296,22 @@
               </p>
 
               <!-- Box in attesa -->
-              <div class="pp-pos-attesa-wrap" *ngIf="boxAttesa.length > 0">
+              <div class="pp-pos-attesa-wrap" *ngIf="boxOrfane.length > 0">
                 <div class="pp-pos-attesa-header">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                  <span>{{ boxAttesa.length }} box {{ boxAttesa.length === 1 ? 'è in attesa' : 'sono in attesa' }} di allocazione</span>
+                  <span>{{ boxOrfane.length }} box {{ boxOrfane.length === 1 ? 'è in attesa' : 'sono in attesa' }} di allocazione</span>
                 </div>
                 <div class="pp-pos-attesa-list">
-                  <div class="pp-pos-attesa-item" *ngFor="let b of boxAttesaList">{{ b.nome }}</div>
+                  <div class="pp-pos-attesa-row" *ngFor="let b of boxOrfane">
+                    <span class="pp-pos-attesa-nome">{{ b.nome }}</span>
+                    <select class="pp-pos-attesa-sel" [(ngModel)]="b._spazio" *ngIf="posizioni.length > 0">
+                      <option [ngValue]="undefined" disabled selected>Spazio...</option>
+                      <option *ngFor="let p of posizioni" [ngValue]="p.id">{{ p.nome }}</option>
+                    </select>
+                    <button class="pp-pos-attesa-btn" *ngIf="posizioni.length > 0" [disabled]="!b._spazio" (click)="assegnaBoxEsistente(b)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -316,18 +325,6 @@
               <ng-template #createForm>
                 <div class="pp-pos-create">
                   <input type="text" class="pp-pos-input" [(ngModel)]="nuovoNomePos" placeholder="Nome posizione (es. Cameretta)" />
-                  <div class="pp-pos-create-boxes" *ngIf="boxAttesaList.length > 0">
-                    <span class="pp-pos-create-label">Seleziona le box da assegnare:</span>
-                    <div class="pp-pos-create-list">
-                      <label class="pp-pos-create-item" *ngFor="let b of boxAttesaList">
-                        <input type="checkbox" [checked]="nuoveBoxPos.has(b.id)" (change)="toggleBox(b.id)" />
-                        <span>{{ b.nome }}</span>
-                      </label>
-                    </div>
-                  </div>
-                  <p class="pp-pos-empty" *ngIf="boxAttesaList.length === 0">
-                    Nessuna box in attesa. Puoi creare comunque la posizione vuota.
-                  </p>
                   <div class="pp-pos-create-actions">
                     <button class="ac-btn pp-pos-btn" (click)="chiudiCrea()">Annulla</button>
                     <button class="ac-btn pp-pos-btn pp-pos-btn--set" [disabled]="!nuovoNomePos.trim()" (click)="creaPosizione()">

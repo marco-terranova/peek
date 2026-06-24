@@ -421,6 +421,8 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &--row {
     flex-direction: row;
     overflow: visible;
+    border: none;
+    background: $white;
   }
 }
 
@@ -434,11 +436,13 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   appearance: none;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   width: 100%; padding: 12px 14px;
-  border: none; outline: none; background: none;
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  outline: none;
+  background: $white;
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 500; color: $dark;
   cursor: pointer;
 
-  span.placeholder { color: $mid; opacity: 0.4; }
   svg { width: 16px; height: 16px; color: $mid; flex-shrink: 0; transition: transform 0.2s; }
 }
 
@@ -475,7 +479,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:hover { background: rgba($green, 0.08); }
   &:active { background: rgba($green, 0.12); }
 
-  & + & { border-top: 1px solid rgba(15,23,42,0.03); }
 }
 
 .csr-dropdown-empty {
@@ -548,54 +551,62 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .is-active & { color: $green-d; opacity: 1; }
 }
 
-// ── Toggle tracking ─────────────────────────────────────
-.csr-toggle-row {
+// ── GPS tracking ─────────────────────────────────────
+.csr-gps-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding: 4px 0;
+  padding: 8px 0;
 }
 
-.csr-toggle {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-
-  input { position: absolute; opacity: 0; width: 0; height: 0; }
+.csr-gps-info {
+  flex: 1;
 }
 
-.csr-toggle-track {
-  display: block;
-  width: 44px; height: 24px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.12);
-  transition: background 0.25s;
-  position: relative;
-}
-
-.csr-toggle-thumb {
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: $white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.csr-toggle input:checked + .csr-toggle-track {
-  background: linear-gradient(135deg, $green 0%, $blue 100%);
-}
-
-.csr-toggle input:checked + .csr-toggle-track .csr-toggle-thumb {
-  transform: translateX(20px);
-}
-
-.csr-toggle-label {
+.csr-gps-text {
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 0.8rem;
   color: $mid;
+  line-height: 1.5;
+}
+
+.csr-gps-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border-radius: 12px;
+  background: $white;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $dark;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  -webkit-appearance: none;
+  appearance: none;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: $mid;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    border-color: rgba($blue, 0.3);
+  }
+
+  &.is-active {
+    border-color: $green;
+    background: rgba($green, 0.06);
+    box-shadow: 0 0 0 3px rgba($green, 0.08);
+    color: $green-d;
+    svg { color: $green-d; }
+  }
 }
 
 // ── Register button ──────────────────────────────────────
@@ -626,6 +637,32 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
     background: rgba(15,23,42,0.08); color: rgba(15,23,42,0.2); cursor: not-allowed;
     box-shadow: none; transform: none; pointer-events: none;
     svg { opacity: 0.2; }
+  }
+}
+
+// ── Error message ──────────────────────────────────────────
+.csr-errore-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 10px;
+  width: 100%;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #DC2626;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #DC2626;
+    line-height: 1.4;
   }
 }
 

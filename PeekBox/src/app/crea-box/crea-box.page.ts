@@ -11,6 +11,7 @@ import {
 } from '@ionic/angular/standalone';
 import { DatabaseService } from '../services/database';
 import { GpsService } from '../services/gps';
+import { firstValueFrom } from 'rxjs';
 import { NavigationHistoryService } from '../services/navigation-history';
 
 @Component({
@@ -33,6 +34,7 @@ export class CreaBoxPage implements OnInit {
   descrizione: string = '';
   rif_armadio: string = '';
   is_preferito: boolean = false;
+  erroreNome: string = '';
   armadi_disponibili: any[] = [];
   utenteId: string = '';
   movingMode: boolean = false;
@@ -110,6 +112,16 @@ export class CreaBoxPage implements OnInit {
 
   async salvaNuovaBox() {
     if (!this.nome_box || !this.rif_armadio) return;
+
+    const nomeBox = this.nome_box.trim().toLowerCase();
+    const res: any = await firstValueFrom(this.dbService.getBox(this.utenteId));
+    const boxes = res?.box || [];
+    const esistente = boxes.find((b: any) => b.nome.trim().toLowerCase() === nomeBox);
+    if (esistente) {
+      this.erroreNome = 'Esiste già una box con questo nome. Scegli un nome diverso.';
+      return;
+    }
+    this.erroreNome = '';
 
     let lat: number | null = null;
     let lng: number | null = null;
@@ -203,5 +215,9 @@ export class CreaBoxPage implements OnInit {
   }
 
   navTo(route: string) { this.navHistory.navTo(route); }
+
+  onNomeInput() {
+    this.erroreNome = '';
+  }
 
 }

@@ -188,11 +188,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   padding: 16px 32px; min-width: 140px; flex-shrink: 0;
   font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700;
   border: none; border-radius: 14px; cursor: pointer;
-  background: linear-gradient(135deg, $green 0%, $green-d 100%); color: $white;
-  box-shadow: 0 4px 16px rgba(125,199,64,0.25);
+  background: linear-gradient(135deg, $green 0%, $blue 100%); color: $white;
+  box-shadow: 0 4px 16px rgba(58,171,219,0.25);
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
   svg { width: 18px; height: 18px; }
-  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(125,199,64,0.35); }
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(58,171,219,0.35); }
   &:active:not(:disabled) { transform: scale(0.97); }
   &:disabled { opacity: 0.4; cursor: not-allowed; &:hover { transform: none; box-shadow: none; } }
 }
@@ -224,6 +224,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   margin-bottom: 14px;
   transition: background 0.2s;
   &:hover { background: rgba(255,255,255,0.75); }
+}
+
+.ca-ospite-scroll {
+  max-height: 180px;
+  overflow-y: auto;
 }
 .ca-arch-head {
   display: flex; align-items: center; gap: 10px;

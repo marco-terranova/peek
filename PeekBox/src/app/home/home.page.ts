@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,48 @@ export class HomePage {
   utenteId: string | null = null;
   boxList: Box[] = [];
   caricamento = true;
+  paginaCorrente = 0;
+  boxPerPagina = 10;
+  messaggioEliminazione = '';
+  menuAperto = false;
+
+  get boxVisibili(): Box[] {
+    const start = this.paginaCorrente * this.boxPerPagina;
+    return this.boxList.slice(start, start + this.boxPerPagina);
+  }
+
+  get totalePagine(): number {
+    return Math.ceil(this.boxList.length / this.boxPerPagina) || 1;
+  }
+
+  get haSuccessiva(): boolean {
+    return (this.paginaCorrente + 1) * this.boxPerPagina < this.boxList.length;
+  }
+
+  get haPrecedente(): boolean {
+    return this.paginaCorrente > 0;
+  }
+
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.menuAperto = !this.menuAperto;
+  }
+
+  @HostListener('document:click', ['$event'])
+  chiudiMenu(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (this.menuAperto && !target.closest('.hm-hamburger-wrap')) {
+      this.menuAperto = false;
+    }
+  }
+
+  paginaSuccessiva() {
+    this.paginaCorrente++;
+  }
+
+  paginaPrecedente() {
+    this.paginaCorrente--;
+  }
 
   constructor(
     private dbService: DatabaseService,
@@ -26,6 +68,7 @@ export class HomePage {
 
   ionViewWillEnter() {
     this.utenteId = localStorage.getItem('utente_id');
+    this.messaggioEliminazione = '';
     if (this.utenteId) {
       this.caricaBox();
     }
@@ -102,7 +145,8 @@ export class HomePage {
           this.dbService.eliminaBox(box.id).subscribe({
             next: () => {
               this.boxList = this.boxList.filter(b => b.id !== box.id);
-              this.toast('Box eliminata.', 'medium');
+              this.messaggioEliminazione = 'Box eliminata.';
+              setTimeout(() => this.messaggioEliminazione = '', 5000);
             },
             error: () => this.toast('Errore durante l\'eliminazione.', 'danger')
           });

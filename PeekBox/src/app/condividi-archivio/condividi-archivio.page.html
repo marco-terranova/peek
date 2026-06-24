@@ -38,7 +38,6 @@
                 </div>
                 <div class="ca-field ca-field--half">
                   <label class="csr-label">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     Permesso
                   </label>
                   <div class="ca-role-toggle">
@@ -102,43 +101,46 @@
               <p class="ac-text">Non hai ancora invitato nessuno. Usa il form qui sopra per inviare il primo invito.</p>
             </div>
 
-            <div *ngFor="let b of boxConOspiti" class="ca-arch-card">
-              <div class="ca-arch-head">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                <span class="ca-arch-name">{{ b.nome }}</span>
-                <span class="ca-arch-count">{{ ospitiMap.get(b.id)?.length || 0 }} ospiti</span>
-              </div>
-
-              <div *ngIf="ospitiLoading.has(b.id)" class="ca-loading">
-                <span>Caricamento ospiti...</span>
-              </div>
-
-              <div *ngFor="let ospite of ospitiMap.get(b.id) || []" class="ca-ospite-row">
-                <div class="ca-ospite-info">
-                  <span class="ca-ospite-email">{{ ospite.ospite_email || 'Ospite' }}</span>
-                  <span class="ca-ospite-data" *ngIf="ospite.creato_il">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    {{ ospite.creato_il | date:'short' }}
-                  </span>
-                  <span class="ca-stato-badge {{ statoClasse(ospite) }}">
-                    {{ statoLabel(ospite) }}
-                  </span>
+              <div *ngFor="let b of boxConOspiti" class="ca-arch-card">
+                <div class="ca-arch-head">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  <span class="ca-arch-name">{{ b.nome }}</span>
+                  <span class="ca-arch-count">{{ ospitiMap.get(b.id)?.length || 0 }} ospiti</span>
                 </div>
-                <div class="ca-ospite-actions" *ngIf="ospite.stato === 'accettata'">
-                  <button class="ca-role-mini-btn"
-                          [class.is-editor]="ospite.ruolo === 'editor'"
-                          (click)="cambiaRuoloOspite(ospite)"
-                          title="Cambia permesso">
-                    <svg *ngIf="ospite.ruolo === 'viewer'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <svg *ngIf="ospite.ruolo === 'editor'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    {{ ospite.ruolo === 'editor' ? 'Editor' : 'Viewer' }}
-                  </button>
+
+                <div class="ca-ospite-scroll">
+                  <div *ngIf="ospitiLoading.has(b.id)" class="ca-loading">
+                    <span>Caricamento ospiti...</span>
+                  </div>
+
+                  <div *ngFor="let ospite of ospitiMap.get(b.id) || []" class="ca-ospite-row">
+                    <div class="ca-ospite-info">
+                      <span class="ca-ospite-email">{{ ospite.ospite_email || 'Ospite' }}</span>
+                      <span class="ca-ospite-data" *ngIf="ospite.creato_il">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        {{ ospite.creato_il | date:'short' }}
+                      </span>
+                      <span class="ca-stato-badge {{ statoClasse(ospite) }}">
+                        {{ statoLabel(ospite) }}
+                      </span>
+                    </div>
+                    <div class="ca-ospite-actions" *ngIf="ospite.stato === 'accettata'">
+                      <button class="ca-role-mini-btn"
+                              [class.is-editor]="ospite.ruolo === 'editor'"
+                              (click)="cambiaRuoloOspite(ospite)"
+                              title="Cambia permesso">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path [attr.d]="ruoloIconPath(ospite.ruolo)"/>
+                        </svg>
+                        {{ ospite.ruolo === 'editor' ? 'Editor' : 'Viewer' }}
+                      </button>
+                    </div>
+                    <button class="ca-revoke-btn" (click)="revocaOspite(ospite.id)" title="Rimuovi ospite">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
                 </div>
-                <button class="ca-revoke-btn" (click)="revocaOspite(ospite.id)" title="Rimuovi ospite">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                </button>
               </div>
-            </div>
           </div>
         </div>
       </div>

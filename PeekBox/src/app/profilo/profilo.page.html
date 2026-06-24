@@ -230,17 +230,113 @@
                 <span class="av-stat-d">Box create</span>
               </div>
               <div class="av-stat-card">
-                <span class="av-stat-n">{{ numOggetti }}</span>
-                <span class="av-stat-d">Oggetti catalogati</span>
+                <span class="av-stat-n">{{ numTransit }}</span>
+                <span class="av-stat-d">Tracking attivo</span>
               </div>
               <div class="av-stat-card">
-                <span class="av-stat-n">{{ numArmadi }}</span>
-                <span class="av-stat-d">Spazi utilizzati</span>
+                <span class="av-stat-n">{{ numElementi }}</span>
+                <span class="av-stat-d">Elementi totali</span>
               </div>
               <div class="av-stat-card">
                 <span class="av-stat-n">{{ numCondivisi }}</span>
-                <span class="av-stat-d">Archivi condivisi</span>
+                <span class="av-stat-d">Box condivise</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══════════════════════════════ SEZIONE 4.5: POSIZIONE BOX ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--alt">
+        <div class="about-content">
+          <h2 class="ac-title">Gestione Posizione Box</h2>
+          <p class="ac-text">
+            Crea posizioni (es. "Cameretta", "Garage") e assegna le box
+            in attesa. Puoi eliminare una posizione in qualsiasi momento:
+            le box torneranno in attesa di allocazione.
+          </p>
+          <div class="pp-pos-stats">
+            <div class="pp-pos-stat">
+              <span class="pp-pos-stat-val">{{ posizioni.length }}</span>
+              <span class="pp-pos-stat-lbl">Posizioni</span>
+            </div>
+            <div class="pp-pos-stat">
+              <span class="pp-pos-stat-val">{{ totAssegnate }}</span>
+              <span class="pp-pos-stat-lbl">Box assegnate</span>
+            </div>
+            <div class="pp-pos-stat">
+              <span class="pp-pos-stat-val" [class.pp-warn]="boxAttesa.length > 0">{{ boxAttesa.length }}</span>
+              <span class="pp-pos-stat-lbl">In attesa</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="av-frame">
+            <div class="pp-pos-card">
+
+              <!-- Lista posizioni esistenti -->
+              <div class="pp-pos-lista" *ngIf="posizioni.length > 0">
+                <div class="pp-pos-item" *ngFor="let p of posizioni">
+                  <div class="pp-pos-item-info">
+                    <span class="pp-pos-item-nome">{{ p.nome }}</span>
+                    <span class="pp-pos-item-count">{{ p.ids.length }} box</span>
+                  </div>
+                  <button class="pp-pos-item-del" (click)="eliminaPosizione(p.nome)" title="Elimina posizione">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+              <p class="pp-pos-empty" *ngIf="posizioni.length === 0">
+                Nessuna posizione. Creane una qui sotto.
+              </p>
+
+              <!-- Box in attesa -->
+              <div class="pp-pos-attesa-wrap" *ngIf="boxAttesa.length > 0">
+                <div class="pp-pos-attesa-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span>{{ boxAttesa.length }} box {{ boxAttesa.length === 1 ? 'è in attesa' : 'sono in attesa' }} di allocazione</span>
+                </div>
+                <div class="pp-pos-attesa-list">
+                  <div class="pp-pos-attesa-item" *ngFor="let b of boxAttesaList">{{ b.nome }}</div>
+                </div>
+              </div>
+
+              <!-- Pulsante / Form creazione -->
+              <ng-container *ngIf="!apertoCrea; else createForm">
+                <button class="ac-btn pp-pos-btn pp-pos-btn--add" (click)="apriCrea()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Nuova posizione
+                </button>
+              </ng-container>
+              <ng-template #createForm>
+                <div class="pp-pos-create">
+                  <input type="text" class="pp-pos-input" [(ngModel)]="nuovoNomePos" placeholder="Nome posizione (es. Cameretta)" />
+                  <div class="pp-pos-create-boxes" *ngIf="boxAttesaList.length > 0">
+                    <span class="pp-pos-create-label">Seleziona le box da assegnare:</span>
+                    <div class="pp-pos-create-list">
+                      <label class="pp-pos-create-item" *ngFor="let b of boxAttesaList">
+                        <input type="checkbox" [checked]="nuoveBoxPos.has(b.id)" (change)="toggleBox(b.id)" />
+                        <span>{{ b.nome }}</span>
+                      </label>
+                    </div>
+                  </div>
+                  <p class="pp-pos-empty" *ngIf="boxAttesaList.length === 0">
+                    Nessuna box in attesa. Puoi creare comunque la posizione vuota.
+                  </p>
+                  <div class="pp-pos-create-actions">
+                    <button class="ac-btn pp-pos-btn" (click)="chiudiCrea()">Annulla</button>
+                    <button class="ac-btn pp-pos-btn pp-pos-btn--set" [disabled]="!nuovoNomePos.trim()" (click)="creaPosizione()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      Crea
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>

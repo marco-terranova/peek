@@ -115,7 +115,7 @@ export class CondividiArchivioPage {
   revocaOspite(ospiteId: number) {
     this.dbService.revocaCondivisione(ospiteId).subscribe({
       next: () => {
-        this.mostraToast('Ospite rimosso.', 'info');
+        this.mostraToast('Ospite rimosso.', 'danger');
         for (const [boxId] of this.ospitiMap) {
           const lista = this.ospitiMap.get(boxId);
           if (lista) {
@@ -147,6 +147,13 @@ export class CondividiArchivioPage {
 
   ruoloLabel(ruolo: string): string {
     return ruolo === 'editor' ? 'Editor' : 'Visualizzatore';
+  }
+
+  ruoloIconPath(ruolo: string): string {
+    if (ruolo === 'editor') {
+      return 'M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z';
+    }
+    return 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0-6 0';
   }
 
   get boxConOspiti(): any[] {

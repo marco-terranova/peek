@@ -26,7 +26,7 @@
         <img src="assets/icon/box-icon.png" alt="Box" class="cs-l-p-img" />
       </div>
 
-      <h2 class="cs-l-title">Crea la tua Box in 2 passi</h2>
+      <h2 class="cs-l-title">Crea la tua Box in 3 passi</h2>
 
       <div class="cs-l-info">
         <div class="cs-l-info-item">
@@ -38,6 +38,13 @@
         </div>
         <div class="cs-l-info-item">
           <div class="cs-l-info-num">2</div>
+          <div class="cs-l-info-text">
+            <strong>Scegli la Dimensione</strong>
+            <span>Seleziona la grandezza della box in base alla quantità di oggetti da contenere</span>
+          </div>
+        </div>
+        <div class="cs-l-info-item">
+          <div class="cs-l-info-num">3</div>
           <div class="cs-l-info-text">
             <strong>Registra e Traccia</strong>
             <span>Salva la box nel sistema e stampa il QR Code univoco per localizzarla sempre</span>
@@ -85,7 +92,7 @@
               Nome del Contenitore
             </label>
             <div class="csr-input-wrap">
-              <input type="text" [(ngModel)]="nome_box" placeholder="Es. Abbigliamento Invernale" />
+              <input type="text" [(ngModel)]="nome_box" (input)="onNomeInput()" placeholder="Es. Abbigliamento Invernale" />
             </div>
           </div>
 
@@ -142,12 +149,17 @@
               </svg>
               Tracking GPS
             </label>
-            <div class="csr-toggle-row">
-              <label class="csr-toggle">
-                <input type="checkbox" [checked]="movingMode" (change)="toggleMovingMode()" />
-                <span class="csr-toggle-track"><span class="csr-toggle-thumb"></span></span>
-              </label>
-              <span class="csr-toggle-label">{{ movingMode ? 'Attivo' : 'Disattivo' }}</span>
+            <div class="csr-gps-row">
+              <div class="csr-gps-info">
+                <span class="csr-gps-text">Attiva la geolocalizzazione per tracciare la posizione</span>
+              </div>
+              <button type="button" class="csr-gps-btn" [class.is-active]="movingMode" (click)="toggleMovingMode()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>{{ movingMode ? 'Attivo' : 'Attiva' }}</span>
+              </button>
             </div>
           </div>
 
@@ -155,6 +167,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span>Registra nel Sistema</span>
           </button>
+          <div class="csr-errore-box" *ngIf="erroreNome">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span>{{ erroreNome }}</span>
+          </div>
         </div>
       </div>
     </div>

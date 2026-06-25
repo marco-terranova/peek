@@ -889,7 +889,7 @@ function verificaCapienzaBox(boxId, nuovaQuantita, callback) {
 
 app.post('/api/oggetti', verificaToken, (req, res) => {
     try {
-        const { nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo = null } = req.body || {};
+        const { nome, descrizione, tipo, fragile, quantita, foto, rif_box } = req.body || {};
         if (!nome || !rif_box) return res.status(400).json({ error: "nome e rif_box obbligatori." });
         verificaAccessoBoxScrittura(rif_box, req.user.id, res, () => {
             verificaCapienzaBox(rif_box, quantita || 1, (err, consentito, maxCap, totAttuale) => {
@@ -899,8 +899,8 @@ app.post('/api/oggetti', verificaToken, (req, res) => {
                         error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi qualche oggetto prima di aggiungerne altri.`
                     });
                 }
-                db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                    [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, rif_box, rif_catalogo], function(err2) {
+                db.run(`INSERT INTO oggetti (nome, descrizione, tipo, fragile, quantita, foto, rif_box) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [nome, descrizione, tipo, fragile ? 1 : 0, quantita || 1, foto || null, rif_box], function(err2) {
                     if (err2) return res.status(500).json({ error: err2.message });
                     inserisciLogBox(rif_box, 'oggetto_aggiunto', `Aggiunto "${nome}" (q.tà: ${quantita || 1})`, { oggetto_id: this.lastID, nome, quantita: quantita || 1 });
                     res.status(201).json({ id: this.lastID });
@@ -965,7 +965,7 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
         if (!oggetto) return res.status(404).json({ error: "Oggetto non trovato." });
 
         verificaAccessoBoxScrittura(oggetto.rif_box, req.user.id, res, () => {
-            const { nome, descrizione, tipo, fragile, quantita } = req.body;
+            const { nome, descrizione, tipo, fragile, quantita, foto } = req.body;
             const nuovaQuantita = quantita !== undefined ? Number(quantita) : (oggetto.quantita || 1);
             const delta = nuovaQuantita - (oggetto.quantita || 1);
             if (delta > 0) {
@@ -985,11 +985,11 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
                 db.run(
                     `UPDATE oggetti SET nome = COALESCE(?, nome), descrizione = COALESCE(?, descrizione),
                      tipo = COALESCE(?, tipo), fragile = COALESCE(?, fragile),
-                     quantita = COALESCE(?, quantita)
+                     quantita = COALESCE(?, quantita), foto = ?
                      WHERE id = ?`,
                     [nome || null, descrizione || null, tipo || null,
                      fragile !== undefined ? (fragile ? 1 : 0) : null,
-                     quantita || null, req.params.id],
+                     quantita || null, foto !== undefined ? foto : null, req.params.id],
                     function(err) {
                         if (err) return res.status(500).json({ error: err.message });
                         inserisciLogBox(oggetto.rif_box, 'oggetto_modificato', `Modificato "${nome || oggetto.nome}"`, { oggetto_id: Number(req.params.id) });

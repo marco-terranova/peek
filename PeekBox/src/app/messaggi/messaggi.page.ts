@@ -20,7 +20,7 @@ export class MessaggiPage implements OnInit {
 
   caricamento = true;
 
-  filtroCorrente: 'tutti' | 'sistema' | 'supporto' | 'condivisione' = 'tutti';
+  filtroCorrente: 'tutti' | 'sistema' | 'supporto' | 'condivisione' | 'geofence' = 'tutti';
   ricercaTesto = '';
   messaggioAperto: number | null = null;
 
@@ -74,8 +74,28 @@ export class MessaggiPage implements OnInit {
   private async caricaMessaggi() {
     this.caricamento = true;
     try {
-      const res = await firstValueFrom(this.dbService.getMessaggi(localStorage.getItem('utente_id')!));
-      this.messaggi = res.messaggi;
+      const [res, geofRes] = await Promise.all([
+        firstValueFrom(this.dbService.getMessaggi(localStorage.getItem('utente_id')!)),
+        firstValueFrom(this.dbService.getGeofenceNotifiche())
+      ]);
+      const geofenceMappati: Messaggio[] = (geofRes.notifiche || []).map(g => ({
+        id: g.id,
+        rif_utente: g.rif_utente,
+        tipo: 'geofence' as const,
+        mittente: 'Geofence',
+        oggetto: `Alert: ${g.nome_box}`,
+        corpo: `${g.messaggio} — Archivio: ${g.nome_archivio}`,
+        letto: g.letto,
+        importante: 0,
+        direzione: 0,
+        timestamp: g.timestamp,
+        geofence_id: g.id,
+        geofence_box_id: g.rif_box,
+        geofence_armadio_id: g.rif_armadio
+      }));
+      this.messaggi = [...res.messaggi, ...geofenceMappati].sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
     } catch (err) {
       console.error('[Messaggi] Errore caricamento:', err);
     }
@@ -89,14 +109,22 @@ export class MessaggiPage implements OnInit {
     }
     this.messaggioAperto = m.id;
     if (!m.letto) {
-      this.dbService.segnaMessaggioLetto(m.id).subscribe({
-        next: () => { m.letto = 1; },
-        error: (err) => console.error('[Messaggi] Errore segna letto:', err)
-      });
+      if (m.geofence_id) {
+        this.dbService.segnaGeofenceLetta(m.geofence_id).subscribe({
+          next: () => { m.letto = 1; },
+          error: (err) => console.error('[Messaggi] Errore segna geofence letto:', err)
+        });
+      } else {
+        this.dbService.segnaMessaggioLetto(m.id).subscribe({
+          next: () => { m.letto = 1; },
+          error: (err) => console.error('[Messaggi] Errore segna letto:', err)
+        });
+      }
     }
   }
 
   toggleImportante(m: Messaggio) {
+    if (m.geofence_id) return;
     this.dbService.toggleMessaggioImportante(m.id).subscribe({
       next: () => { m.importante = m.importante ? 0 : 1; },
       error: (err) => console.error('[Messaggi] Errore toggle importante:', err)
@@ -113,7 +141,10 @@ export class MessaggiPage implements OnInit {
           text: 'Elimina',
           role: 'destructive',
           handler: () => {
-            this.dbService.eliminaMessaggio(m.id).subscribe({
+            const obs = m.geofence_id
+              ? this.dbService.eliminaGeofenceNotifica(m.geofence_id)
+              : this.dbService.eliminaMessaggio(m.id);
+            obs.subscribe({
               next: () => {
                 this.messaggi = this.messaggi.filter(x => x.id !== m.id);
                 if (this.messaggioAperto === m.id) this.messaggioAperto = null;

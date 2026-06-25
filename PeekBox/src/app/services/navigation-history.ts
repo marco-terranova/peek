@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationHistoryService {
   private history: string[] = [];
 
-  private readonly rootRoutes = ['/home', '/search', '/box-ricevute', '/profilo'];
+  private readonly rootRoutes = ['/home', '/search', '/messaggi', '/profilo'];
 
   private readonly excludedRoutes = ['/benvenuto', '/login', '/registrazione'];
 

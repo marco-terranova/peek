@@ -84,7 +84,7 @@ export interface OggettiBoxCondivisaResponse {
 export interface Messaggio {
   id: number;
   rif_utente: number;
-  tipo: 'sistema' | 'supporto' | 'condivisione';
+  tipo: 'sistema' | 'supporto' | 'condivisione' | 'geofence';
   mittente: string;
   oggetto: string;
   corpo: string;
@@ -93,10 +93,32 @@ export interface Messaggio {
   archiviato?: number;
   direzione?: number;
   timestamp: string;
+  /** Se presente, il messaggio è una notifica geofence mappata */
+  geofence_id?: number;
+  geofence_box_id?: number;
+  geofence_armadio_id?: number;
 }
 
 export interface MessaggiResponse {
   messaggi: Messaggio[];
+}
+
+export interface GeofenceNotifica {
+  id: number;
+  rif_box: number;
+  rif_armadio: number;
+  rif_utente: number;
+  latitudine: number;
+  longitudine: number;
+  messaggio: string;
+  letto: number;
+  nome_archivio: string;
+  nome_box: string;
+  timestamp: string;
+}
+
+export interface GeofenceNotificheResponse {
+  notifiche: GeofenceNotifica[];
 }
 
 export interface RispostaRapida {

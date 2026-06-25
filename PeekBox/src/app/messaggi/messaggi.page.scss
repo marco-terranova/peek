@@ -200,6 +200,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &--sistema { background: rgba($blue, 0.08); svg { color: $blue; } }
   &--supporto { background: rgba($green, 0.08); svg { color: $green; } }
   &--condivisione { background: rgba($amber, 0.08); svg { color: $amber; } }
+  &--geofence { background: rgba(#f97316, 0.08); svg { color: #f97316; } }
   &--inviato { background: rgba($blue, 0.08); svg { color: $blue; } }
 }
 .mg-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }

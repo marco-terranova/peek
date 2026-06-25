@@ -592,6 +592,11 @@ app.get('/api/checkpoint/tutti-attivi/:utenteId', verificaToken, (req, res) => {
         WHERE b.moving_mode = 1
           AND b.data_eliminazione IS NULL
           AND (armadi.rif_utente = ? OR c.id IS NOT NULL)
+          AND cp.id = (
+              SELECT MAX(cp2.id)
+              FROM checkpoint_gps cp2
+              WHERE cp2.rif_box = b.id
+          )
         ORDER BY cp.timestamp DESC
     `;
     db.all(sql, [req.params.utenteId, req.params.utenteId], (err, rows) => {

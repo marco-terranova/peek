@@ -329,6 +329,18 @@ export class DatabaseService {
     return this.http.post(`${this.apiUrl}/messaggi`, data);
   }
 
+  getGeofenceNotifiche() {
+    return this.http.get<{ notifiche: any[] }>(`${this.apiUrl}/geofence/notifiche`);
+  }
+
+  segnaGeofenceLetta(id: number) {
+    return this.http.patch(`${this.apiUrl}/geofence/notifiche/${id}/letta`, {});
+  }
+
+  eliminaGeofenceNotifica(id: number) {
+    return this.http.delete(`${this.apiUrl}/geofence/notifiche/${id}`);
+  }
+
   inviaSegnalazione(data: { tipo: 'feedback' | 'report' | 'suggerimento'; titolo: string; descrizione?: string; priorita?: 'bassa' | 'media' | 'alta' }) {
     return this.http.post(`${this.apiUrl}/segnalazioni`, data);
   }

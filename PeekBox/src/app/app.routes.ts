@@ -44,16 +44,6 @@ export const routes: Routes = [
     loadComponent: () => import('./search/search.page').then(m => m.SearchPage)
   },
   {
-    path: 'gestione-spazi',
-    canActivate: [authGuard],
-    loadComponent: () => import('./gestione-spazi/gestione-spazi.page').then(m => m.GestioneSpaziPage)
-  },
-  {
-    path: 'box-ricevute',
-    canActivate: [authGuard],
-    loadComponent: () => import('./box-ricevute/box-ricevute.page').then(m => m.BoxRicevutePage)
-  },
-  {
     path: 'tracking-box',
     canActivate: [authGuard],
     loadComponent: () => import('./tracking-box/tracking-box.page').then(m => m.TrackingBoxPage)
@@ -62,11 +52,6 @@ export const routes: Routes = [
     path: 'transit-zone',
     canActivate: [authGuard],
     loadComponent: () => import('./transit-zone/transit-zone.page').then(m => m.TransitZonePage)
-  },
-  {
-    path: 'geofence-armadio/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./geofence-armadio/geofence-armadio.page').then(m => m.GeofenceArmadioPage)
   },
   {
     path: 'admin',

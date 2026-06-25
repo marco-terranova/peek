@@ -2,9 +2,3 @@
 node_modules/
 PeekBox/node_modules/
 PeekBox-Backend/node_modules/
-
-# Ignora il file del database SQLite per non caricare i tuoi dati privati online
-database.sqlite
-*.db
-*.sqlite
-.env

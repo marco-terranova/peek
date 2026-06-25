@@ -13,9 +13,9 @@ export class ExportService {
 
   async stampaEtichetteBox(boxId: number): Promise<void> {
     try {
-      const [resBox, resOgg] = await Promise.all([
-        firstValueFrom(this.dbService.getBoxSingola(boxId) as any),
-        firstValueFrom(this.dbService.getOggettiPerBox(boxId) as any),
+      const [resBox, resOgg]: [any, any] = await Promise.all([
+        firstValueFrom(this.dbService.getBoxSingola(boxId)),
+        firstValueFrom(this.dbService.getOggettiPerBox(boxId)),
       ]);
       const box = { ...(resBox?.box ?? {}), armadio: resBox?.box?.nome_armadio || '' };
       const oggetti: any[] = resOgg?.oggetti ?? resOgg ?? [];

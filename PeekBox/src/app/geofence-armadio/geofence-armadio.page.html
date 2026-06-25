@@ -23,7 +23,7 @@
       <div class="geo-section geo-section--map">
         <div #mapContainer class="leaflet-map"></div>
         <div class="map-overlay-bar">
-          <button class="btn-gps-main" (click)="usaPosizioneCorrcome()" [disabled]="isGettingGps">
+          <button class="btn-gps-main" (click)="usaPosizioneCorrente()" [disabled]="isGettingGps">
             <ion-spinner *ngIf="isGettingGps" name="crescent"></ion-spinner>
             <span *ngIf="!isGettingGps">USA GPS</span>
           </button>

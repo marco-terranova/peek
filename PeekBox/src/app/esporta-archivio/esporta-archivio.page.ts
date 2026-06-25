@@ -214,8 +214,14 @@ export class EsportaArchivioPage implements OnInit {
 
     try {
       if (this.exportFormat === 'json') {
-        const utenteId = localStorage.getItem('utente_id') || '';
-        this.exportService.downloadJson(utenteId);
+        const dati = await this.getDatiReali();
+        const jsonContent = this.exportService.generaReportJson(dati);
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        this.exportService.triggerDownload(
+          blob,
+          `peekbox_report_${this.exportScope}_${new Date().toISOString().slice(0, 10)}.json`,
+          'application/json'
+        );
 
       } else if (this.exportFormat === 'csv') {
         const dati = await this.getDatiReali();

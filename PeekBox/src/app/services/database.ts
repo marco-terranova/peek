@@ -57,6 +57,10 @@ export class DatabaseService {
     return this.http.post(`${this.apiUrl}/armadi`, { nome, rif_utente: utenteId });
   }
 
+  aggiornaArmadio(id: number, nome: string) {
+    return this.http.put(`${this.apiUrl}/armadi/${id}`, { nome });
+  }
+
   eliminaArmadio(id: number) {
     return this.http.delete(`${this.apiUrl}/armadi/${id}`);
   }
@@ -229,15 +233,6 @@ export class DatabaseService {
       { ruolo });
   }
 
-  getBoxArchivioCondiviso(armadioId: number) {
-    return this.http.get(`${this.apiUrl}/condivisioni/armadio/${armadioId}/box`);
-  }
-
-  getOggettiBoxCondivisa(boxId: number) {
-    return this.http.get<OggettiBoxCondivisaResponse>(
-      `${this.apiUrl}/condivisioni/box/${boxId}/oggetti`);
-  }
-
   getCondivisioniPending(utenteId: string) {
     return this.http.get<PendingResponse>(
       `${this.apiUrl}/condivisioni/pending/${utenteId}`);
@@ -310,25 +305,8 @@ export class DatabaseService {
   }
 
 
-  getExportJson(utenteId: string) {
-    return this.http.get(`${this.apiUrl}/export/json/${utenteId}`, { responseType: 'blob' });
-  }
-
-  getExportCsv(utenteId: string) {
-    return this.http.get(`${this.apiUrl}/export/csv/${utenteId}`, { responseType: 'blob' });
-  }
-
-  getEtichetteBox(boxId: number) {
-    return this.http.get(`${this.apiUrl}/export/etichette/${boxId}`);
-  }
-
-
   getMessaggi(utenteId: string) {
     return this.http.get<{ messaggi: any[] }>(`${this.apiUrl}/messaggi`);
-  }
-
-  getMessaggiArchiviati(utenteId: string) {
-    return this.http.get<{ messaggi: any[] }>(`${this.apiUrl}/messaggi/archiviati`);
   }
 
   getMessaggiNonLetto() {
@@ -343,10 +321,6 @@ export class DatabaseService {
     return this.http.patch(`${this.apiUrl}/messaggi/${id}/importante`, {});
   }
 
-  archiviaMessaggio(id: number) {
-    return this.http.patch(`${this.apiUrl}/messaggi/${id}/archivia`, {});
-  }
-
   eliminaMessaggio(id: number) {
     return this.http.delete(`${this.apiUrl}/messaggi/${id}`);
   }
@@ -357,19 +331,6 @@ export class DatabaseService {
 
   inviaSegnalazione(data: { tipo: 'feedback' | 'report' | 'suggerimento'; titolo: string; descrizione?: string; priorita?: 'bassa' | 'media' | 'alta' }) {
     return this.http.post(`${this.apiUrl}/segnalazioni`, data);
-  }
-
-
-  getRisposteRapide() {
-    return this.http.get<{ risposte: any[] }>(`${this.apiUrl}/risposte-rapide`);
-  }
-
-  creaRispostaRapida(data: { titolo: string; corpo: string }) {
-    return this.http.post(`${this.apiUrl}/risposte-rapide`, data);
-  }
-
-  eliminaRispostaRapida(id: number) {
-    return this.http.delete(`${this.apiUrl}/risposte-rapide/${id}`);
   }
 
 

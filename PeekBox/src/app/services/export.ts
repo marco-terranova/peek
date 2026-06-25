@@ -12,17 +12,19 @@ export class ExportService {
   constructor(private dbService: DatabaseService) {}
 
   async stampaEtichetteBox(boxId: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.dbService.getEtichetteBox(boxId).subscribe({
-        next: (data: any) => {
-          const { box, oggetti } = data;
-          const html = this.buildEtichetteHtml(box, oggetti);
-          this.apriFinestraStampa(html);
-          resolve();
-        },
-        error: (err: any) => reject(err)
-      });
-    });
+    try {
+      const [resBox, resOgg] = await Promise.all([
+        firstValueFrom(this.dbService.getBoxSingola(boxId) as any),
+        firstValueFrom(this.dbService.getOggettiPerBox(boxId) as any),
+      ]);
+      const box = { ...(resBox?.box ?? {}), armadio: resBox?.box?.nome_armadio || '' };
+      const oggetti: any[] = resOgg?.oggetti ?? resOgg ?? [];
+      const html = this.buildEtichetteHtml(box, oggetti);
+      this.apriFinestraStampa(html);
+    } catch (err) {
+      console.error('Errore stampa etichette:', err);
+      throw err;
+    }
   }
 
   private buildEtichetteHtml(box: any, oggetti: any[]): string {
@@ -272,26 +274,6 @@ export class ExportService {
   }
 
 
-  downloadCsv(utenteId: string): void {
-    this.dbService.getExportCsv(utenteId).subscribe({
-      next: (blob: Blob) => {
-        this.triggerDownload(blob, `peekbox-inventario.csv`, 'text/csv;charset=utf-8;');
-      },
-      error: (err: any) => console.error('Errore export CSV:', err)
-    });
-  }
-
-
-  downloadJson(utenteId: string): void {
-    this.dbService.getExportJson(utenteId).subscribe({
-      next: (blob: Blob) => {
-        this.triggerDownload(blob, `peekbox-inventario.json`, 'application/json');
-      },
-      error: (err: any) => console.error('Errore export JSON:', err)
-    });
-  }
-
-
   async stampaBox(boxId: number, elencoBox: any[]): Promise<void> {
     const resOgg: any = await firstValueFrom(
       this.dbService.getOggettiPerBox(boxId) as any
@@ -395,6 +377,10 @@ export class ExportService {
     });
   }
 
+
+  generaReportJson(dati: any[]): string {
+    return JSON.stringify(dati, null, 2);
+  }
 
   generaReportCsv(dati: any[]): string {
     const header = '"NOME CONTENITORE / BOX","ELENCO OGGETTI INTERNI","Q.TÀ","DATA CREAZIONE","ZONA / SPAZIO"';

@@ -113,8 +113,17 @@ export class GestioneSpaziPage implements OnInit {
   salvaModificaSpazio(spazio: any) {
     const nuovoNome = this.nomeModificaSpazio.trim();
     if (!nuovoNome) { this.annullaModifica(); return; }
-    spazio.nome = nuovoNome;
-    this.annullaModifica();
+    this.dbService.aggiornaArmadio(spazio.id, nuovoNome).subscribe({
+      next: () => {
+        spazio.nome = nuovoNome;
+        this.annullaModifica();
+        this.toast('Spazio rinominato!', 'success');
+      },
+      error: () => {
+        this.annullaModifica();
+        this.toast('Errore nel salvataggio del nome.', 'danger');
+      }
+    });
   }
 
   annullaModifica() {

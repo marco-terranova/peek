@@ -264,7 +264,7 @@ export class GeofenceArmadioPage implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  async usaPosizioneCorrcome() {
+  async usaPosizioneCorrente() {
     this.isGettingGps = true;
     try {
       const pos = await this.gpsService.getPosizione();

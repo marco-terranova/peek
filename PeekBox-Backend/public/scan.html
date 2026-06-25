@@ -550,7 +550,6 @@
 <script>
   const BOX_ID = new URLSearchParams(window.location.search).get('box') || 'DEMO-42';
   const TOKEN = new URLSearchParams(window.location.search).get('t') || null;
-  const API_BASE = 'https://api.peekbox.app';
 
   let gpsData = null;
   let gpsSectionOpen = false;
@@ -560,10 +559,10 @@
 
   async function loadBoxInfo() {
     try {
-      const res = await fetch(`${API_BASE}/api/public/box/${BOX_ID}`);
+      const res = await fetch(`/api/scan/${BOX_ID}?token=${TOKEN}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      document.getElementById('company-name').textContent = data.company || data.box?.nome || 'Azienda registrata';
+      document.getElementById('company-name').textContent = data.box?.proprietario_username || data.box?.nome || 'Azienda registrata';
       document.getElementById('box-name').textContent = data.box?.nome || BOX_ID;
     } catch {
       document.getElementById('company-name').textContent = '[Azienda registrata su PeekBox]';
@@ -656,7 +655,7 @@
     };
 
     try {
-      const res = await fetch(`${API_BASE}/api/public/segnalazione`, {
+      const res = await fetch(`/api/scan/segnalazione`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

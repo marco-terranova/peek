@@ -240,6 +240,20 @@ app.post('/api/armadi', verificaToken, (req, res) => {
     });
 });
 
+app.put('/api/armadi/:id', verificaToken, (req, res) => {
+    const { nome } = req.body;
+    if (!nome || !nome.trim()) return res.status(400).json({ error: "Il nome è obbligatorio." });
+    db.run(
+        'UPDATE armadi SET nome = ? WHERE id = ? AND rif_utente = ?',
+        [nome.trim(), req.params.id, req.user.id],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: "Spazio non trovato o non autorizzato." });
+            res.json({ message: "Spazio aggiornato!" });
+        }
+    );
+});
+
 app.delete('/api/armadi/:id', verificaToken, (req, res) => {
     const armadioId = req.params.id;
     db.get('SELECT id FROM armadi WHERE id = ? AND rif_utente = ?', [armadioId, req.user.id], (err, armadio) => {
@@ -856,6 +870,24 @@ app.delete('/api/categorie/:id', verificaToken, (req, res) => {
 });
 
 
+app.get('/api/oggetti/categorie/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+    db.all(
+        `SELECT DISTINCT o.tipo FROM oggetti o
+         JOIN box b ON o.rif_box = b.id
+         JOIN armadi a ON b.rif_armadio = a.id
+         WHERE a.rif_utente = ? AND o.tipo IS NOT NULL AND o.tipo != '' AND b.data_eliminazione IS NULL
+         ORDER BY o.tipo ASC`,
+        [req.params.utenteId],
+        (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            const categorie = (rows || []).map(r => r.tipo);
+            res.json({ categorie });
+        }
+    );
+});
+
 app.get('/api/oggetti/:boxId', verificaToken, (req, res) => {
     verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
         db.all('SELECT * FROM oggetti WHERE rif_box = ? AND data_eliminazione IS NULL', [req.params.boxId], (err, rows) => {
@@ -1133,16 +1165,48 @@ app.get('/api/scan/:boxId', (req, res) => {
         const decoded = jwt.verify(token, SECRET_KEY);
         if (String(decoded.box_id) !== String(req.params.boxId))
             return res.status(403).json({ error: "Token non valido per questa box." });
-        db.get('SELECT box.*, armadi.nome as nome_armadio FROM box JOIN armadi ON box.rif_armadio = armadi.id WHERE box.id = ?',
-            [req.params.boxId], (err, row) => {
-                if (err || !row) return res.status(404).json({ error: "Box non trovata." });
-                res.json({ box: row });
-            });
+        db.get(`
+            SELECT box.*, armadi.nome as nome_armadio, utenti.username as proprietario_username
+            FROM box
+            JOIN armadi ON box.rif_armadio = armadi.id
+            JOIN utenti ON armadi.rif_utente = utenti.id
+            WHERE box.id = ?
+        `, [req.params.boxId], (err, row) => {
+            if (err || !row) return res.status(404).json({ error: "Box non trovata." });
+            res.json({ box: row });
+        });
     } catch (e) {
         res.status(403).json({ error: "Token scaduto o non valido." });
     }
 });
 
+
+app.post('/api/scan/segnalazione', (req, res) => {
+    const { box_id, token, nota, gps, timestamp } = req.body;
+    if (!box_id || !token) return res.status(400).json({ error: "box_id e token obbligatori." });
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        if (String(decoded.box_id) !== String(box_id))
+            return res.status(403).json({ error: "Token non valido per questa box." });
+        db.run(
+            `INSERT INTO scan_segnalazioni (rif_box, token, nota, latitudine, longitudine, accuratezza, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [
+                box_id, token, nota || null,
+                gps?.latitudine || null, gps?.longitudine || null, gps?.accuratezza || null,
+                timestamp || new Date().toISOString()
+            ],
+            function (err) {
+                if (err) return res.status(500).json({ error: err.message });
+                inserisciLogBox(box_id, 'segnalazione_ospite', 'Nuova segnalazione ricevuta da ospite', {
+                    segnalazione_id: this.lastID, nota, gps
+                });
+                res.status(201).json({ id: this.lastID, message: "Segnalazione ricevuta!" });
+            }
+        );
+    } catch (e) {
+        res.status(403).json({ error: "Token scaduto o non valido." });
+    }
+});
 
 app.get('/api/condivisioni/pending/:utenteId', verificaToken, (req, res) => {
     db.get('SELECT COUNT(*) as count FROM condivisioni WHERE rif_ospite = ? AND stato = ?',
@@ -1516,6 +1580,16 @@ app.get('/api/admin/utenti/:id/dettaglio', verificaAdmin, (req, res) => {
                 });
             });
         });
+});
+
+app.delete('/api/admin/utenti/:id', verificaAdmin, (req, res) => {
+    if (Number(req.params.id) === Number(req.user.id))
+        return res.status(400).json({ error: "Non puoi eliminare il tuo stesso account." });
+    db.run('DELETE FROM utenti WHERE id = ?', [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        if (this.changes === 0) return res.status(404).json({ error: "Utente non trovato." });
+        res.json({ message: "Utente eliminato definitivamente!" });
+    });
 });
 
 

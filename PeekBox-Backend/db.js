@@ -213,7 +213,20 @@ db.serialize(() => {
      FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
    )`);
 
-  console.log("✅ Schema tabelle SQLite pronto (Svuotato dagli elementi predefiniti).");
+   db.run(`CREATE TABLE IF NOT EXISTS scan_segnalazioni (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     rif_box INTEGER NOT NULL,
+     token TEXT NOT NULL,
+     nota TEXT,
+     latitudine REAL,
+     longitudine REAL,
+     accuratezza REAL,
+     timestamp TEXT,
+     creato_il TEXT NOT NULL DEFAULT (datetime('now')),
+     FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
+   )`);
+
+   console.log("✅ Schema tabelle SQLite pronto (Svuotato dagli elementi predefiniti).");
   popolaCatalogoDefault();
   popolaDatiEsempio();
 });

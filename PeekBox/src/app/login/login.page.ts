@@ -56,13 +56,13 @@ export class LoginPage implements OnInit {
 
     const atIndex = e.indexOf('@');
     const lastAtIndex = e.lastIndexOf('@');
-    if (atIndex === -1) return false;               // manca @
-    if (lastAtIndex !== atIndex) return false;      // @ multiple
+    if (atIndex === -1) return false;              
+    if (lastAtIndex !== atIndex) return false;     
 
     const local = e.slice(0, atIndex);
     const domain = e.slice(atIndex + 1);
 
-    if (local.length === 0 || domain.length === 0) return false; // vuoto prima/dopo @
+    if (local.length === 0 || domain.length === 0) return false;
 
     if (local.length > 64) return false;
     if (domain.length > 255) return false;

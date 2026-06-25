@@ -162,7 +162,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   overflow: hidden;
   border: 1.5px solid rgba($blue, 0.15);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.09);
-  background: $page; // colore di sfondo finché le tile non caricano
+  background: $page;
 }
 
 .tb-geo-panel-wrap {

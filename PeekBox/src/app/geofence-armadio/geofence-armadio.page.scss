@@ -11,7 +11,7 @@ $font: 'Poppins', sans-serif;
 }
 
 .geo-content {
-  --background: #{$page} !important; // SFONDO CHIARO COME SCAN-QR
+  --background: #{$page} !important;
   --overflow: auto;
   position: relative;
   width: 100%;
@@ -29,7 +29,7 @@ $font: 'Poppins', sans-serif;
   transform: translate(-50%, -50%);
   
   z-index: 2;
-  background: $white !important; // FORZATURA BIANCO SOLIDO
+  background: $white !important;
   width: 90%;
   max-width: 460px;
   border-radius: 24px;
@@ -89,7 +89,7 @@ $font: 'Poppins', sans-serif;
     border-radius: 50px;
     background: rgba($red, 0.08);
     color: $red;
-    display: flex; // Allineamento icona e testo
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
@@ -217,7 +217,7 @@ $font: 'Poppins', sans-serif;
 
 .toggle-brand {
   --handle-background-checked: $white;
-  --background-checked: $blue !important; // AZZURRO PEEKBOX ESPLICITO
+  --background-checked: $blue !important;
 }
 
 .btns-row {
@@ -264,11 +264,25 @@ $font: 'Poppins', sans-serif;
 }
 
 
+@media (max-width: 640px) {
+  .geo-dialog {
+    width: 94%;
+    border-radius: 20px;
+  }
+  .geo-body {
+    padding: 16px;
+    gap: 16px;
+  }
+  .geo-section--map {
+    height: 200px;
+  }
+}
+
 @media (max-width: 399px) {
   .geo-dialog {
     width: 96%;
     border-radius: 18px;
-    transform: translate(-50%, -50%); // Mantiene il centramento
+    transform: translate(-50%, -50%);
   }
   .geo-header {
     padding: 14px 16px;
@@ -299,7 +313,7 @@ $font: 'Poppins', sans-serif;
   .geo-dialog {
     width: 80%;
     max-width: 520px;
-    transform: translate(-50%, -50%); // Mantiene il centramento
+    transform: translate(-50%, -50%);
   }
   .geo-body {
     padding: 24px;
@@ -318,6 +332,6 @@ $font: 'Poppins', sans-serif;
   .geo-dialog {
     width: 60%;
     max-width: 560px;
-    transform: translate(-50%, -50%); // Mantiene il centramento
+    transform: translate(-50%, -50%);
   }
 }

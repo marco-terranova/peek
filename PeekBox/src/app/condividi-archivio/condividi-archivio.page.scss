@@ -8,9 +8,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .ia-content { --background: #ffffff; }
 .ia-stage { width: 100%; position: relative; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BACK BUTTON
-// ═══════════════════════════════════════════════════════════════════
 .ia-back-btn {
   position: fixed; top: 28px; left: 28px; z-index: 100;
   display: flex; align-items: center; gap: 6px;
@@ -25,9 +23,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -48,9 +44,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .about-content-full { width: 100%; display: flex; flex-direction: column; gap: 20px; }
 .about-content-full .ac-title { margin: 0 0 4px; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TEXT STYLES
-// ═══════════════════════════════════════════════════════════════════
 .ac-title {
   font-family: 'Outfit', sans-serif; font-weight: 900;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
@@ -67,9 +61,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   background: $green;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TIPS CARD (reuse from informazione-account)
-// ═══════════════════════════════════════════════════════════════════
 .ia-tips-card {
   max-width: 700px;
   margin: 0 auto;
@@ -96,9 +88,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   margin: 0 0 40px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FORM — condividi
-// ═══════════════════════════════════════════════════════════════════
 .ca-invite-form {
   display: flex; flex-direction: column; gap: 16px;
   text-align: left;
@@ -155,9 +145,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ROLE TOGGLE
-// ═══════════════════════════════════════════════════════════════════
 .ca-role-toggle {
   display: flex; gap: 0;
   background: $page; border: 1px solid rgba(125,199,64,0.2);
@@ -180,9 +168,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:not(.is-active):hover { background: rgba(125,199,64,0.06); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  INVITE BUTTON
-// ═══════════════════════════════════════════════════════════════════
 .ca-inv-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 16px 32px; min-width: 140px; flex-shrink: 0;
@@ -197,9 +183,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:disabled { opacity: 0.4; cursor: not-allowed; &:hover { transform: none; box-shadow: none; } }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BADGE
-// ═══════════════════════════════════════════════════════════════════
 .ca-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 4px 12px; border-radius: 100px;
@@ -212,9 +196,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ARCHIVIO CARD (ospiti section)
-// ═══════════════════════════════════════════════════════════════════
 .ca-arch-card {
   text-align: left;
   padding: 20px 24px;
@@ -245,9 +227,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   background: rgba(74,122,148,0.06); padding: 4px 12px; border-radius: 100px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  OSPITE ROW
-// ═══════════════════════════════════════════════════════════════════
 .ca-ospite-row {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 0;
@@ -308,9 +288,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 
 
-// ═══════════════════════════════════════════════════════════════════
 //  SHARED ARCHIVE CARD (condivisi con te)
-// ═══════════════════════════════════════════════════════════════════
 .ca-sha-card {
   text-align: left;
   display: flex; align-items: center; gap: 14px;
@@ -341,9 +319,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 .ca-sha-armadio { display: block; font-family: 'DM Sans', sans-serif; font-size: 0.72rem; color: $mid; margin-top: 2px; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  LOADING / EMPTY
-// ═══════════════════════════════════════════════════════════════════
 .ca-loading {
   text-align: center; padding: 24px;
   font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: $mid;
@@ -354,9 +330,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ac-text { margin: 0; text-align: center; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 48px; padding: 60px 28px; }
   .ac-text { text-align: center; }

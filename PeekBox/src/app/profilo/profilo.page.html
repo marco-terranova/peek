@@ -2,7 +2,6 @@
 
   <div class="prf-stage">
 
-    <!-- ═══════════════════════════════ SEZIONE 1: DATI + CONDIVISIONI ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
       <button class="ia-back-btn" (click)="vai('/home')" style="position:absolute;top:28px;left:28px;">
@@ -70,7 +69,6 @@
 
     <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════ SEZIONE 2: TRACKING ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
       <div class="about-inner about-inner--alt">
@@ -141,7 +139,6 @@
 
     <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════ SEZIONE 3: CESTINO ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
       <div class="about-inner">
@@ -200,7 +197,6 @@
 
     <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════ SEZIONE 4: STATS ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
       <div class="about-inner about-inner--alt">
@@ -249,7 +245,6 @@
 
     <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════ SEZIONE 4.5: POSIZIONE BOX ══════ -->
     <section class="about-section">
       <div class="about-bg"></div>
       <div class="about-inner about-inner--alt">
@@ -285,7 +280,6 @@
           <div class="av-frame">
             <div class="pp-pos-card">
 
-              <!-- Lista posizioni esistenti -->
               <div class="pp-pos-lista" *ngIf="posizioni.length > 0">
                 <div class="pp-pos-item" *ngFor="let p of posizioni">
                   <div class="pp-pos-item-info">
@@ -301,7 +295,6 @@
                 Nessuna posizione. Creane una qui sotto.
               </p>
 
-              <!-- Box in attesa -->
               <div class="pp-pos-attesa-wrap" *ngIf="boxOrfane.length > 0">
                 <div class="pp-pos-attesa-header">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -321,7 +314,6 @@
                 </div>
               </div>
 
-              <!-- Pulsante / Form creazione -->
               <ng-container *ngIf="!apertoCrea; else createForm">
                 <button class="ac-btn pp-pos-btn pp-pos-btn--add" (click)="apriCrea()">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -348,7 +340,68 @@
 
     <div class="section-divider"></div>
 
-    <!-- ═══════════════════════════════ SEZIONE 5: PRIVACY ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner">
+        <div class="about-visual">
+          <div class="av-frame">
+            <div class="pp-pos-card">
+              <div class="pp-pos-lista" *ngIf="categorie.length > 0">
+                <div class="pp-pos-item" *ngFor="let cat of categorie">
+                  <div class="pp-pos-item-info">
+                    <span class="pp-pos-item-nome">{{ cat.nome }}</span>
+                  </div>
+                  <button class="pp-pos-item-del" (click)="eliminaCategoriaConferma(cat)" title="Elimina categoria">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+              <p class="pp-pos-empty" *ngIf="categorie.length === 0">
+                Nessuna categoria creata.
+              </p>
+
+              <ng-container *ngIf="!apertoCreaCategoria; else createCatForm">
+                <button class="ac-btn pp-pos-btn pp-pos-btn--add" (click)="apertoCreaCategoria = true; nuovoNomeCat = ''">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Nuova categoria
+                </button>
+              </ng-container>
+              <ng-template #createCatForm>
+                <div class="pp-pos-create">
+                  <input type="text" class="pp-pos-input" [(ngModel)]="nuovoNomeCat" placeholder="Nome categoria (es. Elettronica)" />
+                  <div class="pp-pos-create-actions">
+                    <button class="ac-btn pp-pos-btn" (click)="apertoCreaCategoria = false">Annulla</button>
+                    <button class="ac-btn pp-pos-btn pp-pos-btn--set" [disabled]="!nuovoNomeCat.trim()" (click)="creaCategoriaProfilo()">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      Crea
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+        <div class="about-content">
+          <h2 class="ac-title">Gestione Categorie</h2>
+          <p class="ac-text">
+            Le categorie ti permettono di classificare gli oggetti all&rsquo;interno
+            delle tue box. Puoi creare categorie personalizzate come &ldquo;Elettronica&rdquo;,
+            &ldquo;Vestiti&rdquo;, &ldquo;Documenti&rdquo; e assegnarle quando aggiungi
+            un oggetto. Se elimini una categoria, gli oggetti che la utilizzavano
+            perderanno semplicemente la classificazione senza essere cancellati.
+          </p>
+          <div class="pp-pos-stats">
+            <div class="pp-pos-stat">
+              <span class="pp-pos-stat-val">{{ categorie.length }}</span>
+              <span class="pp-pos-stat-lbl">Categorie</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
     <section class="about-section">
       <div class="about-bg"></div>
       <div class="about-inner">
@@ -403,7 +456,6 @@
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════ SEZIONE 6: ADMIN ══════ -->
     <ng-container *ngIf="isAdmin">
       <div class="section-divider"></div>
       <section class="about-section">
@@ -456,6 +508,33 @@
         </div>
       </section>
     </ng-container>
+
+    <div class="section-divider"></div>
+
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <h2 class="ac-title">Esporta il tuo archivio</h2>
+          <div class="ar-row">
+            <div class="ar-text">
+              <p class="ac-text">
+                Scarica una copia completa di tutto il tuo account PeekBox: box, oggetti,
+                categorie, spazi e impostazioni. Puoi esportare in formato JSON, CSV o PDF
+                per avere sempre un backup personale dei tuoi dati oppure per trasferirli
+                su un altro dispositivo. L&rsquo;esportazione include tutte le informazioni
+                associate alle tue box, compresi oggetti, note, foto e cronologia degli
+                spostamenti.
+              </p>
+            </div>
+            <button class="ac-btn ar-btn" (click)="vai('/esporta-archivio')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Esporta archivio
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="section-divider"></div>
 

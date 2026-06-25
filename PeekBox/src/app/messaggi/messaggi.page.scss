@@ -138,7 +138,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:hover { background: rgba(74,122,148,0.15); transform: none; box-shadow: none; }
 }
 
-// ─── Messaggi specific styles ─────────────────────────────────
 
 .mg-filtri-wrap {
   display: flex;
@@ -216,7 +215,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .mg-card-corpo-full { font-family: "DM Sans", sans-serif; font-size: 0.82rem; color: $mid; line-height: 1.6; white-space: pre-wrap; text-align: left; }
 .mg-card-azioni { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; justify-content: flex-start; }
 
-// ─── Star button ────────────────────────────────────────────────
 .mg-star-btn {
   display: flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; border: none; border-radius: 6px;

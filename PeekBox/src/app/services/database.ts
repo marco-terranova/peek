@@ -23,7 +23,6 @@ export class DatabaseService {
 
   constructor(private http: HttpClient) { }
 
-  // ─── AUTENTICAZIONE ───────────────────────────────────────
 
   registraUtente(username: string, email: string, pass: string, tipo_profilo: 'personal' | 'business' = 'personal') {
     return this.http.post(`${this.apiUrl}/registrazione`, {
@@ -33,11 +32,6 @@ export class DatabaseService {
 
   loginUtente(email: string, pass: string) {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password: pass });
-  }
-
-  aggiornaTipoProfilo(utenteId: string, tipo_profilo: 'personal' | 'business') {
-    return this.http.put(`${this.apiUrl}/utenti/${utenteId}/profilo`,
-      { tipo_profilo });
   }
 
   aggiornaProfiloUtente(utenteId: string, dati: { nome?: string; cognome?: string; email?: string }) {
@@ -54,7 +48,6 @@ export class DatabaseService {
     );
   }
 
-  // ─── ARMADI ───────────────────────────────────────────────
 
   getArmadi(utenteId: string) {
     return this.http.get(`${this.apiUrl}/armadi/${utenteId}`);
@@ -76,7 +69,6 @@ export class DatabaseService {
     return this.http.put(`${this.apiUrl}/box/${boxId}/rialloca`, { rif_armadio });
   }
 
-  // ─── BOX ──────────────────────────────────────────────────
 
   getBoxSingola(id: number) {
     return this.http.get(`${this.apiUrl}/box/singola/${id}`);
@@ -92,10 +84,6 @@ export class DatabaseService {
 
   updatePreferito(id: number, is_preferito: boolean) {
     return this.http.put(`${this.apiUrl}/box/preferito/${id}`, { is_preferito });
-  }
-
-  updateMovingMode(id: number, moving_mode: boolean) {
-    return this.http.put(`${this.apiUrl}/box/moving-mode/${id}`, { moving_mode });
   }
 
   eliminaBox(id: number) {
@@ -114,7 +102,6 @@ export class DatabaseService {
     return this.http.get<BoxEliminateResponse>(`${this.apiUrl}/box/eliminate/${utenteId}`);
   }
 
-  // ─── CHECKPOINT GPS ───────────────────────────────────────
 
   salvaCheckpoint(rif_box: number, latitudine: number, longitudine: number, accuratezza?: number, label?: string) {
     return this.http.post(`${this.apiUrl}/checkpoint`, {
@@ -138,20 +125,6 @@ export class DatabaseService {
     return this.http.get(`${this.apiUrl}/checkpoint/tutti-attivi/${utenteId}`);
   }
 
-  eliminaCheckpoints(boxId: number) {
-    return this.http.delete(`${this.apiUrl}/checkpoint/${boxId}`);
-  }
-
-  aggiornaCheckpointLabel(id: number, boxId: number, label: string) {
-    return this.http.patch(`${this.apiUrl}/checkpoint/${id}/label`, { label });
-  }
-
-  // ─── SEGNALAZIONI GUEST ───────────────────────────────────
-
-  getSegnalazioni(boxId: number) {
-    return this.http.get(`${this.apiUrl}/box/${boxId}/segnalazioni`);
-  }
-
   getQrToken(boxId: number) {
     return this.http.get(`${this.apiUrl}/box/${boxId}/qr-token`);
   }
@@ -161,13 +134,7 @@ export class DatabaseService {
     return `${base}/scan?box=${boxId}&t=${token}`;
   }
 
-  // ─── DASHBOARD BUSINESS ───────────────────────────────────
 
-  getDashboardBusiness(utenteId: string) {
-    return this.http.get(`${this.apiUrl}/dashboard/business/${utenteId}`);
-  }
-
-  // ─── OGGETTI ──────────────────────────────────────────────
 
   getOggettiPerBox(boxId: number) {
     return this.http.get(`${this.apiUrl}/oggetti/${boxId}`);
@@ -204,46 +171,20 @@ export class DatabaseService {
     return this.http.delete(`${this.apiUrl}/box/${boxId}/oggetti`);
   }
 
-  // ─── CATALOGO ELEMENTI ────────────────────────────────────
 
-  getCatalogoCategorie() {
-    return this.http.get(`${this.apiUrl}/catalogo/categorie`);
+  getCategorie() {
+    return this.http.get(`${this.apiUrl}/categorie`);
   }
 
   creaCategoria(nome: string) {
-    return this.http.post(`${this.apiUrl}/catalogo/categorie`, { nome });
+    return this.http.post(`${this.apiUrl}/categorie`, { nome });
   }
 
-  getCatalogoElementi(filtri: { q?: string; categoria?: string; tag?: string; sort?: string } = {}) {
-    const params = new URLSearchParams();
-    if (filtri.q) params.set('q', filtri.q);
-    if (filtri.categoria) params.set('categoria', filtri.categoria);
-    if (filtri.tag) params.set('tag', filtri.tag);
-    if (filtri.sort) params.set('sort', filtri.sort);
-    const query = params.toString();
-    const url = query ? `${this.apiUrl}/catalogo/elementi?${query}` : `${this.apiUrl}/catalogo/elementi`;
-    return this.http.get(url);
+  eliminaCategoria(id: number) {
+    return this.http.delete(`${this.apiUrl}/categorie/${id}`);
   }
 
-  aggiungiElementoCatalogo(boxId: number, catalogoId: number, quantita: number = 1) {
-    return this.http.post(
-      `${this.apiUrl}/box/${boxId}/catalogo/${catalogoId}/aggiungi`,
-      { quantita }
-    );
-  }
 
-  // ─── TRANSIT ZONE ─────────────────────────────────────────
-
-  spostaOggetti(oggettiIds: number[], boxDestinazioneId: number) {
-    const idsPuliti = oggettiIds.map(Number).filter(id => !isNaN(id) && id > 0);
-    const destId    = Number(boxDestinazioneId);
-    if (idsPuliti.length === 0) throw new Error('ID oggetti non validi');
-    if (!destId || isNaN(destId) || destId <= 0) throw new Error('ID box destinazione non valido');
-    return this.http.put(
-      `${this.apiUrl}/oggetti/sposta`,
-      { oggetti_ids: idsPuliti, box_destinazione_id: destId }
-    );
-  }
 
   spostaOggetto(idOgg: number, boxDestinazioneId: number) {
     const id   = Number(idOgg);
@@ -256,21 +197,6 @@ export class DatabaseService {
     );
   }
 
-  // ─── TIPOLOGIE ────────────────────────────────────────────
-
-  getTipologie(utenteId: string) {
-    return this.http.get(`${this.apiUrl}/tipologie/${utenteId}`);
-  }
-
-  creaTipologia(nome: string, utenteId: string) {
-    return this.http.post(`${this.apiUrl}/tipologie`, { nome, rif_utente: utenteId });
-  }
-
-  eliminaTipologia(id: number) {
-    return this.http.delete(`${this.apiUrl}/tipologie/${id}`);
-  }
-
-  // ─── RICERCA ──────────────────────────────────────────────
 
   cercaOggetti(termine: string) {
     return this.http.get(
@@ -278,7 +204,6 @@ export class DatabaseService {
     );
   }
 
-  // ─── CONDIVISIONI ARCHIVIO (RBAC) ─────────────────────────
 
   condividiArchivio(box_id: number, email_ospite: string, ruolo: 'viewer' | 'editor') {
     return this.http.post(`${this.apiUrl}/condivisioni`,
@@ -338,7 +263,6 @@ export class DatabaseService {
       {});
   }
 
-  // ─── GEOFENCING ───────────────────────────────────────────
 
   impostaGeofence(armadio_id: number, latitudine: number, longitudine: number, raggio_m: number = 100, attivo: boolean = true) {
     return this.http.post(`${this.apiUrl}/geofence`,
@@ -358,15 +282,6 @@ export class DatabaseService {
       { armadio_id, latitudine, longitudine });
   }
 
-  salvaCheckpointSicuro(rif_box: number, latitudine: number, longitudine: number, accuratezza?: number, label?: string) {
-    return this.http.post(`${this.apiUrl}/checkpoint/sicuro`,
-      { rif_box, latitudine, longitudine, accuratezza, label });
-  }
-
-  getBoxLog(boxId: number) {
-    return this.http.get(`${this.apiUrl}/box/${boxId}/log`);
-  }
-
   getNotificheGeofence() {
     return this.http.get(`${this.apiUrl}/geofence/notifiche`);
   }
@@ -384,7 +299,6 @@ export class DatabaseService {
     return this.http.get(`${this.apiUrl}/geofence/${armadioId}/checkpoints`);
   }
 
-  // ─── GEOFENCE PER CHECKPOINT ────────────────────────────
 
   impostaGeofenceCheckpoint(checkpoint_id: number, latitudine: number, longitudine: number, raggio_m: number = 100, attivo: boolean = true) {
     return this.http.post(`${this.apiUrl}/geofence-checkpoint`, { checkpoint_id, latitudine, longitudine, raggio_m, attivo });
@@ -394,15 +308,10 @@ export class DatabaseService {
     return this.http.get(`${this.apiUrl}/geofence-checkpoint/${checkpointId}`);
   }
 
-  eliminaGeofenceCheckpoint(checkpointId: number) {
-    return this.http.delete(`${this.apiUrl}/geofence-checkpoint/${checkpointId}`);
-  }
-
   getGeofenceCheckpointUtente(utenteId: string) {
     return this.http.get(`${this.apiUrl}/geofence-checkpoint/utente/${utenteId}`);
   }
 
-  // ─── EXPORT ───────────────────────────────────────────────
 
   getExportJson(utenteId: string) {
     return this.http.get(`${this.apiUrl}/export/json/${utenteId}`, { responseType: 'blob' });
@@ -416,7 +325,6 @@ export class DatabaseService {
     return this.http.get(`${this.apiUrl}/export/etichette/${boxId}`);
   }
 
-  // ─── MESSAGGI ─────────────────────────────────────────────
 
   getMessaggi(utenteId: string) {
     return this.http.get<{ messaggi: any[] }>(`${this.apiUrl}/messaggi`);
@@ -454,7 +362,6 @@ export class DatabaseService {
     return this.http.post(`${this.apiUrl}/segnalazioni`, data);
   }
 
-  // ─── RISPOSTE RAPIDE ──────────────────────────────────────
 
   getRisposteRapide() {
     return this.http.get<{ risposte: any[] }>(`${this.apiUrl}/risposte-rapide`);
@@ -468,7 +375,6 @@ export class DatabaseService {
     return this.http.delete(`${this.apiUrl}/risposte-rapide/${id}`);
   }
 
-  // ─── ADMIN ────────────────────────────────────────────────
 
   adminGetUtenti() {
     return this.http.get(`${this.apiUrl}/admin/utenti`);

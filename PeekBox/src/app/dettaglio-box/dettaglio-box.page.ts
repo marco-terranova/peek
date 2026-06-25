@@ -101,7 +101,7 @@ export class DettaglioBoxPage implements OnInit {
   }
 
   private caricaCategorie() {
-    this.dbService.getCatalogoCategorie().subscribe({
+    this.dbService.getCategorie().subscribe({
       next: (res: any) => { this.categorie = res.categorie || []; },
       error: () => {}
     });
@@ -300,7 +300,35 @@ export class DettaglioBoxPage implements OnInit {
     await alert.present();
   }
 
-  async apriSceltaFoto() {
+  @ViewChild('cameraInput') cameraInput!: ElementRef<HTMLInputElement>;
+
+  async scattaFoto() {
+    try {
+      const { Camera, CameraSource, CameraResultType } = await import('@capacitor/camera');
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Base64, source: CameraSource.Camera, quality: 90,
+        correctOrientation: true, width: 800
+      });
+      if (photo.base64String) { this.formFoto = `data:image/jpeg;base64,${photo.base64String}`; }
+    } catch {
+      if (this.cameraInput?.nativeElement) {
+        this.cameraInput.nativeElement.value = '';
+        this.cameraInput.nativeElement.click();
+      }
+    }
+  }
+
+  onCameraCapture(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => { this.formFoto = e.target?.result as string; };
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
+
+  async apriGalleria() {
     try {
       const { Camera, CameraSource, CameraResultType } = await import('@capacitor/camera');
       const photo = await Camera.getPhoto({

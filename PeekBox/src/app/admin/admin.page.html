@@ -24,7 +24,6 @@
   </div>
   <div class="admin-stage">
 
-    <!-- ═══════════════════════════════════ STATS DASHBOARD ══════ -->
     <section class="ad-section">
       <div class="ad-section-inner">
         <div class="ad-section-body">
@@ -72,7 +71,6 @@
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════ TAB BUTTONS ══════ -->
     <div class="admin-tabs">
       <button class="admin-tab" [class.active]="tab === 'utenti'" (click)="tab = 'utenti'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -84,7 +82,6 @@
       </button>
     </div>
 
-    <!-- ═══════════════════════════════════ TAB: UTENTI ══════ -->
     <div *ngIf="tab === 'utenti'" class="admin-tab-content">
 
       <div class="admin-tools-bar">
@@ -167,7 +164,6 @@
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════ TAB: SEGNALAZIONI ══════ -->
     <div *ngIf="tab === 'segnalazioni'" class="admin-tab-content">
 
       <div class="admin-tools-bar">
@@ -189,16 +185,6 @@
         <div class="admin-seg-card" *ngFor="let s of segnalazioni">
           <div class="admin-seg-header">
             <div class="admin-seg-meta">
-              <span class="admin-seg-tipo" [class.feedback]="s.tipo === 'feedback'"
-                    [class.report]="s.tipo === 'report'"
-                    [class.suggerimento]="s.tipo === 'suggerimento'">
-                {{ s.tipo }}
-              </span>
-              <span class="admin-seg-priorita" [class.alta]="s.priorita === 'alta'"
-                    [class.media]="s.priorita === 'media'"
-                    [class.bassa]="s.priorita === 'bassa'">
-                {{ s.priorita }}
-              </span>
               <span class="admin-seg-stato" [class.nuova]="s.stato === 'nuova'"
                     [class.in_lavorazione]="s.stato === 'in_lavorazione'"
                     [class.risolta]="s.stato === 'risolta'"

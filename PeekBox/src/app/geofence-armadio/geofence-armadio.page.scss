@@ -266,11 +266,8 @@ $font: 'Poppins', sans-serif;
   p { margin: 0; font-size: 0.65rem; color: $mid; line-height: 1.4; }
 }
 
-// ═══════════════════════════════════════════════════════════════
 // RESPONSIVE — Adattamento adattivo per tutte le dimensioni
-// ═══════════════════════════════════════════════════════════════
 
-// ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .geo-dialog {
     width: 96%;
@@ -302,7 +299,6 @@ $font: 'Poppins', sans-serif;
   }
 }
 
-// ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .geo-dialog {
     width: 80%;
@@ -322,7 +318,6 @@ $font: 'Poppins', sans-serif;
   }
 }
 
-// ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .geo-dialog {
     width: 60%;

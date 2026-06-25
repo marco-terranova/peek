@@ -264,7 +264,6 @@ export class BoxRicevutePage implements OnInit {
     });
   }
 
-  // ─── GESTIONE RICHIESTE ──────────────────────────────────────────────────
 
   async accetta(condivisione: any) {
     const alert = await this.alertCtrl.create({
@@ -324,7 +323,6 @@ export class BoxRicevutePage implements OnInit {
     });
   }
 
-  // ─── INVITO RAPIDO GUEST ──────────────────────────────────────────────────
 
   async invitaNuovoOspite() {
     if (!this.armadioSelezionato) { this.mostraToast('Seleziona un archivio da condividere.', 'warning'); return; }
@@ -374,7 +372,6 @@ export class BoxRicevutePage implements OnInit {
     await alert.present();
   }
 
-  // ─── GESTIONE NOTIFICHE GEOFENCE ──────────────────────────────────────────
 
   segnaComeLetta(notifica: any) {
     this.dbService.segnaNotificaComeLetta(notifica.id).subscribe({
@@ -401,7 +398,6 @@ export class BoxRicevutePage implements OnInit {
     this.segnaComeLetta(notifica);
   }
 
-  // ─── NAVIGAZIONE & HELPERS ────────────────────────────────────────────────
 
   apriArchivioCondiviso(archivio: any) { this.router.navigate(['/home']); }
 

@@ -14,7 +14,6 @@
 <ion-content>
   <div class="page-wrapper">
 
-    <!-- Aggiungi nuovo spazio -->
     <div class="add-space-row">
       <input
         type="text"
@@ -28,20 +27,17 @@
       </button>
     </div>
 
-    <!-- Loading -->
     <div *ngIf="isLoadingSpazi" class="loading-state">
       <div class="spinner"></div>
       <p>Caricamento spazi...</p>
     </div>
 
-    <!-- Empty -->
     <div *ngIf="!isLoadingSpazi && gliArmadi.length === 0 && boxOrfane.length === 0" class="empty-state">
       <div class="empty-icon">📦</div>
       <h3>Nessuno spazio creato</h3>
       <p>Crea il tuo primo spazio qui sopra per iniziare a organizzare le box.</p>
     </div>
 
-    <!-- ═══════ BOX IN ATTESA DI RIALLOCAZIONE ═══════ -->
     <div *ngIf="!isLoadingSpazi && boxOrfane.length > 0" class="gs-orfane-section">
       <div class="gs-orfane-header">
         <ion-icon name="alert-circle-outline"></ion-icon>
@@ -70,11 +66,9 @@
       </div>
     </div>
 
-    <!-- ═══════ LISTA SPAZI ═══════ -->
     <div *ngIf="!isLoadingSpazi && gliArmadi.length > 0" class="spaces-list">
       <div *ngFor="let spazio of gliArmadi" class="space-card">
 
-        <!-- View mode -->
         <div *ngIf="spazioInModifica !== spazio.id" class="space-card-view">
           <div class="space-icon-wrap">
             <ion-icon name="archive-outline"></ion-icon>
@@ -93,7 +87,6 @@
           </div>
         </div>
 
-        <!-- Edit mode -->
         <div *ngIf="spazioInModifica === spazio.id" class="space-card-edit">
           <input
             type="text"
@@ -117,7 +110,6 @@
   </div>
 </ion-content>
 
-<!-- FLOATING BOTTOM NAV -->
 <div class="floating-nav">
   <div class="nav-glow"></div>
 

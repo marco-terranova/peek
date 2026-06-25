@@ -1,37 +1,22 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar class="peek-toolbar">
-    <div class="header-inner">
-      <div class="header-top">
-        <div class="header-greet">
-          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" />
-          <h1 class="header-greeting">ESPORTA <span class="nome-verde">ARCHIVIO</span></h1>
-        </div>
-        <div class="header-actions">
-          <button class="btn-print-box" *ngIf="exportScope === 'singola' && selectedBoxId"
-                  (click)="stampaBox()" title="Stampa contenuto box">
-            <ion-icon name="print-outline"></ion-icon>
-            <span>Stampa</span>
-          </button>
-          <button class="btn-export-top-right"
-                  [disabled]="!isFormValid() || isExporting"
-                  (click)="generaReport()">
-            <ion-icon name="sparkles" *ngIf="!isExporting"></ion-icon>
-            <ion-spinner name="crescent" *ngIf="isExporting"></ion-spinner>
-            <span>{{ isExporting ? 'Generazione...' : 'Genera Report' }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="bg-soft">
+<ion-content [fullscreen]="true" class="bg-soft">
   <div class="page-wrapper">
 
-    <!-- ── Plancia 2 colonne (nuova griglia grande) ── -->
+    <button class="ea-back-btn" (click)="navTo('/profilo')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      <span>Torna indietro</span>
+    </button>
+
+    <div class="ea-header">
+      <h1 class="ea-title">Esporta Archivio</h1>
+      <p class="ea-sub">Scarica una copia completa dei tuoi dati PeekBox</p>
+    </div>
+
     <div class="export-plancia-grid">
 
-      <!-- COLONNA SX: filtri scope -->
       <div class="quadrante-esporta-card">
         <div class="panel-header">
           <ion-icon name="filter-circle-outline" class="text-azzurro"></ion-icon>
@@ -81,7 +66,6 @@
         </div>
       </div>
 
-      <!-- COLONNA DX: selezione formato -->
       <div class="quadrante-esporta-card">
         <div class="panel-header">
           <ion-icon name="document-text-outline" class="text-verde"></ion-icon>
@@ -116,38 +100,15 @@
 
     </div>
 
+    <div class="ea-actions">
+<button class="ea-btn-genera"
+              [disabled]="!isFormValid() || isExporting"
+              (click)="generaReport()">
+        <ion-icon name="sparkles" *ngIf="!isExporting"></ion-icon>
+        <ion-spinner name="crescent" *ngIf="isExporting"></ion-spinner>
+        <span>{{ isExporting ? 'Generazione...' : 'Genera Report' }}</span>
+      </button>
+    </div>
+
   </div>
 </ion-content>
-
-<!-- FLOATING BOTTOM NAV — identica alla homepage -->
-<div class="floating-nav">
-  <div class="nav-glow"></div>
-
-  <div class="nav-item" (click)="vaiHome()">
-    <ion-icon name="home"></ion-icon>
-    <span>Home</span>
-  </div>
-
-  <div class="nav-item" (click)="navTo('/box-ricevute')">
-    <ion-icon name="chatbubbles-outline"></ion-icon>
-    <span>Avvisi</span>
-  </div>
-
-  <div class="nav-fab-wrapper">
-    <button class="nav-fab" (click)="navTo('/crea-box')">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </div>
-
-  <div class="nav-item" (click)="navTo('/scan-qr')">
-    <ion-icon name="qr-code-outline"></ion-icon>
-    <span>Scan</span>
-  </div>
-
-  <div class="nav-item" (click)="navTo('/area-personale')">
-    <div class="avatar-circle-nav">
-      {{ nomeUtente ? nomeUtente.charAt(0).toUpperCase() : 'U' }}
-    </div>
-    <span>Profilo</span>
-  </div>
-</div>

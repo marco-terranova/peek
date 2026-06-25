@@ -54,7 +54,6 @@ export class LoginPage implements OnInit {
     const e = email.trim();
     if (!e) return false;
 
-    // ── Struttura base ───────────────────────────────────
     const atIndex = e.indexOf('@');
     const lastAtIndex = e.lastIndexOf('@');
     if (atIndex === -1) return false;               // manca @
@@ -65,38 +64,28 @@ export class LoginPage implements OnInit {
 
     if (local.length === 0 || domain.length === 0) return false; // vuoto prima/dopo @
 
-    // ── Lunghezza ────────────────────────────────────────
     if (local.length > 64) return false;
     if (domain.length > 255) return false;
     if (e.length > 254) return false;
 
-    // ── Parte locale ─────────────────────────────────────
     if (local.startsWith('.') || local.endsWith('.')) return false;
     if (local.includes('..')) return false;
 
-    // Caratteri non permessi fuori da virgolette
     const localInvalid = /[<>()\[\]\\,;:\s"]/;
     if (localInvalid.test(local)) return false;
 
-    // Caratteri accentati / Unicode non supportati
     if (!/^[\x20-\x7E]+$/.test(local)) return false;
 
-    // ── Dominio ──────────────────────────────────────────
-    // IP nudo tra parentesi quadre → accettato
     if (domain.startsWith('[') && domain.endsWith(']')) return true;
 
-    // Deve avere almeno un punto
     if (!domain.includes('.')) return false;
 
-    // Non iniziare/finire con trattino
     if (domain.startsWith('-') || domain.endsWith('-')) return false;
     if (domain.startsWith('.') || domain.endsWith('.')) return false;
     if (domain.includes('..')) return false;
 
-    // Solo lettere, numeri, trattini e punti
     if (!/^[a-zA-Z0-9.-]+$/.test(domain)) return false;
 
-    // TLD deve essere almeno 2 lettere e valido
     const tld = domain.slice(domain.lastIndexOf('.') + 1).toLowerCase();
     if (tld.length < 2) return false;
     if (!tlds.includes(tld)) return false;
@@ -148,7 +137,6 @@ export class LoginPage implements OnInit {
     }
   }
 
-  // ── Card Tilt + Scene Parallax ───────────────────────
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
     const card = this.cardRef?.nativeElement ?? this.overlayCardRef?.nativeElement;
@@ -187,12 +175,10 @@ export class LoginPage implements OnInit {
     }
   }
 
-  // ── Mode Toggle ──────────────────────────────────────
   toggleMode() {
     this.isRegister = !this.isRegister;
   }
 
-  // ── Login Logic ──────────────────────────────────────
   accedi() {
     this.dbService.loginUtente(this.email, this.password).pipe(
       switchMap((res: LoginResponse) => {
@@ -250,7 +236,6 @@ export class LoginPage implements OnInit {
     this.router.navigateByUrl('/benvenuto', { replaceUrl: true });
   }
 
-  // ── Registration Logic ───────────────────────────────
   selezionaProfilo(tipo: 'personal' | 'business') {
     this.tipoProfilo = tipo;
   }

@@ -2,13 +2,10 @@
 
   <div #stageRef class="login-stage">
 
-    <!-- Split Layout -->
     <div class="split-layout">
 
-      <!-- ───── LEFT: HERO PANEL ───── -->
       <div class="hero-panel">
 
-        <!-- Animated blob background -->
         <div class="hp-blobs">
           <div class="hpb-blob hpb-blob--1"></div>
           <div class="hpb-blob hpb-blob--2"></div>
@@ -16,17 +13,14 @@
           <div class="hpb-blob hpb-blob--4"></div>
         </div>
 
-        <!-- Subtle grid pattern -->
         <div class="hp-grid"></div>
 
-        <!-- Decorative organic curve -->
         <svg class="hp-arc" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M-50 350 Q150 200 320 100 Q420 40 550 20" stroke="url(#arcGrad)" stroke-width="1.5" opacity="0.15"/>
           <path d="M-50 420 Q180 260 350 140 Q440 70 550 40" stroke="url(#arcGrad)" stroke-width="0.8" opacity="0.08"/>
           <defs><linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7DC740" stop-opacity="0"/><stop offset="50%" stop-color="#7DC740"/><stop offset="100%" stop-color="#3AABDB" stop-opacity="0"/></linearGradient></defs>
         </svg>
 
-        <!-- Floating testimonial cards -->
         <div class="hp-testimonial hp-testimonial--1">
           <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
           <p class="hp-t-text">&ldquo;Da quando usiamo PeekBox abbiamo ridotto i tempi di ricerca del 70%. Straordinario.&rdquo;</p>
@@ -57,7 +51,6 @@
           </div>
         </div>
 
-        <!-- Floating testimonial -->
         <div class="hp-testimonial">
           <svg class="hp-t-quote" viewBox="0 0 24 24" fill="none" stroke="#7DC740" stroke-width="1.5"><path d="M9 12H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/><path d="M21 12h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v7c0 2.5-1.5 5-4 6"/></svg>
           <p class="hp-t-text">"Finalmente un sistema che rende la gestione dell'inventario semplice e veloce"</p>
@@ -67,7 +60,6 @@
           </div>
         </div>
 
-        <!-- Floating dots -->
         <div class="hp-dot hp-dot--1"></div>
         <div class="hp-dot hp-dot--2"></div>
         <div class="hp-dot hp-dot--3"></div>
@@ -77,7 +69,6 @@
         <div class="hp-dot hp-dot--7"></div>
         <div class="hp-dot hp-dot--8"></div>
 
-        <!-- Main brand -->
         <div class="hp-brand">
           <div class="hp-brand-icon">
             <div class="hp-bi-glow"></div>
@@ -106,7 +97,6 @@
 
       </div>
 
-      <!-- ───── RIGHT: LOGIN / REGISTER CARD ───── -->
       <div class="form-panel">
         <div class="fp-blobs">
           <div class="fpb-blob fpb-blob--1"></div>
@@ -115,7 +105,6 @@
           <div class="fpb-blob fpb-blob--4"></div>
         </div>
 
-        <!-- ── RECUPERO PASSWORD OVERLAY ── -->
         <div class="fp-overlay" *ngIf="showRecupero">
           <div class="fp-overlay-back" (click)="chiudiRecupero()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -196,7 +185,6 @@
           </ng-template>
         </div>
 
-        <!-- ── REGISTRATION SUCCESS OVERLAY ── -->
         <div class="fp-overlay" *ngIf="registerSuccess">
           <div class="fp-overlay-back" (click)="tornaBenvenuto()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -251,7 +239,6 @@
           <div class="card-bubble card-bubble--2"></div>
           <div class="card-bubble card-bubble--3"></div>
 
-          <!-- ── LOGIN MODE ── -->
           <ng-container *ngIf="!isRegister">
             <div class="card-header card-header--center">
               <h1 class="card-title">Bentornato</h1>
@@ -300,7 +287,6 @@
             </div>
           </ng-container>
 
-          <!-- ── REGISTER MODE ── -->
           <ng-container *ngIf="isRegister">
             <div class="card-header card-header--center">
               <h1 class="card-title">Benvenuto</h1>

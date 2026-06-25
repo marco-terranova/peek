@@ -118,7 +118,6 @@ function verificaAccessoBoxScrittura(boxId, userId, res, cb) {
     });
 }
 
-// ─── Helper: inserisci log cronologia box ─────────────────────
 function inserisciLogBox(boxId, tipo, descrizione, dettagli, cb) {
     const sql = `INSERT INTO box_log (rif_box, tipo, descrizione, dettagli) VALUES (?, ?, ?, ?)`;
     db.run(sql, [boxId, tipo, descrizione, dettagli ? JSON.stringify(dettagli) : null], function(err) {
@@ -127,9 +126,6 @@ function inserisciLogBox(boxId, tipo, descrizione, dettagli, cb) {
     });
 }
 
-// ─────────────────────────────────────────────
-// UTENTI
-// ─────────────────────────────────────────────
 
 app.get('/', (req, res) => {
     res.send('🚀 Backend PeekBox v3 attivo — GPS + Profili + Ripristina Box!');
@@ -215,9 +211,6 @@ app.put('/api/utenti/:id/password', verificaToken, async (req, res) => {
     } catch (error) { res.status(500).json({ error: "Errore server." }); }
 });
 
-// ─────────────────────────────────────────────
-// ARMADI
-// ─────────────────────────────────────────────
 
 app.get('/api/armadi/:utenteId', verificaToken, (req, res) => {
     if (String(req.user.id) !== String(req.params.utenteId))
@@ -294,9 +287,6 @@ app.put('/api/box/:id/rialloca', verificaToken, (req, res) => {
     });
 });
 
-// ─────────────────────────────────────────────
-// BOX
-// ─────────────────────────────────────────────
 
 app.get('/api/box/singola/:id', verificaToken, (req, res) => {
     verificaAccessoBoxLettura(req.params.id, req.user.id, res, (box, ruolo) => {
@@ -355,7 +345,6 @@ app.put('/api/box/moving-mode/:id', verificaToken, (req, res) => {
     });
 });
 
-// ─── GET cronologia box ──────────────────────────────────────
 app.get('/api/box/:id/log', verificaToken, (req, res) => {
     verificaAccessoBoxLettura(req.params.id, req.user.id, res, () => {
         boxService.ottieniLog(req.params.id, (err, rows) => {
@@ -424,7 +413,6 @@ app.delete('/api/box/cestino/pulisci', verificaToken, (req, res) => {
     });
 });
 
-// ── Pulizia automatica ogni ora ──────────────────────────────
 const PULIZIA_INTERVAL_MS = 60 * 60 * 1000; // 1 ora
 setInterval(() => {
     boxService.pulisciCestino((err, result) => {
@@ -446,9 +434,6 @@ setInterval(() => {
 }, PULIZIA_INTERVAL_MS);
 console.log(`[Pulizia automatica] Avviata ogni ${PULIZIA_INTERVAL_MS / 60000} minuti.`);
 
-// ─────────────────────────────────────────────
-// CHECKPOINT GPS
-// ─────────────────────────────────────────────
 
 app.post('/api/checkpoint', verificaToken, (req, res) => {
     const { rif_box, latitudine, longitudine, accuratezza, label } = req.body;
@@ -575,11 +560,6 @@ app.get('/api/checkpoint/tutti/:utenteId', verificaToken, (req, res) => {
     `;
     db.all(sql, [req.params.utenteId, req.params.utenteId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (rows && rows.length > 0) {
-            console.log('[DEBUG checkpoint/tutti] prima riga:', JSON.stringify(rows[0], null, 2));
-        } else {
-            console.log('[DEBUG checkpoint/tutti] nessuna riga trovata');
-        }
         res.json({ checkpoints: rows });
     });
 });
@@ -606,9 +586,6 @@ app.get('/api/checkpoint/tutti-attivi/:utenteId', verificaToken, (req, res) => {
     });
 });
 
-// ─────────────────────────────────────────────
-// GEOFENCE & NOTIFICHE
-// ─────────────────────────────────────────────
 
 const R = 6371000; // Raggio terrestre in metri (per formula Haversine)
 
@@ -621,7 +598,6 @@ function calcolaDistanza(lat1, lng1, lat2, lng2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Salva/aggiorna geofence per un armadio
 app.post('/api/geofence', verificaToken, (req, res) => {
     const { armadio_id, latitudine, longitudine, raggio_m, attivo } = req.body;
     if (!armadio_id || latitudine == null || longitudine == null)
@@ -643,7 +619,6 @@ app.post('/api/geofence', verificaToken, (req, res) => {
     });
 });
 
-// Ottieni geofence per armadio
 app.get('/api/geofence/:armadioId', verificaToken, (req, res) => {
     verificaAccessoArmadioLettura(req.params.armadioId, req.user.id, res, () => {
         db.get('SELECT * FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], (err, geofence) => {
@@ -653,7 +628,6 @@ app.get('/api/geofence/:armadioId', verificaToken, (req, res) => {
     });
 });
 
-// Elimina geofence
 app.delete('/api/geofence/:armadioId', verificaToken, (req, res) => {
     verificaAccessoArmadioScrittura(req.params.armadioId, req.user.id, res, () => {
         db.run('DELETE FROM geofence WHERE rif_armadio = ?', [req.params.armadioId], function(err) {
@@ -663,7 +637,6 @@ app.delete('/api/geofence/:armadioId', verificaToken, (req, res) => {
     });
 });
 
-// Verifica posizione rispetto al geofence (accetta armadio_id o box_id)
 app.post('/api/geofence/verifica', verificaToken, (req, res) => {
     const { armadio_id, box_id, latitudine, longitudine } = req.body;
     if ((!armadio_id && !box_id) || latitudine == null || longitudine == null)
@@ -691,7 +664,6 @@ app.post('/api/geofence/verifica', verificaToken, (req, res) => {
     });
 });
 
-// Salva checkpoint con verifica geofence (usato da scansione QR / tracking)
 app.post('/api/checkpoint/sicuro', verificaToken, (req, res) => {
     const { rif_box, latitudine, longitudine, accuratezza, label } = req.body;
     if (!rif_box || latitudine == null || longitudine == null)
@@ -738,7 +710,6 @@ app.post('/api/checkpoint/sicuro', verificaToken, (req, res) => {
     });
 });
 
-// Ottieni tutte le notifiche geofence per l'utente loggato
 app.get('/api/geofence/notifiche', verificaToken, (req, res) => {
     db.all(`SELECT n.*, a.nome as nome_archivio, b.nome as nome_box
              FROM geofence_notifiche n
@@ -751,7 +722,6 @@ app.get('/api/geofence/notifiche', verificaToken, (req, res) => {
     });
 });
 
-// Segna notifica come letta
 app.patch('/api/geofence/notifiche/:id/letta', verificaToken, (req, res) => {
     db.run('UPDATE geofence_notifiche SET letto = 1 WHERE id = ? AND rif_utente = ?',
         [req.params.id, req.user.id], function(err) {
@@ -761,7 +731,6 @@ app.patch('/api/geofence/notifiche/:id/letta', verificaToken, (req, res) => {
     );
 });
 
-// Elimina notifica
 app.delete('/api/geofence/notifiche/:id', verificaToken, (req, res) => {
     db.run('DELETE FROM geofence_notifiche WHERE id = ? AND rif_utente = ?',
         [req.params.id, req.user.id], function(err) {
@@ -771,7 +740,6 @@ app.delete('/api/geofence/notifiche/:id', verificaToken, (req, res) => {
     );
 });
 
-// Ottieni checkpoints per tutti i box di un armadio (per la mappa geofence)
 app.get('/api/geofence/:armadioId/checkpoints', verificaToken, (req, res) => {
     verificaAccessoArmadioLettura(req.params.armadioId, req.user.id, res, () => {
         const sql = `SELECT c.*, b.nome as nome_box, b.id as box_id
@@ -786,9 +754,6 @@ app.get('/api/geofence/:armadioId/checkpoints', verificaToken, (req, res) => {
     });
 });
 
-// ─────────────────────────────────────────────
-// GEOFENCE PER CHECKPOINT
-// ─────────────────────────────────────────────
 
 app.post('/api/geofence-checkpoint', verificaToken, (req, res) => {
     const { checkpoint_id, latitudine, longitudine, raggio_m = 100, attivo = true } = req.body;
@@ -852,177 +817,44 @@ app.get('/api/geofence-checkpoint/utente/:utenteId', verificaToken, (req, res) =
     );
 });
 
-// ─────────────────────────────────────────────
-// CATALOGO ELEMENTI PREDEFINITI
-// ─────────────────────────────────────────────
 
-app.get('/api/catalogo/categorie', verificaToken, (req, res) => {
-    const sql = `
-        SELECT c.*, COUNT(e.id) as num_elementi
-        FROM catalogo_categorie c
-        LEFT JOIN catalogo_elementi e
-          ON e.categoria_slug = c.slug
-         AND e.attivo = 1
-        WHERE c.rif_utente = ?
-        GROUP BY c.id
-        ORDER BY c.ordine ASC, c.nome ASC
-    `;
-
-    db.all(sql, [req.user.id], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ categorie: rows || [] });
-    });
+app.get('/api/categorie', verificaToken, (req, res) => {
+    db.all(`SELECT * FROM categorie WHERE rif_utente = ? ORDER BY nome ASC`,
+        [req.user.id], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ categorie: rows || [] });
+        });
 });
 
-app.post('/api/catalogo/categorie', verificaToken, (req, res) => {
+app.post('/api/categorie', verificaToken, (req, res) => {
     const { nome } = req.body;
     if (!nome || !nome.trim()) return res.status(400).json({ error: 'Nome categoria obbligatorio.' });
-    const slug = nome.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    db.run(`INSERT INTO catalogo_categorie (slug, nome, rif_utente) VALUES (?, ?, ?)`,
-        [slug, nome.trim(), req.user.id], function(err) {
+    db.run(`INSERT INTO categorie (nome, rif_utente) VALUES (?, ?)`,
+        [nome.trim(), req.user.id], function(err) {
             if (err) {
                 if (err.message.includes('UNIQUE')) return res.status(400).json({ error: 'Categoria già esistente.' });
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ id: this.lastID, slug, nome: nome.trim() });
-        }
-    );
+            res.status(201).json({ id: this.lastID, nome: nome.trim() });
+        });
 });
 
-app.get('/api/catalogo/elementi', verificaToken, (req, res) => {
-    const q = String(req.query.q || '').trim();
-    const categoria = String(req.query.categoria || 'tutte').trim();
-    const tag = String(req.query.tag || 'tutti').trim();
-    const sort = String(req.query.sort || 'popolari').trim();
-
-    const where = ['e.attivo = 1'];
-    const params = [];
-
-    if (categoria && categoria !== 'tutte') {
-        where.push('e.categoria_slug = ?');
-        params.push(categoria);
-    }
-
-    if (tag && tag !== 'tutti') {
-        where.push('e.tags LIKE ?');
-        params.push(`%${tag}%`);
-    }
-
-    if (q) {
-        where.push('(e.nome LIKE ? OR e.descrizione LIKE ? OR e.tags LIKE ? OR c.nome LIKE ?)');
-        const term = `%${q}%`;
-        params.push(term, term, term, term);
-    }
-
-    const orderBy = {
-        popolari: 'e.popolarita DESC, e.nome ASC',
-        nome: 'e.nome ASC',
-        categoria: 'c.ordine ASC, e.nome ASC',
-        nuovi: 'e.id DESC'
-    }[sort] || 'e.popolarita DESC, e.nome ASC';
-
-    const sql = `
-        SELECT e.*, c.nome as categoria_nome, c.ordine as categoria_ordine
-        FROM catalogo_elementi e
-        JOIN catalogo_categorie c ON c.slug = e.categoria_slug
-        WHERE ${where.join(' AND ')}
-        ORDER BY ${orderBy}
-        LIMIT 160
-    `;
-
-    db.all(sql, params, (err, rows) => {
+app.delete('/api/categorie/:id', verificaToken, (req, res) => {
+    const catId = Number(req.params.id);
+    if (!catId) return res.status(400).json({ error: 'ID categoria non valido.' });
+    db.get(`SELECT nome FROM categorie WHERE id = ? AND rif_utente = ?`, [catId, req.user.id], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
-        const elementi = (rows || []).map((row) => ({
-            ...row,
-            tags_array: row.tags ? String(row.tags).split(',').filter(Boolean) : []
-        }));
-        res.json({ elementi });
-    });
-});
-
-app.post('/api/box/:boxId/catalogo/:catalogoId/aggiungi', verificaToken, (req, res) => {
-    const boxId = Number(req.params.boxId);
-    const catalogoId = Number(req.params.catalogoId);
-    const quantita = Math.max(1, Number(req.body?.quantita || 1));
-
-    if (!boxId || !catalogoId) {
-        return res.status(400).json({ error: "boxId e catalogoId sono obbligatori." });
-    }
-
-    verificaAccessoBoxScrittura(boxId, req.user.id, res, () => {
-        db.get(
-            `SELECT * FROM catalogo_elementi WHERE id = ? AND attivo = 1`,
-            [catalogoId],
-            (catalogErr, catalogo) => {
-                if (catalogErr) return res.status(500).json({ error: catalogErr.message });
-                if (!catalogo) return res.status(404).json({ error: "Elemento catalogo non trovato." });
-
-                verificaCapienzaBox(boxId, quantita, (capErr, consentito, maxCap, totAttuale) => {
-                    if (capErr) return res.status(500).json({ error: capErr.message });
-                    if (!consentito) {
-                        return res.status(400).json({
-                            error: `Limite di capienza raggiunto. La box può contenere al massimo ${maxCap} elementi (attualmente ${totAttuale}). Rimuovi qualche oggetto prima di aggiungerne altri.`
-                        });
-                    }
-
-                    db.get(
-                        `SELECT id, quantita FROM oggetti WHERE rif_box = ? AND rif_catalogo = ?`,
-                        [boxId, catalogoId],
-                        (existingErr, esistente) => {
-                            if (existingErr) return res.status(500).json({ error: existingErr.message });
-
-                            if (esistente) {
-                                const nuovaQuantita = Number(esistente.quantita || 1) + quantita;
-                                db.run(
-                                    `UPDATE oggetti SET quantita = ? WHERE id = ?`,
-                                    [nuovaQuantita, esistente.id],
-                                    function(updateErr) {
-                                        if (updateErr) return res.status(500).json({ error: updateErr.message });
-                                        return res.json({
-                                            id: esistente.id,
-                                            quantita: nuovaQuantita,
-                                            action: 'incremented',
-                                            message: "Quantita aggiornata."
-                                        });
-                                    }
-                                );
-                                return;
-                            }
-
-                            db.run(
-                                `INSERT INTO oggetti
-                                  (nome, descrizione, tipo, fragile, quantita, rif_box, rif_catalogo)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                                [
-                                    catalogo.nome,
-                                    catalogo.descrizione,
-                                    catalogo.categoria_slug,
-                                    catalogo.fragile ? 1 : 0,
-                                    quantita,
-                                    boxId,
-                                    catalogoId
-                                ],
-                                function(insertErr) {
-                                    if (insertErr) return res.status(500).json({ error: insertErr.message });
-                                    res.status(201).json({
-                                        id: this.lastID,
-                                        quantita,
-                                        action: 'created',
-                                        message: "Elemento aggiunto alla box."
-                                    });
-                                }
-                            );
-                        }
-                    );
+        if (!row) return res.status(404).json({ error: 'Categoria non trovata.' });
+        db.run(`UPDATE oggetti SET tipo = NULL WHERE tipo = ? AND rif_box IN (SELECT id FROM box WHERE rif_utente = ?)`,
+            [row.nome, req.user.id], () => {
+                db.run(`DELETE FROM categorie WHERE id = ? AND rif_utente = ?`, [catId, req.user.id], function(err2) {
+                    if (err2) return res.status(500).json({ error: err2.message });
+                    res.json({ ok: true });
                 });
-            }
-        );
+            });
     });
 });
 
-// ─────────────────────────────────────────────
-// OGGETTI
-// ─────────────────────────────────────────────
 
 app.get('/api/oggetti/:boxId', verificaToken, (req, res) => {
     verificaAccessoBoxLettura(req.params.boxId, req.user.id, res, () => {
@@ -1081,7 +913,6 @@ app.post('/api/oggetti', verificaToken, (req, res) => {
     }
 });
 
-// ── FIX: era mancante la ) di chiusura del return res.status(400) ──
 app.put('/api/oggetti/sposta', verificaToken, (req, res) => {
     const { oggetti_ids, box_destinazione_id } = req.body;
 
@@ -1170,7 +1001,6 @@ app.put('/api/oggetti/:id', verificaToken, (req, res) => {
     });
 });
 
-// ─── Soft-delete: sposta l'oggetto nel cestino ────────────────
 app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
     db.get('SELECT rif_box, nome FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -1180,14 +1010,12 @@ app.delete('/api/oggetti/:id', verificaToken, (req, res) => {
             db.run("UPDATE oggetti SET data_eliminazione = datetime('now') WHERE id = ?", [req.params.id], function(err) {
                 if (err) return res.status(500).json({ error: err.message });
                 inserisciLogBox(oggetto.rif_box, 'oggetto_eliminato', `Eliminato "${oggetto.nome}"`, { oggetto_id: Number(req.params.id) });
-                console.log(`[DELETE /api/oggetti/${req.params.id}] Soft-delete eseguito.`);
                 res.json({ message: "Oggetto spostato nel cestino!" });
             });
         });
     });
 });
 
-// ─── Ripristina oggetto dal cestino ──────────────────────────
 app.put('/api/oggetti/:id/ripristina', verificaToken, (req, res) => {
     db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -1202,7 +1030,6 @@ app.put('/api/oggetti/:id/ripristina', verificaToken, (req, res) => {
     });
 });
 
-// ─── Eliminazione definitiva oggetto ─────────────────────────
 app.delete('/api/oggetti/:id/definitivo', verificaToken, (req, res) => {
     db.get('SELECT rif_box FROM oggetti WHERE id = ?', [req.params.id], (err, oggetto) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -1217,7 +1044,6 @@ app.delete('/api/oggetti/:id/definitivo', verificaToken, (req, res) => {
     });
 });
 
-// ─── Svuota box: soft-delete di tutti gli oggetti ────────────
 app.delete('/api/box/:boxId/oggetti', verificaToken, (req, res) => {
     const boxId = req.params.boxId;
     verificaAccessoBoxScrittura(boxId, req.user.id, res, () => {
@@ -1232,7 +1058,6 @@ app.delete('/api/box/:boxId/oggetti', verificaToken, (req, res) => {
     });
 });
 
-// ─── Elenco oggetti nel cestino per utente ───────────────────
 app.get('/api/oggetti/eliminate/:utenteId', verificaToken, (req, res) => {
     if (String(req.user.id) !== String(req.params.utenteId))
         return res.status(403).json({ error: "Non autorizzato." });
@@ -1248,20 +1073,15 @@ app.get('/api/oggetti/eliminate/:utenteId', verificaToken, (req, res) => {
           AND o.data_eliminazione >= ?
         ORDER BY o.data_eliminazione DESC
     `;
-    console.log(`[GET oggetti/eliminate] utenteId=${utenteId}, trentaGiorniFa=${trentaGiorniFa}`);
     db.all(sql, [utenteId, trentaGiorniFa], (err, rows) => {
         if (err) {
             console.error('[GET oggetti/eliminate] ERRORE:', err.message);
             return res.status(500).json({ error: err.message });
         }
-        console.log(`[GET oggetti/eliminate] Trovati ${rows.length} oggetti.`);
         res.json({ oggetti_eliminati: rows });
     });
 });
 
-// ─────────────────────────────────────────────
-// RICERCA GLOBALE
-// ─────────────────────────────────────────────
 
 app.get('/api/cerca', verificaToken, (req, res) => {
     const q = `%${req.query.q || ''}%`;
@@ -1299,9 +1119,6 @@ app.get('/api/cerca', verificaToken, (req, res) => {
     });
 });
 
-// ─────────────────────────────────────────────
-// QR TOKEN
-// ─────────────────────────────────────────────
 
 app.get('/api/box/:id/qr-token', verificaToken, (req, res) => {
     const boxId = req.params.id;
@@ -1326,11 +1143,7 @@ app.get('/api/scan/:boxId', (req, res) => {
     }
 });
 
-// ─────────────────────────────────────────────
-// CONDIVISIONE BOX
-// ─────────────────────────────────────────────
 
-// GET pending count (usato dalla login)
 app.get('/api/condivisioni/pending/:utenteId', verificaToken, (req, res) => {
     db.get('SELECT COUNT(*) as count FROM condivisioni WHERE rif_ospite = ? AND stato = ?',
         [req.params.utenteId, 'in_attesa'], (err, row) => {
@@ -1339,7 +1152,6 @@ app.get('/api/condivisioni/pending/:utenteId', verificaToken, (req, res) => {
         });
 });
 
-// GET richieste in attesa per un utente
 app.get('/api/condivisioni/in-attesa/:utenteId', verificaToken, (req, res) => {
     const sql = `
         SELECT c.id as condivisione_id, c.rif_box as box_id, b.nome as box_nome,
@@ -1358,7 +1170,6 @@ app.get('/api/condivisioni/in-attesa/:utenteId', verificaToken, (req, res) => {
     });
 });
 
-// GET box ricevute in condivisione (con parametro utenteId — compatibilità frontend)
 app.get('/api/condivisioni/ricevute/:utenteId', verificaToken, (req, res) => {
     const sql = `
         SELECT c.id as condivisione_id, c.rif_box as box_id, c.ruolo, c.stato, c.creato_il,
@@ -1376,7 +1187,6 @@ app.get('/api/condivisioni/ricevute/:utenteId', verificaToken, (req, res) => {
     });
 });
 
-// GET ospiti di una box
 app.get('/api/condivisioni/:boxId', verificaToken, (req, res) => {
     const sql = `
         SELECT c.id, c.ruolo, c.stato, c.creato_il,
@@ -1392,7 +1202,6 @@ app.get('/api/condivisioni/:boxId', verificaToken, (req, res) => {
     });
 });
 
-// PUT aggiorna ruolo
 app.put('/api/condivisioni/:id/ruolo', verificaToken, (req, res) => {
     const { ruolo } = req.body;
     if (!['viewer', 'editor'].includes(ruolo)) return res.status(400).json({ error: "ruolo non valido." });
@@ -1495,9 +1304,6 @@ app.delete('/api/condivisioni/:id', verificaToken, (req, res) => {
         });
 });
 
-// ─────────────────────────────────────────────
-// ADMIN
-// ─────────────────────────────────────────────
 
 app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
     db.all(`
@@ -1534,11 +1340,7 @@ app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
     });
 });
 
-// ─────────────────────────────────────────────
-// SEGNALAZIONI UTENTI (FEEDBACK/REPORT)
-// ─────────────────────────────────────────────
 
-// Invia una nuova segnalazione/feedback
 app.post('/api/segnalazioni', verificaToken, (req, res) => {
     const { tipo, titolo, descrizione, priorita } = req.body;
     
@@ -1570,7 +1372,6 @@ app.post('/api/segnalazioni', verificaToken, (req, res) => {
     });
 });
 
-// Ottieni tutte le segnalazioni (solo per admin)
 app.get('/api/admin/segnalazioni', verificaAdmin, (req, res) => {
     const sql = `
         SELECT su.*, u.username, u.email
@@ -1591,7 +1392,6 @@ app.get('/api/admin/segnalazioni', verificaAdmin, (req, res) => {
     });
 });
 
-// Aggiorna lo stato di una segnalazione (solo per admin)
 app.patch('/api/admin/segnalazioni/:id/stato', verificaAdmin, (req, res) => {
     const { stato } = req.body;
     const statiValidi = ['nuova', 'in_lavorazione', 'risolta', 'chiusa'];
@@ -1609,7 +1409,6 @@ app.patch('/api/admin/segnalazioni/:id/stato', verificaAdmin, (req, res) => {
     });
 });
 
-// Elimina una segnalazione (solo per admin)
 app.delete('/api/admin/segnalazioni/:id', verificaAdmin, (req, res) => {
     db.run('DELETE FROM segnalazioni_utenti WHERE id = ?', [req.params.id], function(err) {
         if (err) return res.status(500).json({ error: err.message });
@@ -1620,7 +1419,6 @@ app.delete('/api/admin/segnalazioni/:id', verificaAdmin, (req, res) => {
     });
 });
 
-// Rispondi a una segnalazione (solo per admin) — crea un messaggio nella posta dell'utente
 app.post('/api/admin/segnalazioni/:id/rispondi', verificaAdmin, (req, res) => {
     const { risposta } = req.body;
     if (!risposta || !risposta.trim()) {
@@ -1648,7 +1446,6 @@ app.post('/api/admin/segnalazioni/:id/rispondi', verificaAdmin, (req, res) => {
     });
 });
 
-// Ottieni le segnalazioni dell'utente loggato
 app.get('/api/segnalazioni/mie', verificaToken, (req, res) => {
     const sql = `
         SELECT * FROM segnalazioni_utenti 
@@ -1707,9 +1504,6 @@ app.get('/api/admin/utenti/:id/dettaglio', verificaAdmin, (req, res) => {
         });
 });
 
-// ─────────────────────────────────────────────
-// MESSAGGI UTENTI (bacheca messaggi sistema/supporto)
-// ─────────────────────────────────────────────
 
 app.get('/api/messaggi/non-letto', verificaToken, (req, res) => {
     db.get('SELECT COUNT(*) as count FROM messaggi_utenti WHERE rif_utente = ? AND letto = 0',
@@ -1743,22 +1537,6 @@ app.patch('/api/messaggi/:id/importante', verificaToken, (req, res) => {
         });
 });
 
-app.patch('/api/messaggi/:id/archivia', verificaToken, (req, res) => {
-    db.run(`UPDATE messaggi_utenti SET archiviato = CASE WHEN archiviato = 1 THEN 0 ELSE 1 END WHERE id = ? AND rif_utente = ?`,
-        [req.params.id, req.user.id], function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ ok: true, changes: this.changes });
-        });
-});
-
-app.get('/api/messaggi/archiviati', verificaToken, (req, res) => {
-    db.all(`SELECT * FROM messaggi_utenti WHERE rif_utente = ? AND archiviato = 1 ORDER BY timestamp DESC`,
-        [req.user.id], (err, rows) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ messaggi: rows });
-        });
-});
-
 app.delete('/api/messaggi/:id', verificaToken, (req, res) => {
     db.run('DELETE FROM messaggi_utenti WHERE id = ? AND rif_utente = ?',
         [req.params.id, req.user.id], function(err) {
@@ -1777,45 +1555,12 @@ app.post('/api/messaggi', verificaToken, (req, res) => {
         });
 });
 
-// ─── RISPOSTE RAPIDE ─────────────────────────
-app.get('/api/risposte-rapide', verificaToken, (req, res) => {
-    db.all(`SELECT * FROM risposte_rapide WHERE rif_utente = ? ORDER BY timestamp DESC`,
-        [req.user.id], (err, rows) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ risposte: rows });
-        });
-});
-
-app.post('/api/risposte-rapide', verificaToken, (req, res) => {
-    const { titolo, corpo } = req.body;
-    if (!titolo || !corpo) return res.status(400).json({ error: 'Titolo e corpo richiesti.' });
-    db.run(`INSERT INTO risposte_rapide (rif_utente, titolo, corpo) VALUES (?, ?, ?)`,
-        [req.user.id, titolo, corpo], function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ ok: true, id: this.lastID });
-        });
-});
-
-app.delete('/api/risposte-rapide/:id', verificaToken, (req, res) => {
-    db.run('DELETE FROM risposte_rapide WHERE id = ? AND rif_utente = ?',
-        [req.params.id, req.user.id], function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ ok: true, changes: this.changes });
-        });
-});
-
-// ─────────────────────────────────────────────
-// GLOBAL ERROR HANDLER (cattura errori da body-parser e route handlers)
-// ─────────────────────────────────────────────
 app.use((err, req, res, next) => {
     console.error('GLOBAL ERROR:', err);
     const status = err.status || 500;
     res.status(status).json({ error: err.message || 'Errore interno del server.' });
 });
 
-// ─────────────────────────────────────────────
-// AVVIO SERVER
-// ─────────────────────────────────────────────
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server PeekBox attivo su http://${HOST}:${PORT}`);

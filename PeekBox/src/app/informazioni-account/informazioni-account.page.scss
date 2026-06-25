@@ -23,9 +23,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -52,9 +50,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .about-content-full { width: 100%; display: flex; flex-direction: column; gap: 20px; }
 .about-content-full .ac-title { margin: 0 0 4px; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TEXT STYLES
-// ═══════════════════════════════════════════════════════════════════
 .ac-title {
   font-family: 'Outfit', sans-serif; font-weight: 900;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
@@ -71,9 +67,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   background: $green;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BADGE ROW
-// ═══════════════════════════════════════════════════════════════════
 .ia-badge-row {
   display: flex; justify-content: center; gap: 10px;
   flex-wrap: wrap; margin-top: 20px;
@@ -102,9 +96,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   flex-shrink: 0;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  DATI CARDS
-// ═══════════════════════════════════════════════════════════════════
 .ia-dati-cards {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
   max-width: 700px; margin: 24px auto 0;
@@ -146,9 +138,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   text-align: center; padding: 10px 0; font-size: 0.85rem;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FORM FIELDS
-// ═══════════════════════════════════════════════════════════════════
 .ia-form {
   display: flex; flex-direction: column; gap: 16px;
 }
@@ -184,9 +174,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ia-input-lock { width: 16px; height: 16px; stroke: rgba(239,68,68,0.6); flex-shrink: 0; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  PASSWORD STRENGTH
-// ═══════════════════════════════════════════════════════════════════
 .ia-pw-strength {
   display: flex; align-items: center; gap: 12px;
   margin-top: 12px;
@@ -213,9 +201,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &.strong { color: $green-d; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SUGGERIMENTI PASSWORD
-// ═══════════════════════════════════════════════════════════════════
 .ia-tips-card {
   max-width: 700px;
   margin: 0 auto;
@@ -242,9 +228,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   margin: 0;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FEEDBACK + SAVE
-// ═══════════════════════════════════════════════════════════════════
 .ar-row {
   display: flex; align-items: center; gap: 32px;
   padding: 20px 24px; border-radius: 16px;
@@ -292,9 +276,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   margin: 0;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BUTTONS
-// ═══════════════════════════════════════════════════════════════════
 .ac-btn {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 11px 22px;
@@ -309,9 +291,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 .is-disabled, .ac-btn:disabled { opacity: 0.4; cursor: not-allowed; &:hover { transform: none; box-shadow: none; } }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 48px; padding: 60px 28px; }
   .about-visual { width: 100%; }

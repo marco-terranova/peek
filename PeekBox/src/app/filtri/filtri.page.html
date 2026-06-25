@@ -2,7 +2,6 @@
 <div class="filtri-split">
   <div class="fs-backdrop" (click)="navTo('/home')"></div>
 
-  <!-- LEFT: Info panel -->
   <div class="fs-left">
     <div class="fs-l-blobs">
       <div class="fslb fslb--1"></div>
@@ -40,7 +39,6 @@
     </div>
   </div>
 
-  <!-- RIGHT: Glass card with filter form -->
   <div class="fs-right">
     <div class="fsr-blobs">
       <div class="fsrb fsrb--1"></div>
@@ -116,7 +114,6 @@
   </div>
 </div>
 
-<!-- Dropdown fuori dalla card glass -->
 <div class="fsr-dd-backdrop" *ngIf="mostraCatDd || mostraArmDd" (click)="chiudiDd()"></div>
 <div class="fsr-dd" *ngIf="mostraCatDd" [ngStyle]="catDdStyle">
   <div class="fsr-dd-item" (click)="selCat('')">Tutte le categorie</div>

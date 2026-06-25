@@ -14,15 +14,13 @@
   min-height: 22px;
   user-select: none;
   border-radius: 14px;
-  background: $page;
-  border: 1px solid rgba($green, 0.2);
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  background: transparent;
+  border: none;
+  transition: background 0.2s;
 
   &:focus-within,
   &:focus {
-    border-color: $green;
-    box-shadow: 0 0 0 4px rgba($green, 0.1);
-    background: $white;
+    background: rgba($white, 0.5);
     outline: none;
   }
 }
@@ -69,19 +67,11 @@
   border-radius: 12px;
   box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
   padding: 4px;
-}
+  scrollbar-width: none;
 
-.pb-dropdown-menu::-webkit-scrollbar {
-  width: 5px;
-}
-
-.pb-dropdown-menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.pb-dropdown-menu::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.15);
-  border-radius: 6px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .pb-dropdown-option {

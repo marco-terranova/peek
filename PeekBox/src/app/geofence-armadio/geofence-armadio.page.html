@@ -1,12 +1,9 @@
 <ion-content class="geo-content">
 
-  <!-- BACKDROP BLURRED -->
   <div class="geo-backdrop" (click)="chiudi()"></div>
 
-  <!-- DIALOG COMPATTO MODALE -->
   <div class="geo-dialog">
 
-    <!-- HEADER DIALOG -->
     <div class="geo-header">
       <button class="btn-close" (click)="chiudi()">
         <ion-icon name="close-outline"></ion-icon>
@@ -21,10 +18,8 @@
       </div>
     </div>
 
-    <!-- BODY DIALOG -->
     <div class="geo-body">
 
-      <!-- SEZIONE MAPPA / GPS (Leaflet) -->
       <div class="geo-section geo-section--map">
         <div #mapContainer class="leaflet-map"></div>
         <div class="map-overlay-bar">
@@ -39,7 +34,6 @@
         </div>
       </div>
 
-      <!-- SEZIONE COORDINATE E RAGGIO -->
       <div class="geo-section">
         <div class="coords-row">
           <div class="coord-field">
@@ -61,7 +55,6 @@
         </div>
       </div>
 
-      <!-- SEZIONE TOGGLE E AZIONI -->
       <div class="geo-section geo-section--actions">
         <div class="toggle-field">
           <div class="toggle-info">
@@ -85,7 +78,6 @@
 
     </div>
 
-    <!-- FOOTER INFO -->
     <div class="geo-footer">
       <ion-icon name="information-circle-outline"></ion-icon>
       <p>Il sistema rileva la posizione GPS ad ogni scansione QR per garantire la sicurezza degli asset.</p>

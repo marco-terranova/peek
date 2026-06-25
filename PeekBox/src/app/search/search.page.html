@@ -48,7 +48,6 @@
           </div>
           <div class="sr-list">
             <ng-container *ngFor="let r of risultati">
-              <!-- Box result — QR-style card -->
               <div *ngIf="r.tipo === 'box'" class="sr-box-card">
                 <div class="sr-box-card-inner">
                   <div class="sr-box-row sr-box-row--label">
@@ -79,7 +78,6 @@
                 </button>
               </div>
 
-              <!-- Oggetto result — existing list style -->
               <a *ngIf="r.tipo === 'oggetto'"
                  class="sr-item sr-item--ogg"
                  data-testid="search-result-item">

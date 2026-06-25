@@ -1,41 +1,23 @@
 @use './theme/variables' as *;
 @import 'leaflet/dist/leaflet.css';
 
-/*
- * App Global CSS — PeekBox
- * ORDINE CRITICO: Ionic PRIMA, Bootstrap DOPO.
- * Bootstrap reimposta html/body{height:auto} che rompe ion-content.
- * Mettendolo dopo, i fix Ionic prendono precedenza per ordine di cascata.
- */
 
-/* ① Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
-/* ② Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* ③ Optional Ionic utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/* ④ Dark mode palette (commentato per ora) */
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
-/* ⑤ Bootstrap DOPO Ionic — così non sovrascrive la catena di altezza */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
-/* ═══════════════════════════════════════════════════════════════════
-   FIX ALTEZZA — Ripristina la catena height:100% che Bootstrap rompe.
-   Necessario perché Bootstrap.reboot imposta html,body { height: auto }.
-   ═══════════════════════════════════════════════════════════════════ */
 html,
 body {
   height: 100% !important;
@@ -70,7 +52,6 @@ ion-content {
   flex: 1 1 auto !important;
 }
 
-/* box-sizing uniforme */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -414,9 +395,7 @@ ion-toast.peekbox-toast {
 }
 
 
-// ═══════════════════════════════════════════════════════════════════
 //  FLOATING BOTTOM NAV — Componente globale condiviso tra le pagine
-// ═══════════════════════════════════════════════════════════════════
 .floating-nav {
   position: fixed;
   bottom: 18px; left: 50%;
@@ -509,11 +488,8 @@ ion-toast.peekbox-toast {
     }
   }
 }
-// ═══════════════════════════════════════════════════════════════════
 //  FIX DEFINITIVI — Icone azzurre nav + Avatar profilo azzurro
-// ═══════════════════════════════════════════════════════════════════
 
-/* Fix 3: Forza TUTTE le icone e label della floating nav in azzurro */
 .floating-nav .nav-item ion-icon {
   color: $blue !important;
 }
@@ -532,7 +508,6 @@ ion-toast.peekbox-toast {
   color: rgba($blue, 0.5) !important;
 }
 
-/* Fix 4: Avatar profilo — solo azzurro, niente gradiente verde */
 .floating-nav .avatar-circle {
   background: rgba($blue, 0.15) !important;
   color: $blue !important;
@@ -540,9 +515,7 @@ ion-toast.peekbox-toast {
   box-shadow: 0 2px 8px rgba($blue, 0.25) !important;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FIX TAB BAR — Opacità forzata 100%, azzurro solido su tutto
-// ═══════════════════════════════════════════════════════════════════
 
 ion-tab-button {
   opacity: 1 !important;
@@ -554,9 +527,7 @@ ion-tab-button ion-label {
   opacity: 1 !important;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FIX DEFINITIVO TAB BAR — Variabili Ionic native + forza bruta
-// ═══════════════════════════════════════════════════════════════════
 
 ion-tab-bar {
   --color: $blue !important;
@@ -581,9 +552,7 @@ ion-tab-button ion-label {
   fill: $blue !important;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FIX NUCLEARE TAB BAR — Shadow DOM + variabili Ionic + forza bruta
-// ═══════════════════════════════════════════════════════════════════
 
 ion-tab-bar {
   --color: $sky !important;
@@ -613,9 +582,7 @@ ion-tab-button ion-label {
   opacity: 1 !important;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  PEEKBOX — ACTION SHEET CUSTOM FOTO (Premium Design)
-// ═══════════════════════════════════════════════════════════════════
 
 .peekbox-photo-sheet {
   // Contenitore principale
@@ -692,11 +659,9 @@ ion-tab-button ion-label {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  PEEKBOX — FIX EMOJI GLOBALE
 //  Le emoji vengono renderizzate con il font di sistema corretto
 //  su tutte le piattaforme (iOS, Android, Web).
-// ═══════════════════════════════════════════════════════════════════
 
 .empty-icon,
 .empty-emoji,
@@ -715,12 +680,9 @@ ion-tab-button ion-label {
   line-height: 1 !important;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE GLOBALE — Adattamento adattivo per tutte le pagine
 //  Gestisce elementi condivisi: floating-nav, floating-nav, font base
-// ═══════════════════════════════════════════════════════════════════
 
-// ── Mobile piccolo (< 400px) ──────────────────────────────────────
 @media (max-width: 399px) {
   // Floating nav più compatta su schermi molto piccoli
   .floating-nav {
@@ -748,7 +710,6 @@ ion-tab-button ion-label {
   }
 }
 
-// ── Tablet (≥ 768px) ──────────────────────────────────────────────
 @media (min-width: 768px) {
   // Floating nav — più ampia su tablet
   .floating-nav {
@@ -767,7 +728,6 @@ ion-tab-button ion-label {
   }
 }
 
-// ── Desktop (≥ 1024px) ────────────────────────────────────────────
 @media (min-width: 1024px) {
   // Floating nav — si espande proporzionalmente
   .floating-nav {
@@ -791,9 +751,7 @@ ion-tab-button ion-label {
   }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  CREA-BOX: Select popover — stessa larghezza del trigger, discesa lineare, compatto
-// ═══════════════════════════════════════════════════════════
 
 ion-popover.select-popover.csr-select-popover {
   --min-width: var(--popover-trigger-width, 100%);

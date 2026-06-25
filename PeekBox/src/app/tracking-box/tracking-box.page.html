@@ -3,7 +3,6 @@
 
     <ng-container *ngIf="tipoProfilo === 'business'; else personalMsg">
 
-      <!-- ═══════════════════════════════════════════ SEZIONE 1: INTRODUZIONE ══════ -->
       <section class="about-section intro-section">
         <button class="ia-back-btn" (click)="tornaIndietro()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -31,7 +30,6 @@
           </div>
         </div>
 
-        <!-- Freccia giù per aprire la mappa -->
         <button class="tb-scroll-btn" (click)="toggleMappa()" [class.is-open]="mappaAperta">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"/>
@@ -39,11 +37,9 @@
         </button>
       </section>
 
-      <!-- ═══════════════════════════════════════════ PANNELLO MAPPA (collassabile) ══════ -->
       <div class="tb-map-panel" [class.is-visible]="mappaAperta">
         <div class="tb-map-panel-inner">
 
-          <!-- Mappa posizioni attuali -->
           <div class="tb-live-map-wrap">
             <div *ngIf="isLoading" class="tb-loading">
               <div class="db-spinner"></div>
@@ -58,7 +54,6 @@
             <div #mapContainer class="tb-map-container"></div>
           </div>
 
-          <!-- Pannello geofence per la box selezionata -->
           <div class="tb-geo-panel-wrap" *ngIf="selectedBox" [@panelSlide]>
             <div class="tb-geo-panel">
               <div class="tb-geo-header">

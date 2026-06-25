@@ -63,7 +63,6 @@ export class AdminPage implements OnInit {
     this.caricaSegnalazioni();
   }
 
-  // ── STATS ────────────────────────────
   caricaStats() {
     this.dbService.adminGetStats().subscribe({
       next: (res: any) => { this.stats = res; },
@@ -71,7 +70,6 @@ export class AdminPage implements OnInit {
     });
   }
 
-  // ── UTENTI ───────────────────────────
   caricaUtenti() {
     this.isLoading = true;
     this.errore = '';
@@ -172,7 +170,6 @@ export class AdminPage implements OnInit {
     await alert.present();
   }
 
-  // ── SEGNALAZIONI ─────────────────────
   caricaSegnalazioni() {
     this.segLoading = true;
     this.dbService.adminGetSegnalazioni().subscribe({
@@ -193,6 +190,7 @@ export class AdminPage implements OnInit {
     this.dbService.adminUpdateSegnalazioneStatus(s.id, nuovoStato).subscribe({
       next: () => {
         s.stato = nuovoStato;
+        this.caricaStats();
         this.mostraToast('Stato segnalazione aggiornato.', 'success');
       },
       error: (err) => this.mostraToast(err?.error?.error || 'Errore', 'danger')
@@ -233,6 +231,7 @@ export class AdminPage implements OnInit {
         s.stato = 'risolta';
         s.mostraRisposta = false;
         s.testoRisposta = '';
+        this.caricaStats();
         this.mostraToast('Risposta inviata all\'utente!', 'success');
       },
       error: (err) => this.mostraToast(err?.error?.error || 'Errore invio risposta.', 'danger')

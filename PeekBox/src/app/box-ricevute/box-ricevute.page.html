@@ -7,13 +7,11 @@
       <div class="bg-blob bg-blob--3"></div>
     </div>
 
-    <!-- ─── GLASS TOPBAR ─── -->
     <div class="glass-topbar" (click)="tornaHome()">
       <img src="assets/icon/logoTitolo1.png" alt="PeekBox" class="gt-logo" />
       <span class="gt-brand"><span class="gt-pk">Peek</span><span class="gt-bx">Box</span></span>
     </div>
 
-    <!-- ─── LOADING ─── -->
     <div *ngIf="isLoading" class="loading-dock">
       <div class="ld-ring"></div>
       <p>Caricamento in corso...</p>
@@ -21,7 +19,6 @@
 
     <ng-container *ngIf="!isLoading">
 
-      <!-- ─── PAGE HEADER ─── -->
       <div class="page-header">
         <div class="ph-glow"></div>
         <div class="ph-badge" *ngIf="contatoreNonLette > 0">{{ contatoreNonLette }}</div>
@@ -31,7 +28,6 @@
         </p>
       </div>
 
-      <!-- ─── TAB PILLS ─── -->
       <div class="tab-pills">
         <button class="tab-pill" [class.tab-pill--active]="!mostraSpazi" (click)="mostraSpazi = false">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -54,10 +50,8 @@
         </button>
       </div>
 
-      <!-- ════════════════ RICHIESTE ════════════════ -->
       <div *ngIf="!mostraSpazi" class="tab-content">
 
-        <!-- Richieste in attesa -->
         <div class="glass-card">
           <div class="gc-accent"></div>
           <div class="gc-header">
@@ -119,7 +113,6 @@
           </div>
         </div>
 
-        <!-- Archivi condivisi -->
         <div class="glass-card">
           <div class="gc-accent"></div>
           <div class="gc-header">
@@ -162,7 +155,6 @@
           </div>
         </div>
 
-        <!-- Notifiche Geofence (solo business) -->
         <div class="glass-card" *ngIf="tipoProfilo === 'business' && notificheGeofence.length > 0">
           <div class="gc-accent"></div>
           <div class="gc-header">
@@ -209,10 +201,8 @@
 
       </div>
 
-      <!-- ════════════════ SPAZI ════════════════ -->
       <div *ngIf="mostraSpazi" class="tab-content tab-content--spazi">
 
-        <!-- Colonna sinistra: Invita -->
         <div class="glass-card">
           <div class="gc-accent"></div>
           <div class="gc-header">
@@ -274,7 +264,6 @@
           </div>
         </div>
 
-        <!-- Colonna destra: Gestione spazi -->
         <div class="glass-card">
           <div class="gc-accent"></div>
           <div class="gc-header">
@@ -370,7 +359,6 @@
 
   </div>
 
-  <!-- FLOATING BOTTOM NAV -->
   <div class="floating-nav">
     <div class="nav-glow"></div>
 

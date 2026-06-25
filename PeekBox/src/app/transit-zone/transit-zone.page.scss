@@ -8,9 +8,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .ia-content { --background: #ffffff; }
 .ia-stage { width: 100%; position: relative; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BACK BUTTON
-// ═══════════════════════════════════════════════════════════════════
 .ia-back-btn {
   position: fixed; top: 28px; left: 28px; z-index: 100;
   display: flex; align-items: center; gap: 6px;
@@ -25,9 +23,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -48,9 +44,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .about-content-full { width: 100%; display: flex; flex-direction: column; gap: 20px; }
 .about-content-full .ac-title { margin: 0 0 4px; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TEXT STYLES
-// ═══════════════════════════════════════════════════════════════════
 .ac-title {
   font-family: 'Outfit', sans-serif; font-weight: 900;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
@@ -67,9 +61,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   background: $green;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TIPS CARD
-// ═══════════════════════════════════════════════════════════════════
 .ia-tips-card {
   max-width: 700px;
   margin: 0 auto;
@@ -104,9 +96,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   svg { stroke: $green-d; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  FORM
-// ═══════════════════════════════════════════════════════════════════
 .ia-form {
   display: flex; flex-direction: column; gap: 16px;
   text-align: left;
@@ -127,9 +117,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   width: 16px; height: 16px; stroke: $green-d; flex-shrink: 0;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TRANSIT ZONE: BOX SELECT
-// ═══════════════════════════════════════════════════════════════════
 .tz-row {
   display: flex; gap: 14px; align-items: flex-end;
 }
@@ -150,9 +138,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.93) rotate(180deg); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TRANSIT ZONE: TWO-COLUMN LAYOUT
-// ═══════════════════════════════════════════════════════════════════
 .tz-columns {
   display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
   text-align: left;
@@ -187,9 +173,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   min-height: 140px; padding: 6px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TRANSIT ZONE: OGGETTO ROW
-// ═══════════════════════════════════════════════════════════════════
 .tz-oggetto {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 14px; margin-bottom: 4px;
@@ -238,9 +222,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:hover { background: rgba(125,199,64,0.04); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TRANSIT ZONE: ACTIONS
-// ═══════════════════════════════════════════════════════════════════
 .tz-actions {
   display: flex; gap: 14px; flex-wrap: wrap;
   justify-content: center; margin: 0;
@@ -259,9 +241,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active:not(:disabled) { transform: scale(0.97); }
   &:disabled { opacity: 0.4; cursor: not-allowed; &:hover { transform: none; box-shadow: none; } }
 }
-// ═══════════════════════════════════════════════════════════════════
 //  LOADING / EMPTY
-// ═══════════════════════════════════════════════════════════════════
 .ca-loading {
   text-align: center; padding: 24px;
   font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: $mid;
@@ -272,9 +252,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ac-text { margin: 0; text-align: center; font-size: 0.9rem; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 48px; padding: 60px 28px; }
   .ac-text { text-align: center; }

@@ -15,9 +15,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 .split-layout { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; }
 
-// ══════════════════════════════════════════════════════════
 //  LEFT: BRAND HERO
-// ══════════════════════════════════════════════════════════
 .hero-panel {
   flex: 3; position: relative; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -33,7 +31,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 @keyframes hp-in { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
 
-// ── Animated blobs (left panel) ──────────────────────────
 .hp-blobs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
 .hpb-blob {
@@ -79,7 +76,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-25px,20px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Grid overlay ─────────────────────────────────────────
 .hp-grid {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
@@ -90,13 +86,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 20%, transparent 70%);
 }
 
-// ── Decorative arc ───────────────────────────────────────
 .hp-arc {
   position: absolute; pointer-events: none; z-index: 1;
   width: 100%; height: 100%; top: 0; left: 0;
 }
 
-// ── Stat cards ───────────────────────────────────────────
 .hp-stat {
   position: absolute; z-index: 3; pointer-events: none;
   display: flex; align-items: center; gap: 12px;
@@ -138,7 +132,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   to   { transform: var(--tf-base, translateX(0) translateY(0)) translateY(-12px); }
 }
 
-// ── Testimonials ─────────────────────────────────────────
 .hp-testimonial {
   position: absolute; z-index: 3; pointer-events: none;
   max-width: 280px;
@@ -174,7 +167,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   font-family: 'DM Sans', sans-serif; font-size: 0.62rem; color: $mid; opacity: 0.55;
 }
 
-// ── Floating dots ────────────────────────────────────────
 .hp-dot {
   position: absolute; border-radius: 50%; pointer-events: none;
   animation: hd-float 8s ease-in-out infinite alternate;
@@ -195,7 +187,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   to   { transform: var(--tf-dot, translateX(0) translateY(0)) translateY(-20px); }
 }
 
-// ── Brand content ────────────────────────────────────────
 .hp-brand {
   position: relative; z-index: 4; max-width: 420px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -248,7 +239,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   color: $mid; line-height: 1.7;
 }
 
-// ── Badges ───────────────────────────────────────────────
 .hp-badges {
   display: flex; gap: 10px; margin-top: 20px; justify-content: center;
 }
@@ -264,9 +254,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ══════════════════════════════════════════════════════════
 //  RIGHT: FORM PANEL with chromed blobs
-// ══════════════════════════════════════════════════════════
 .form-panel {
   flex: 2; position: relative; display: flex;
   align-items: center; justify-content: center; padding: 32px 32px 32px 56px;
@@ -289,7 +277,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ── Form panel blobs (chromed effect like benvenuto) ─────
 .fp-blobs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
 .fpb-blob {
@@ -336,9 +323,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 @keyframes fp-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-// ══════════════════════════════════════════════════════════
 //  LOGIN CARD
-// ══════════════════════════════════════════════════════════
 .login-card {
   position: relative; width: 100%; max-width: 390px;
   background: rgba(255,255,255,0.6);
@@ -493,7 +478,6 @@ ion-input-password-toggle {
 .register-link { margin: 0; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: $mid; }
 .register-anchor { color: $green; font-weight: 700; text-decoration: none; margin-left: 4px; position: relative; transition: color 0.2s; cursor: pointer; &::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 0; height: 1.5px; background: $green; transition: width 0.25s; } &:hover { color: $green-d; &::after { width: 100%; } } }
 
-// ── Profile Selector ───────────────────────────────────
 .profile-selector { display: flex; gap: 8px; }
 .ps-btn {
   flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -509,9 +493,7 @@ ion-input-password-toggle {
   box-shadow: 0 0 0 3px rgba(125,199,64,0.08);
 }
 
-// ══════════════════════════════════════════════════════════
 //  FORM-PANEL OVERLAYS (recupero password, registrazione success)
-// ══════════════════════════════════════════════════════════
 .fp-overlay {
   position: absolute; inset: 0; z-index: 50;
   display: flex; align-items: center; justify-content: center;
@@ -553,9 +535,7 @@ ion-input-password-toggle {
   color: $mid; opacity: 0.6; text-align: center;
 }
 
-// ══════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ══════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .hero-panel { display: none; }
   .form-panel { padding: 20px; }

@@ -4,18 +4,6 @@ import { firstValueFrom } from 'rxjs';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-/**
- * ExportService
- * ─────────────────────────────────────────────────────────────
- * Gestisce la generazione di PDF etichette (stampa griglia) e il
- * download dei formati strutturati CSV / JSON dell'inventario.
- *
- * Il PDF viene prodotto interamente nel browser usando l'API
- * window.print() su un documento HTML dedicato, senza dipendenze
- * esterne (nessuna lib PDF aggiuntiva da installare).
- * Per ambienti dove è disponibile jsPDF è possibile sostituire
- * printEtichetteBox() con l'implementazione commentata in fondo.
- */
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +11,6 @@ export class ExportService {
 
   constructor(private dbService: DatabaseService) {}
 
-  // ─── PDF ETICHETTE ────────────────────────────────────────
 
   /**
    * Genera e stampa una griglia di etichette per tutti gli oggetti
@@ -298,14 +285,12 @@ export class ExportService {
     win.document.write(html);
     win.document.close();
     win.focus();
-    // Piccolo delay per assicurarsi che il rendering sia completo
     setTimeout(() => {
       win.print();
       win.close();
     }, 400);
   }
 
-  // ─── DOWNLOAD CSV ─────────────────────────────────────────
 
   /**
    * Scarica l'inventario in formato CSV.
@@ -320,7 +305,6 @@ export class ExportService {
     });
   }
 
-  // ─── DOWNLOAD JSON ────────────────────────────────────────
 
   /**
    * Scarica l'inventario in formato JSON strutturato.
@@ -335,7 +319,6 @@ export class ExportService {
     });
   }
 
-  // ─── STAMPA BOX (window.print) ─────────────────────────
 
   async stampaBox(boxId: number, elencoBox: any[]): Promise<void> {
     const resOgg: any = await firstValueFrom(
@@ -348,7 +331,6 @@ export class ExportService {
     this.apriFinestraStampa(html);
   }
 
-  // ─── REPORT PDF (jsPDF) ───────────────────────────────
 
   /**
    * Genera un report PDF con i dati forniti e restituisce l'istanza jsPDF.
@@ -451,7 +433,6 @@ export class ExportService {
     });
   }
 
-  // ─── REPORT CSV ───────────────────────────────────────
 
   /**
    * Genera il contenuto CSV (stringa) a partire dai dati del report.
@@ -471,7 +452,6 @@ export class ExportService {
     return '\uFEFF' + header + '\r\n' + rows.join('\r\n');
   }
 
-  // ─── UTILITY ─────────────────────────────────────────────
 
   /** Innesca il download di un Blob nel browser. */
   triggerDownload(blob: Blob, filename: string, mimeType: string): void {

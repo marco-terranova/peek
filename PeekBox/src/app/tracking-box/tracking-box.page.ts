@@ -18,13 +18,11 @@ export class TrackingBoxPage implements OnDestroy {
   utenteId = '';
   tipoProfilo = 'personal';
 
-  // Mappa live
   mappaAperta = false;
   boxAttive: any[] = [];
   isLoading = false;
   hasError = false;
 
-  // Box / geofence selezionata
   selectedBox: any = null;
   geofenceRadius = 500;
   isSaving = false;
@@ -129,7 +127,6 @@ export class TrackingBoxPage implements OnDestroy {
       maxZoom: 19,
     }).addTo(this.leafletMap);
 
-    // Doppio invalidateSize: uno subito, uno dopo che le tile si caricano
     this.leafletMap.invalidateSize();
     setTimeout(() => this.leafletMap?.invalidateSize(), 300);
   }

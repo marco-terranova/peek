@@ -2,29 +2,12 @@ import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-/**
- * NavigationHistoryService
- *
- * Tiene traccia della cronologia di navigazione interna all'app Angular/Ionic.
- *
- * Risolve due problemi:
- * 1. Location.back() del browser punta a URL sbagliate in una SPA (specialmente
- *    con replaceUrl:true o guard).
- * 2. La freccia indietro del browser porta a pagine sbagliate perché ogni
- *    routerLink aggiunge voci nella browser history.
- *
- * Strategia: tutte le navigazioni della navbar usano replaceUrl:true tramite
- * navTo(), così non accumulano voci nella browser history. Il tasto indietro
- * del browser funziona solo sulla history "reale" (pagine di dettaglio, ecc.).
- */
 @Injectable({ providedIn: 'root' })
 export class NavigationHistoryService {
   private history: string[] = [];
 
-  // Route principali (navbar) — non devono impilare la browser history
   private readonly rootRoutes = ['/home', '/search', '/box-ricevute', '/profilo'];
 
-  // Route che azzerano la cronologia (autenticazione)
   private readonly excludedRoutes = ['/benvenuto', '/login', '/registrazione'];
 
   constructor(private router: Router) {

@@ -12,7 +12,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
 db.serialize(() => {
   db.run("PRAGMA foreign_keys = ON;");
 
-  // 1. Tabella UTENTI — con tipo_profilo ('personal' | 'business') e is_admin
   db.run(`CREATE TABLE IF NOT EXISTS utenti (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
@@ -40,7 +39,6 @@ db.serialize(() => {
     }
   });
 
-  // 2. Tabella ARMADI
   db.run(`CREATE TABLE IF NOT EXISTS armadi (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
@@ -48,7 +46,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
   )`);
 
-  // 3. Tabella BOX — con moving_mode flag e descrizione
   db.run(`CREATE TABLE IF NOT EXISTS box (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
@@ -60,7 +57,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_armadio) REFERENCES armadi(id) ON DELETE CASCADE
   )`);
 
-  // Migrazioni box
   db.run(`ALTER TABLE box ADD COLUMN data_eliminazione TEXT DEFAULT NULL`, (err) => {
     if (err && !err.message.includes('duplicate column')) console.error("Migrazione data_eliminazione:", err.message);
   });
@@ -78,7 +74,6 @@ db.serialize(() => {
     else db.run(`UPDATE box SET data_creazione = datetime('now', 'localtime') WHERE data_creazione IS NULL`);
   });
 
-  // 4. Tabella OGGETTI
   db.run(`CREATE TABLE IF NOT EXISTS oggetti (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
@@ -87,16 +82,9 @@ db.serialize(() => {
     fragile INTEGER DEFAULT 0,
     quantita INTEGER DEFAULT 1,
     foto TEXT,
-    rif_catalogo INTEGER,
     rif_box INTEGER,
     FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
   )`);
-
-  db.run(`ALTER TABLE oggetti ADD COLUMN rif_catalogo INTEGER`, (err) => {
-    if (err && !err.message.includes('duplicate column')) {
-      console.error("Migrazione rif_catalogo:", err.message);
-    }
-  });
 
   db.run(`ALTER TABLE oggetti ADD COLUMN data_eliminazione TEXT DEFAULT NULL`, (err) => {
     if (err && !err.message.includes('duplicate column')) {
@@ -104,47 +92,14 @@ db.serialize(() => {
     }
   });
 
-  // 5. Tabella TIPOLOGIE
-  db.run(`CREATE TABLE IF NOT EXISTS tipologie (
+  db.run(`CREATE TABLE IF NOT EXISTS categorie (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
-    rif_utente INTEGER,
+    rif_utente INTEGER NOT NULL,
+    UNIQUE(nome, rif_utente),
     FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
   )`);
 
-  // Catalogo elementi predefiniti
-  db.run(`CREATE TABLE IF NOT EXISTS catalogo_categorie (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slug TEXT NOT NULL,
-    nome TEXT NOT NULL,
-    descrizione TEXT,
-    ordine INTEGER NOT NULL DEFAULT 0,
-    rif_utente INTEGER,
-    UNIQUE(slug, rif_utente)
-  )`);
-
-  db.run(`ALTER TABLE catalogo_categorie ADD COLUMN rif_utente INTEGER`, (err) => {
-    if (err && !err.message.includes('duplicate column')) console.error("Migrazione rif_utente categorie:", err.message);
-  });
-
-  db.run(`CREATE TABLE IF NOT EXISTS catalogo_elementi (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    descrizione TEXT,
-    categoria_slug TEXT NOT NULL,
-    tags TEXT,
-    foto TEXT,
-    popolarita INTEGER NOT NULL DEFAULT 0,
-    fragile INTEGER NOT NULL DEFAULT 0,
-    attivo INTEGER NOT NULL DEFAULT 1,
-    UNIQUE(nome, categoria_slug),
-    FOREIGN KEY(categoria_slug) REFERENCES catalogo_categorie(slug) ON DELETE CASCADE
-  )`);
-
-  db.run(`CREATE INDEX IF NOT EXISTS idx_catalogo_elementi_categoria ON catalogo_elementi(categoria_slug)`);
-  db.run(`CREATE INDEX IF NOT EXISTS idx_catalogo_elementi_popolarita ON catalogo_elementi(popolarita DESC)`);
-
-  // 6. Tabella CHECKPOINT GPS
   db.run(`CREATE TABLE IF NOT EXISTS checkpoint_gps (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     rif_box INTEGER NOT NULL,
@@ -158,7 +113,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
   )`);
 
-  // 7. CONDIVISIONI ARCHIVIO
    db.run(`CREATE TABLE IF NOT EXISTS condivisioni (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      rif_box INTEGER NOT NULL,
@@ -173,7 +127,6 @@ db.serialize(() => {
      FOREIGN KEY(rif_ospite) REFERENCES utenti(id) ON DELETE CASCADE
    )`);
 
-  // 8. GEOFENCE
   db.run(`CREATE TABLE IF NOT EXISTS geofence (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     rif_armadio INTEGER NOT NULL UNIQUE,
@@ -185,7 +138,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_armadio) REFERENCES armadi(id) ON DELETE CASCADE
   )`);
 
-  // 8b. GEOFENCE PER CHECKPOINT
   db.run(`CREATE TABLE IF NOT EXISTS geofence_checkpoint (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     rif_checkpoint INTEGER NOT NULL UNIQUE,
@@ -197,7 +149,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_checkpoint) REFERENCES checkpoint_gps(id) ON DELETE CASCADE
   )`);
 
-  // 9. SMART QR
   db.run(`CREATE TABLE IF NOT EXISTS qr_token (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     rif_box   INTEGER NOT NULL UNIQUE,
@@ -206,21 +157,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
   )`);
 
-  // 10. SEGNALAZIONI GUEST
-  db.run(`CREATE TABLE IF NOT EXISTS segnalazioni_guest (
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    rif_box      INTEGER NOT NULL,
-    latitudine   REAL,
-    longitudine  REAL,
-    accuratezza  REAL,
-    nota         TEXT,
-    ip_hash      TEXT,
-    timestamp    TEXT NOT NULL DEFAULT (datetime('now')),
-    notificato   INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
-  )`);
-
-  // 11. NOTIFICHE GEOFENCE
   db.run(`CREATE TABLE IF NOT EXISTS geofence_notifiche (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     rif_box INTEGER NOT NULL,
@@ -236,7 +172,6 @@ db.serialize(() => {
     FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
   )`);
 
-   // 12. BOX LOG (cronologia)
    db.run(`CREATE TABLE IF NOT EXISTS box_log (
      id         INTEGER PRIMARY KEY AUTOINCREMENT,
      rif_box    INTEGER NOT NULL,
@@ -247,7 +182,6 @@ db.serialize(() => {
      FOREIGN KEY(rif_box) REFERENCES box(id) ON DELETE CASCADE
    )`);
 
-   // 14. MESSAGGI UTENTI (sistema / supporto)
    db.run(`CREATE TABLE IF NOT EXISTS messaggi_utenti (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      rif_utente INTEGER NOT NULL,
@@ -261,28 +195,12 @@ db.serialize(() => {
      FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
    )`);
 
-   db.run(`ALTER TABLE messaggi_utenti ADD COLUMN archiviato INTEGER NOT NULL DEFAULT 0`, (err) => {
-     if (err && !err.message.includes('duplicate column')) {
-       console.error("Migrazione archiviato messaggi:", err.message);
-     }
-   });
    db.run(`ALTER TABLE messaggi_utenti ADD COLUMN direzione INTEGER NOT NULL DEFAULT 0`, (err) => {
      if (err && !err.message.includes('duplicate column')) {
        console.error("Migrazione direzione messaggi:", err.message);
      }
    });
 
-   // 15. RISPOSTE RAPIDE (templates)
-   db.run(`CREATE TABLE IF NOT EXISTS risposte_rapide (
-     id INTEGER PRIMARY KEY AUTOINCREMENT,
-     rif_utente INTEGER NOT NULL,
-     titolo TEXT NOT NULL,
-     corpo TEXT NOT NULL,
-     timestamp TEXT NOT NULL DEFAULT (datetime('now')),
-     FOREIGN KEY(rif_utente) REFERENCES utenti(id) ON DELETE CASCADE
-   )`);
-
-   // 13. SEGNALAZIONI UTENTI (feedback/report)
    db.run(`CREATE TABLE IF NOT EXISTS segnalazioni_utenti (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      rif_utente INTEGER NOT NULL,
@@ -300,9 +218,7 @@ db.serialize(() => {
   popolaDatiEsempio();
 });
 
-function popolaCatalogoDefault() {
-  console.log("Catalogo elementi lasciato vuoto come richiesto.");
-}
+function popolaCatalogoDefault() {}
 
 function inserisciDatiEsempio() {
   const messaggi = [
@@ -323,14 +239,6 @@ function inserisciDatiEsempio() {
     db.run(`INSERT OR IGNORE INTO messaggi_utenti (id, rif_utente, tipo, mittente, oggetto, corpo, letto, importante) VALUES (?, ?, ?, ?, ?, ?, COALESCE(?, 0), ?)`, m);
   }
 
-  const risposte = [
-    [1, 1, 'Conferma ricezione', 'Grazie per la comunicazione. Ho ricevuto il tuo messaggio e provvederò a breve.'],
-    [2, 1, 'Richiedo chiarimenti', 'Grazie per la segnalazione. Potresti fornirmi ulteriori dettagli per poter risolvere la questione?'],
-    [3, 1, 'Suggerisci correzione', 'Grazie per la segnalazione. Provvederemo a verificare e correggere quanto segnalato.'],
-  ];
-  for (const r of risposte) {
-    db.run(`INSERT OR IGNORE INTO risposte_rapide (id, rif_utente, titolo, corpo) VALUES (?, ?, ?, ?)`, r);
-  }
 }
 
 async function popolaDatiEsempio() {

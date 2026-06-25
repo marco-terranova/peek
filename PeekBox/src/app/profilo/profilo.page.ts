@@ -41,6 +41,10 @@ export class ProfiloPage implements OnInit {
   nuoveBoxPos: Set<number> = new Set();
   apertoCrea = false;
 
+  categorie: any[] = [];
+  nuovoNomeCat = '';
+  apertoCreaCategoria = false;
+
   constructor(
     private router: Router,
     private dbService: DatabaseService,
@@ -105,6 +109,7 @@ export class ProfiloPage implements OnInit {
       }
 
       this.leggiPosizioni();
+      this.leggiCategorie();
     } catch (err) {
       console.error('[Profilo] Errore caricamento statistiche:', err);
     }
@@ -189,6 +194,34 @@ export class ProfiloPage implements OnInit {
           this.leggiPosizioni();
         }
         this.chiudiCrea();
+      },
+      error: () => {}
+    });
+  }
+
+  private leggiCategorie() {
+    this.dbService.getCategorie().subscribe({
+      next: (res: any) => { this.categorie = res.categorie || []; },
+      error: () => { this.categorie = []; }
+    });
+  }
+
+  eliminaCategoriaConferma(cat: any) {
+    if (!cat?.id) return;
+    this.dbService.eliminaCategoria(cat.id).subscribe({
+      next: () => { this.leggiCategorie(); },
+      error: () => {}
+    });
+  }
+
+  creaCategoriaProfilo() {
+    const n = this.nuovoNomeCat.trim();
+    if (!n) return;
+    this.dbService.creaCategoria(n).subscribe({
+      next: () => {
+        this.apertoCreaCategoria = false;
+        this.nuovoNomeCat = '';
+        this.leggiCategorie();
       },
       error: () => {}
     });

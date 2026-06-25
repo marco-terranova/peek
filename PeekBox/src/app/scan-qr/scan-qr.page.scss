@@ -21,9 +21,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   --background: #{$page};
 }
 
-// ═══════════════════════════════════════════════════════════
 //  SCAN SPLIT VIEW
-// ═══════════════════════════════════════════════════════════
 
 .scan-split {
   display: flex;
@@ -38,7 +36,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   to { opacity: 1; }
 }
 
-// ── LEFT PANEL ──────────────────────────────────────────
 .ss-left {
   position: relative;
   flex: 1;
@@ -102,7 +99,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-15px,10px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Left content wrapper ────────────────────────────
 .ss-l-content {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -135,7 +131,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Left waiting state ──────────────────────────────
 .ss-l-waiting {
   display: flex;
   flex-direction: column;
@@ -180,7 +175,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   max-width: 380px;
 }
 
-// ── Left info steps ────────────────────────────────
 .ss-l-info {
   display: flex;
   flex-direction: column;
@@ -230,7 +224,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Left tip ──────────────────────────────────────
 .ss-l-tip {
   display: flex;
   align-items: flex-start;
@@ -258,7 +251,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Left boxes list ─────────────────────────────────
 .ss-l-boxes {
   display: flex;
   flex-direction: column;
@@ -278,7 +270,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   text-align: center;
 }
 
-// ── Left result ──────────────────────────────────────
 .ss-l-result {
   position: relative;
   z-index: 1;
@@ -437,9 +428,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RIGHT PANEL
-// ═══════════════════════════════════════════════════════════
 
 .ss-right {
   position: relative;
@@ -450,7 +439,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   overflow: hidden;
 }
 
-// ── Right blobs ────────────────────────────────────────
 .sr-blobs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
 .srb-blob {
@@ -496,7 +484,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-25px,20px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Right body ───────────────────────────────────────
 .sr-body {
   position: relative; z-index: 5;
   flex: 1;
@@ -572,7 +559,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 .sr-card-body { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 14px; }
 
-// ── Viewfinder ────────────────────────────────────────
 .sr-viewfinder { display: flex; flex-direction: column; gap: 12px; }
 
 .sr-camera-preview {
@@ -645,7 +631,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   svg { width: 22px; height: 22px; opacity: 0.3; }
 }
 
-// ── Action buttons ─────────────────────────────────
 .sr-actions-row {
   display: flex; gap: 10px;
 }
@@ -674,7 +659,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Manual input ────────────────────────────────────
 .sr-manual-section { display: flex; flex-direction: column; gap: 6px; }
 
 .gallery-error {
@@ -741,9 +725,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════
 
 @media (max-width: 899px) {
   .scan-split { flex-direction: column-reverse; }

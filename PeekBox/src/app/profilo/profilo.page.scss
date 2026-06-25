@@ -23,9 +23,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -57,9 +55,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   flex: 1; max-width: 520px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 1 — DATI + CONDIVISIONI (text + button rows)
-// ═══════════════════════════════════════════════════════════════════
 .about-inner--rows {
   max-width: 900px; padding: 80px 48px;
 }
@@ -79,9 +75,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .ar-btn { min-width: 220px; flex-shrink: 0; justify-content: center; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 2 — TRACKING
-// ═══════════════════════════════════════════════════════════════════
 .av-track-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
   width: 100%;
@@ -103,9 +97,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 600; color: $mid;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 3 — CESTINO
-// ═══════════════════════════════════════════════════════════════════
 .av-cestino-card {
   display: flex; flex-direction: column; align-items: center; gap: 14px;
   width: 100%;
@@ -137,9 +129,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   svg { width: 13px; height: 13px; stroke: currentColor; flex-shrink: 0; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 4 — STATS
-// ═══════════════════════════════════════════════════════════════════
 .av-stats-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
   width: 100%;
@@ -159,9 +149,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; color: $mid;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 5 — PRIVACY ICONS
-// ═══════════════════════════════════════════════════════════════════
 .av-privacy-icons {
   display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
   width: 100%;
@@ -175,9 +163,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   span { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600; color: $mid; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TEXT CONTENT
-// ═══════════════════════════════════════════════════════════════════
 .ac-title {
   margin: 0 0 28px;
   font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 900;
@@ -216,9 +202,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION 6 — ADMIN
-// ═══════════════════════════════════════════════════════════════════
 .av-admin-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
   width: 100%;
@@ -234,9 +218,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   span { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 600; color: $mid; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  LOGOUT
-// ═══════════════════════════════════════════════════════════════════
 .prf-logout-wrap {
   display: flex; justify-content: center;
   padding: 48px 24px 24px;
@@ -257,14 +239,10 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  DIVIDER
-// ═══════════════════════════════════════════════════════════════════
 .section-divider { height: 2px; background: $green; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  POSIZIONE BOX
-// ═══════════════════════════════════════════════════════════════════
 .pp-pos-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -320,7 +298,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 280px;
+  max-height: 180px;
   overflow-y: auto;
   padding-right: 4px;
 
@@ -574,9 +552,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   justify-content: flex-end;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 40px; padding: 64px 28px; text-align: center; }
   .about-inner--alt { flex-direction: column-reverse; }

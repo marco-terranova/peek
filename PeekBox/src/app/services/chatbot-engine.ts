@@ -36,39 +36,32 @@ export class ChatbotEngineService {
   }
 
   private async matchIntent(lower: string, utenteId: string): Promise<string> {
-    // ── SALUTI ─────────────────────────────────────────────
     if (this.is(lower, ['ciao', 'salve', 'buongiorno', 'buonasera', 'buona sera', 'hey', 'ehi', 'buona giornata', 'buona serata', 'buona giornat', 'saluti', 'salutami'])) {
       return this.greetingResponse();
     }
 
-    // ── RINGRAZIAMENTI ─────────────────────────────────────
     if (this.hasAny(lower, ['grazie mille', 'ti ringrazio', 'grazie tante', 'grazie', 'thanks', 'thank', 'sei gentile', 'sei unico', 'ti ringrazio tanto', 'grazie infinite', 'grazie mille'])) {
       return 'Prego! 😊 Sono qui per questo. Se hai bisogno di altro, chiedi pure!';
     }
 
-    // ── STATO ──────────────────────────────────────────────
     if (this.hasAny(lower, ['come stai', 'come va', 'tutto bene', 'come butta', 'come ti senti', 'tutto ok', 'tutto a posto', 'come procede', 'come va la vita'])) {
       return 'Tutto a posto! 🚀 Sempre pronto a darti una mano con box, oggetti e tutto il resto. Tu dimmi!';
     }
 
-    // ── CHI SEI ───────────────────────────────────────────
     if (this.hasAny(lower, ['chi sei', 'chi ti ha creato', 'che sei', 'chi sei tu', 'cosa sei', 'da chi sei stato creato', 'chi ha fatto', 'che cosa sei'])) {
       return 'Sono l\'assistente virtuale di PeekBox 🤖\n\nSono stato creato per aiutarti a gestire il tuo profilo, le tue box, i tuoi oggetti, gli spazi e le condivisioni. Conosciamoci meglio: dimmi cosa ti serve!';
     }
 
-    // ── AIUTO ──────────────────────────────────────────────
     if (this.is(lower, ['aiuto', 'help', 'cosa sai fare', 'comandi', 'cosa puoi fare', 'comando', 'funzioni', 'help!', 'cosa fai', 'che sai fare', 'cosa posso chiederti', 'di cosa sei capace', 'cosa posso fare', 'lista comandi', 'elenco comandi'])) {
       return this.helpResponse();
     }
 
-    // ── MESSAGGI / SUPPORTO ───────────────────────────────
     if (this.hasAny(lower, ['messaggi', 'centro messaggi', 'supporto', 'contatta', 'assistenza', 'parlare con', 'contattare', 'servizio clienti', 'reclamo', 'problema', 'segnala', 'segnalare', 'bug', 'errore', 'assist']) ||
         (lower.includes('aiut') && lower.includes('contatt'))) {
       this.ultimoContesto = { intent: 'messaggi' };
       return this.messaggiResponse();
     }
 
-    // ── RICERCA ────────────────────────────────────────────
     const cercaMatch = this.estraiTermineRicerca(lower);
     if (cercaMatch) {
       if (this.hasAny(lower, ['dov', 'posizione', 'dove sta', 'dov\'', 'posizion', 'checkpoint', 'gps', 'coordinate'])) {
@@ -79,25 +72,21 @@ export class ChatbotEngineService {
       return await this.cercaOggettiResponse(utenteId, cercaMatch);
     }
 
-    // ── CESTINO ────────────────────────────────────────────
     if (this.hasAny(lower, ['cestin', 'eliminat', 'cancell', 'cestino', 'cancellat', 'eliminato', 'eliminate', 'cancellate', 'eliminati', 'cancellati', 'box eliminate', 'cestino delle box', 'cestino box'])) {
       this.ultimoContesto = { intent: 'cestino' };
       return await this.cestinoResponse(utenteId);
     }
 
-    // ── PREFERITE ──────────────────────────────────────────
     if (this.hasAny(lower, ['preferit', 'preferite', 'preferiti', 'preferito', 'stelle', 'star', 'preferenze', 'preferita', 'preferiti', 'box preferite', 'box preferiti'])) {
       this.ultimoContesto = { intent: 'preferite' };
       return await this.preferiteResponse(utenteId);
     }
 
-    // ── TRANSITO ───────────────────────────────────────────
     if (this.hasAny(lower, ['transit', 'moving', 'in moviment', 'spostament', 'spostate', 'spostato', 'viaggio', 'in viaggio', 'in corso', 'moving mode', 'spostamento in corso', 'box in transito', 'in trasporto'])) {
       this.ultimoContesto = { intent: 'transito' };
       return await this.transitResponse(utenteId);
     }
 
-    // ── MOSTRA / ELENCO + contesto ────────────────────────
     if (this.hasAny(lower, ['mostra', 'elenco', 'lista', 'voglio vedere', 'fammi vedere', 'apri', 'visualizza', 'vedi', 'vediamo', 'elencami'])) {
       if (this.hasAny(lower, ['preferit', 'preferite'])) {
         this.ultimoContesto = { intent: 'preferite' };
@@ -135,14 +124,12 @@ export class ChatbotEngineService {
       return 'Cosa vuoi vedere? Prova con: "Mostra box", "Mostra preferite", "Mostra spazi", "Mostra condivisioni".';
     }
 
-    // ── BOX ────────────────────────────────────────────────
     if ((this.hasAny(lower, ['box', 'scatol']) && (this.hasAny(lower, ['quant', 'conta', 'total', 'ho', 'quante', 'quanti', 'numero', 'conteggio', 'tante', 'tutte', 'mie', 'miei']))) ||
         lower === 'box' || lower === 'scatole' || lower === 'le mie box' || lower === 'le scatole' || lower === 'tutte le box') {
       this.ultimoContesto = { intent: 'box' };
       return await this.boxResponse(utenteId);
     }
 
-    // ── OGGETTI ────────────────────────────────────────────
     if (this.hasAny(lower, ['oggett', 'articol', 'cose che ho', 'cose', 'elementi', 'pezzi', 'beni', 'prodotti', 'merce', 'inventario', 'catalogo', 'collezione'])) {
       this.ultimoContesto = { intent: 'oggetti' };
       return await this.oggettiResponse(utenteId);
@@ -152,43 +139,36 @@ export class ChatbotEngineService {
       return await this.oggettiResponse(utenteId);
     }
 
-    // ── CONDIVISIONI ──────────────────────────────────────
     if (this.hasAny(lower, ['condivis', 'condivid', 'con chi', 'condivision', 'in comune', 'ospiti', 'inviti', 'invitato', 'chi condivide', 'condivisa', 'condivise', 'condiviso', 'condivider', 'share', 'sharing', 'chi ha accesso', 'permessi', 'autorizzaz'])) {
       this.ultimoContesto = { intent: 'condivisioni' };
       return await this.condivisioniResponse(utenteId);
     }
 
-    // ── SPAZI ──────────────────────────────────────────────
     if (this.hasAny(lower, ['spazi', 'armadi', 'archivi', 'luoghi', 'dove tengo', 'miei spazi', 'miei armadi', 'miei archivi', 'scaffali', 'ripiani', 'locali', 'stanze', 'magazzini', 'depositi', 'dove sono le box', 'dove sono le scatole', 'spazio', 'archivio'])) {
       this.ultimoContesto = { intent: 'spazi' };
       return await this.spaziResponse(utenteId);
     }
 
-    // ── PROFILO ────────────────────────────────────────────
     if (this.hasAny(lower, ['profilo', 'account', 'miei dati', 'informazioni', 'informazioni account', 'impostazioni', 'impostazione', 'impostaz', 'dati account', 'dati personali'])) {
       this.ultimoContesto = { intent: 'profilo' };
       return '👤 **Il tuo profilo**\n\nNella sezione Profilo puoi:\n- Modificare nome, email e password\n- Cambiare foto profilo\n- Regolare le notifiche\n- Vedere i tuoi messaggi\n- Gestire le condivisioni\n- Monitorare lo spazio utilizzato\n\nVai su Profilo per gestire tutto!';
     }
 
-    // ── NOTIFICHE ─────────────────────────────────────────
     if (this.hasAny(lower, ['notific', 'notifica', 'alert', 'avvis', 'avviso', 'promemoria', 'notifiche', 'notificato', 'notificata', 'ricevere notifiche', 'avvisi'])) {
       this.ultimoContesto = { intent: 'notifiche' };
       return '🔔 **Notifiche**\n\nPuoi gestire le tue notifiche dalla pagina "Informazioni Account" nel tuo profilo. Lì puoi scegliere quali notifiche ricevere.\n\nAl momento sono disponibili notifiche per:\n- Movimenti delle box\n- Condivisioni\n- Messaggi dal supporto\n- Promemoria';
     }
 
-    // ── TEMA ───────────────────────────────────────────────
     if (this.hasAny(lower, ['buio', 'tema', 'dark', 'modalit', 'scur', 'tema scuro', 'dark mode', 'tema chiaro', 'light', 'tema scura', 'colori', 'modalità scura', 'tema scuro', 'light mode', 'tema light'])) {
       this.ultimoContesto = { intent: 'tema' };
       return '🎨 **Tema**\n\nPeekBox supporta la modalità scura! Puoi attivarla dalle impostazioni del tuo dispositivo o dall\'app. Il tema scuro riduce l\'affaticamento degli occhi e consuma meno batteria sui display OLED.';
     }
 
-    // ── TOTALI / STATISTICHE ──────────────────────────────
     if (this.hasAny(lower, ['totali', 'riepilog', 'stat', 'dashboard', 'sommario', 'riassunto', 'numeri', 'statistiche', 'statistico', 'dati', 'report', 'resoconto', 'quadro', 'situazione', 'panoramica', 'riepilogo', 'summary', 'stats'])) {
       this.ultimoContesto = { intent: 'totali' };
       return await this.totaliResponse(utenteId);
     }
 
-    // ── POSIZIONE BOX ──────────────────────────────────────
     if ((this.hasAny(lower, ['posizion', 'checkpoint', 'gps', 'coordinate', 'mappa', 'dove sono', 'ultima posizione', 'ultimo', 'ubicazion']) ||
          (lower.includes('dov') && !cercaMatch)) &&
         this.hasAny(lower, ['box', 'scatol', 'mia', 'mie', 'mio'])) {
@@ -196,24 +176,20 @@ export class ChatbotEngineService {
       return await this.posizioneBoxResponse(utenteId);
     }
 
-    // ── POSIZIONE GENERALE ─────────────────────────────────
     if (this.hasAny(lower, ['posizion', 'checkpoint', 'gps', 'coordinate', 'mappa', 'dove sono', 'ultima posizione', 'ultimo', 'ubicazion'])) {
       this.ultimoContesto = { intent: 'posizione' };
       return await this.posizioneBoxResponse(utenteId);
     }
 
-    // ── GESTIONE ERRORI / FEEDBACK NEGATIVO ───────────────
     if (this.hasAny(lower, ['non funziona', 'non va', 'non carica', 'non si apre', 'bug', 'errore', 'si blocca', 'crasha', 'problema tecnico', 'problemi', 'non riesco', 'non parte', 'non risponde', 'non fa niente'])) {
       return 'Mi dispiace per l\'inconveniente 🙁\n\nTi consiglio di:\n1. Controllare la connessione internet\n2. Riavviare l\'app\n3. Se il problema persiste, contattare il supporto dalla sezione "Messaggi" nel profilo.\n\nSe vuoi, posso aiutarti con altro!';
     }
 
-    // ── RECUPERO BOX ──────────────────────────────────────
     if (this.hasAny(lower, ['recuper', 'ripristin', 'tornare', 'ripristina', 'recupera', 'annulla', 'undo', 'ripristinare']) &&
         this.hasAny(lower, ['box', 'scatol', 'cancell', 'eliminat'])) {
       return '🗑️ **Recuperare una box**\n\nLe box eliminate vengono conservate nel cestino per 30 giorni prima della rimozione definitiva.\n\nPer visualizzarle: "Mostra cestino" o "Cestino?"\n\nSe vuoi ripristinare una box, vai nella sezione "Cestino" dal menu principale e clicca sul pulsante di ripristino.';
     }
 
-    // ── CREAZIONE BOX ──────────────────────────────────────
     if (this.hasAny(lower, ['crea', 'creare', 'nuova', 'aggiungi', 'aggiungere', 'nuovo', 'creazione', 'creo', 'creiamo', 'crearne']) &&
         this.hasAny(lower, ['box', 'scatol', 'archivi', 'armadi'])) {
       return '📦 **Creare una nuova box**\n\nPer creare una nuova box:\n1. Vai nella sezione "Crea Box" dal menu\n2. Scegli un nome e una descrizione\n3. Seleziona l\'armadio dove archiviarla\n4. Clicca "Registra nel Sistema"\n\nVai su "Crea Box" per iniziare!';
@@ -224,7 +200,6 @@ export class ChatbotEngineService {
       return '🏠 **Creare un nuovo spazio**\n\nPer creare un nuovo armadio:\n1. Vai su "Gestione Spazi" dal menu\n2. Clicca il pulsante "+" in basso\n3. Inserisci il nome dell\'armadio\n4. Conferma la creazione\n\nVai su "Gestione Spazi" per iniziare!';
     }
 
-    // ── GUIDE: "COME SI FA..." ─────────────────────────────
     if (this.hasAny(lower, ['come si fa', 'come faccio', 'come posso', 'come si', 'si può', 'è possibile', 'vorrei', 'vorrei sapere', 'spiegami', 'insegnami', 'guida', 'tutorial', 'come fare per', 'come devo'])) {
       if (this.hasAny(lower, ['condivid', 'condivis', 'invit', 'ospit'])) {
         return '🤝 **Come condividere una box**\n\nVai su "Condividi Box" dal profilo. Scegli la box, seleziona il permesso (Visualizzatore/Editor), inserisci l\'email dell\'ospite e clicca "Invita". L\'ospite riceverà una notifica per accettare o rifiutare.';
@@ -247,14 +222,11 @@ export class ChatbotEngineService {
       return this.helpResponse();
     }
 
-    // ── CONTEXT AWARE FOLLOW-UP ────────────────────────────
     if (this.ultimoContesto) {
       const ctxRisposta = await this.handleContext(lower, utenteId);
       if (ctxRisposta) return ctxRisposta;
     }
 
-    // ── FALLBACK ───────────────────────────────────────────
-    // Ultimo tentativo: estrae keywords e prova a rispondere
     const fallback = await this.fallbackResponse(lower, utenteId);
     if (fallback) return fallback;
 
@@ -296,7 +268,6 @@ export class ChatbotEngineService {
     const ctx = this.ultimoContesto;
     const currentIntent = ctx.intent;
 
-    // Cambio di intenzione esplicito
     if (this.hasAny(lower, ['preferit', 'preferite', 'preferiti', 'preferito', 'stelle', 'preferenze'])) {
       this.ultimoContesto = { intent: 'preferite' };
       return await this.preferiteResponse(utenteId);
@@ -332,7 +303,6 @@ export class ChatbotEngineService {
       return await this.oggettiResponse(utenteId);
     }
 
-    // Follow-up contestuale: "dimmi di più", "dettagli", "altro", "spiega meglio"
     const richiedeDettagli = this.hasAny(lower, ['dimmi', 'dettagli', 'approfondisci', 'spiega meglio', 'altro', 'ancora', 'inoltre', 'poi', 'e poi', 'continua', 'vai avanti', 'di più', 'più informazioni', 'descrivi', 'più dettagli']);
 
     if (richiedeDettagli) {
@@ -354,7 +324,6 @@ export class ChatbotEngineService {
       }
     }
 
-    // "e queste?" / "e quelle?" — mostra più dettagli dell'intento corrente
     if (this.hasAny(lower, ['e queste', 'e quelli', 'e queste?', 'e quelli?', 'e quelle', 'e quelle?', 'quali', 'quali sono', 'come'])) {
       switch (currentIntent) {
         case 'box':
@@ -489,7 +458,6 @@ export class ChatbotEngineService {
     return ['Aiuto', 'Quante box ho?', 'Totali?', 'Messaggi?'];
   }
 
-  // ─── UTILITY ──────────────────────────────────────────────
 
   private is(lower: string, matches: string[]): boolean {
     return matches.some(m => lower === m || lower.startsWith(m + ' ') || lower.startsWith(m + '?') || lower.startsWith(m + ',') || lower.startsWith(m + '.') || lower.startsWith(m + '!'));
@@ -522,7 +490,6 @@ export class ChatbotEngineService {
     return `${greeting}! 👋 Come posso aiutarti? Digita "aiuto" per vedere cosa posso fare.`;
   }
 
-  // ─── HELP ─────────────────────────────────────────────────
 
   private helpResponse(): string {
     this.ultimoContesto = { intent: 'aiuto' };
@@ -562,7 +529,6 @@ export class ChatbotEngineService {
     return '📬 **Centro Messaggi**\n\nPuoi trovare tutti i tuoi messaggi, le risposte rapide e il modulo di contatto supporto nella sezione "Messaggi" del tuo profilo.\n\nVai su Profilo → Messaggi per:\n- Leggere la posta in arrivo\n- Gestire messaggi importanti\n- Contattare il supporto\n- Usare le risposte rapide\n\nVuoi che ti dica di più?';
   }
 
-  // ─── INTENT PARSING ──────────────────────────────────────
 
   private estraiTermineRicerca(lower: string): string | null {
     const pattern = /(?:cerca|trova|dov'[eè]|dove\s+(?:si\s+)?trova|dov[ée]\s+|dov[ée]\s*[èe]\s*|che\s+cos'[eè]\s*|cos'[eè]\s+|dov[ée]\s+si\s+trova|trova\s+il\s+mio|dov[ée]\s+posso\s+trovare)(.+)/i;
@@ -577,7 +543,6 @@ export class ChatbotEngineService {
     return null;
   }
 
-  // ─── BOX ──────────────────────────────────────────────────
 
   private async boxResponse(utenteId: string): Promise<string> {
     try {
@@ -651,7 +616,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── OGGETTI ──────────────────────────────────────────────
 
   private async oggettiResponse(utenteId: string): Promise<string> {
     try {
@@ -675,7 +639,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── CONDIVISIONI ─────────────────────────────────────────
 
   private async condivisioniResponse(utenteId: string): Promise<string> {
     try {
@@ -724,7 +687,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── SPAZI ────────────────────────────────────────────────
 
   private async spaziResponse(utenteId: string): Promise<string> {
     try {
@@ -753,7 +715,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── TOTALI ──────────────────────────────────────────────
 
   private async totaliResponse(utenteId: string): Promise<string> {
     try {
@@ -786,7 +747,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── CERCA OGGETTI ───────────────────────────────────────
 
   private async cercaOggettiResponse(utenteId: string, termine: string): Promise<string> {
     try {
@@ -918,7 +878,6 @@ export class ChatbotEngineService {
     }
   }
 
-  // ─── POSIZIONE BOX ───────────────────────────────────────
 
   private async posizioneBoxResponse(utenteId: string): Promise<string> {
     try {

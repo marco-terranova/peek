@@ -9,9 +9,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
 .ia-content { --background: #ffffff; }
 .ia-stage { width: 100%; position: relative; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  BACK BUTTON
-// ═══════════════════════════════════════════════════════════════════
 .ia-back-btn {
   position: fixed; top: 28px; left: 28px; z-index: 100;
   display: flex; align-items: center; gap: 6px;
@@ -26,9 +24,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -49,9 +45,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
 .about-content-full { width: 100%; display: flex; flex-direction: column; gap: 20px; }
 .about-content-full .ac-title { margin: 0 0 4px; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TEXT STYLES
-// ═══════════════════════════════════════════════════════════════════
 .ac-title {
   font-family: 'Outfit', sans-serif; font-weight: 900;
   font-size: clamp(1.6rem, 3.5vw, 2.4rem);
@@ -68,9 +62,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   background: $green;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TIPS CARD
-// ═══════════════════════════════════════════════════════════════════
 .ia-tips-card {
   max-width: 700px;
   margin: 0 auto;
@@ -97,9 +89,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   margin: 0 0 40px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  CESTINO: CARD VARIANT
-// ═══════════════════════════════════════════════════════════════════
 .cs-card {
   max-width: 860px;
   .ac-title { margin-bottom: 24px; }
@@ -109,9 +99,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   svg { stroke: $green-d; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  CESTINO: TABLE
-// ═══════════════════════════════════════════════════════════════════
 .cs-table {
   display: flex; flex-direction: column;
   text-align: left; margin-top: 20px;
@@ -152,9 +140,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr 110px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  CESTINO: PROGRESS
-// ═══════════════════════════════════════════════════════════════════
 .cs-progress-track {
   flex: 1; height: 8px; max-width: 100px;
   background: rgba(74,122,148,0.08);
@@ -176,9 +162,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   display: flex; align-items: center; gap: 8px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  CESTINO: ACTIONS
-// ═══════════════════════════════════════════════════════════════════
 .cs-actions {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
 }
@@ -206,9 +190,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   &:active { transform: scale(0.94); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  LOADING / EMPTY
-// ═══════════════════════════════════════════════════════════════════
 .ca-loading {
   text-align: center; padding: 24px;
   font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: $mid;
@@ -219,9 +201,7 @@ $red: #ef4444; $red-l: rgba(239,68,68,0.08);
   .ac-text { margin: 0; text-align: center; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 48px; padding: 60px 28px; }
   .ac-text { text-align: center; }

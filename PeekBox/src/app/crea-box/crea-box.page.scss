@@ -7,9 +7,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 :host { display: block; }
 .crea-content { --background: #{$page}; --overflow: hidden; }
 
-// ═══════════════════════════════════════════════════════════
 //  SPLIT VIEW
-// ═══════════════════════════════════════════════════════════
 
 .crea-split {
   position: fixed;
@@ -32,9 +30,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   -webkit-backdrop-filter: blur(4px);
 }
 
-// ═══════════════════════════════════════════════════════════
 //  LEFT PANEL — Box preview + info steps
-// ═══════════════════════════════════════════════════════════
 
 .cs-left {
   position: relative;
@@ -113,7 +109,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-15px,10px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Left content ─────────────────────────────────────────
 .cs-l-content {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center;
@@ -125,7 +120,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   justify-content: center;
 }
 
-// ── Box preview ──────────────────────────────────────────
 .cs-l-preview {
   position: relative;
   width: 160px; height: 160px;
@@ -149,7 +143,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   z-index: 2;
 }
 
-// ── Title ────────────────────────────────────────────────
 .cs-l-title {
   margin: -12px 0 0;
   font-size: 1.4rem;
@@ -162,7 +155,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   text-align: center;
 }
 
-// ── Info steps ──────────────────────────────────────────
 .cs-l-info {
   display: flex;
   flex-direction: column;
@@ -214,7 +206,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Tip ──────────────────────────────────────────────────
 .cs-l-tip {
   display: flex;
   align-items: flex-start;
@@ -242,9 +233,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RIGHT PANEL — Glass card with form + photo
-// ═══════════════════════════════════════════════════════════
 
 .cs-right {
   position: relative;
@@ -278,7 +267,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   overflow-y: auto;
 }
 
-// ── Glass card ───────────────────────────────────────────
 .csr-card {
   position: relative; width: 100%; max-width: 390px;
   background: rgba(255, 255, 255, 0.6);
@@ -362,7 +350,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   gap: 14px;
 }
 
-// ── Form fields ──────────────────────────────────────────
 .csr-field {
   display: flex;
   flex-direction: column;
@@ -422,7 +409,9 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
     flex-direction: row;
     overflow: visible;
     border: none;
-    background: $white;
+    background: transparent;
+    border-radius: 0;
+    gap: 8px;
   }
 }
 
@@ -436,10 +425,10 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   appearance: none;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   width: 100%; padding: 12px 14px;
-  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  border: none;
   border-radius: 12px;
   outline: none;
-  background: $white;
+  background: transparent;
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 500; color: $dark;
   cursor: pointer;
 
@@ -455,6 +444,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   max-height: 200px;
   overflow-y: auto;
   animation: csr-dd-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .csr-dropdown-backdrop {
@@ -498,7 +492,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.95); }
 }
 
-// ── Dimension selector ──────────────────────────────────
 .csr-dim-row {
   display: flex;
   gap: 8px;
@@ -551,7 +544,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   .is-active & { color: $green-d; opacity: 1; }
 }
 
-// ── GPS tracking ─────────────────────────────────────
 .csr-gps-row {
   display: flex;
   align-items: center;
@@ -609,7 +601,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Register button ──────────────────────────────────────
 .csr-btn-registra {
   position: relative; width: 100%;
   display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -640,7 +631,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Error message ──────────────────────────────────────────
 .csr-errore-box {
   display: flex;
   align-items: center;
@@ -666,9 +656,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  TAB BAR
-// ═══════════════════════════════════════════════════════════
 
 ion-footer { position: relative; z-index: 10; }
 
@@ -697,9 +685,7 @@ ion-tab-button svg {
   box-shadow: 0 4px 12px rgba($green, 0.3) !important;
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════
 
 @media (max-width: 899px) {
   .crea-split { flex-direction: column; }

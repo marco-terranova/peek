@@ -12,10 +12,8 @@
 
     <ng-container *ngIf="!isLoading && box; else caricaState">
 
-      <!-- ═══════════════ SEZIONE 1: ELEMENTI (layout orizzontale) ══════ -->
       <section class="db-section-elementi">
         <div class="db-split">
-          <!-- LEFT: info box -->
           <div class="db-split-left">
             <div class="db-info-card">
               <div class="ia-tips-icon">
@@ -40,7 +38,6 @@
             </div>
           </div>
 
-          <!-- RIGHT: oggetti list -->
           <div class="db-split-right">
             <div class="db-obj-toolbar" *ngIf="oggetti.length > 0">
               <div class="db-obj-search">
@@ -60,21 +57,28 @@
               <p>Nessun risultato per "{{ searchQuery }}"</p>
             </div>
 
-            <div class="db-obj-list" *ngIf="filteredOggetti.length > 0">
-              <div class="db-card-obj" *ngFor="let o of filteredOggetti">
+            <div class="db-obj-grid" *ngIf="filteredOggetti.length > 0">
+              <div class="db-card-obj" *ngFor="let o of filteredOggetti" (click)="apriFormOggetto(o)">
+                <div class="db-card-obj-thumb">
+                  <img *ngIf="o.foto" [src]="o.foto" alt="" />
+                  <div *ngIf="!o.foto" class="db-card-obj-thumb-ph">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                  <div *ngIf="o.fragile" class="db-card-obj-fragile-dot"></div>
+                </div>
                 <div class="db-card-obj-body">
                   <span class="db-card-obj-nome">{{ o.nome }}</span>
-                  <span class="db-card-obj-info">
+                  <span class="db-card-obj-meta">
                     <span class="db-card-obj-qta">{{ o.quantita || 1 }} pz</span>
                     <span *ngIf="o.tipo" class="db-card-obj-tipo">{{ o.tipo }}</span>
                   </span>
+                  <span *ngIf="o.fragile" class="db-card-obj-fragile-badge">Fragile</span>
                 </div>
-                <div *ngIf="o.fragile" class="db-card-obj-fragile-badge">Fragile</div>
                 <div class="db-card-obj-acts" *ngIf="!isViewer">
-                  <button class="db-card-obj-btn" (click)="apriFormOggetto(o)">
+                  <button class="db-card-obj-btn" (click)="apriFormOggetto(o); $event.stopPropagation()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   </button>
-                  <button class="db-card-obj-btn db-card-obj-btn--del" (click)="eliminaOggetto(o)">
+                  <button class="db-card-obj-btn db-card-obj-btn--del" (click)="eliminaOggetto(o); $event.stopPropagation()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
                 </div>
@@ -94,7 +98,6 @@
 
       <div class="section-divider"></div>
 
-      <!-- ═══════════════ SEZIONE 2: QR CODE ══════ -->
       <section class="about-section">
         <div class="about-bg"></div>
         <div class="about-inner about-inner--rows">
@@ -128,7 +131,6 @@
         </div>
       </section>
 
-      <!-- ═══════════════ SEZIONE 3: MAPPA (condizionale) ══════ -->
       <ng-container *ngIf="box.moving_mode">
         <div class="section-divider"></div>
         <section class="db-section-mappa">
@@ -179,7 +181,6 @@
 
   </div>
 
-  <!-- ═══════════════ OBJECT FORM MODAL ══════ -->
   <div class="db-modal-overlay" *ngIf="objectFormOpen" (click)="chiudiFormOggetto()">
     <div class="db-modal-sheet" (click)="$event.stopPropagation()">
       <div class="db-modal-handle"></div>
@@ -192,7 +193,7 @@
       <div class="db-modal-body">
         <div class="db-form-cols">
           <div class="db-form-left">
-            <div class="db-form-photo" (click)="apriSceltaFoto()">
+            <div class="db-form-photo" (click)="apriGalleria()">
               <img *ngIf="formFoto" [src]="formFoto" class="db-form-photo-img"/>
               <div *ngIf="!formFoto" class="db-form-photo-ph">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -202,7 +203,18 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
+            <div class="db-form-photo-btns">
+              <button class="db-form-photo-btn" (click)="scattaFoto()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Scatta</span>
+              </button>
+              <button class="db-form-photo-btn" (click)="apriGalleria()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Galleria</span>
+              </button>
+            </div>
             <input type="file" id="db-foto-input" accept="image/*" (change)="onFileSelected($event)" style="display:none"/>
+            <input type="file" #cameraInput accept="image/*" capture="environment" (change)="onCameraCapture($event)" style="display:none"/>
             <label class="db-form-switch">
               <input type="checkbox" [(ngModel)]="formFragile"/>
               <span class="db-form-switch-track"><span class="db-form-switch-thumb"></span></span>
@@ -246,7 +258,6 @@
     </div>
   </div>
 
-  <!-- Dropdown categorie renderizzato fuori dal modal -->
   <div class="db-cat-backdrop" *ngIf="mostraCatDropdown" (click)="chiudiCatDropdown()"></div>
   <div class="db-cat-dropdown" *ngIf="mostraCatDropdown" [ngStyle]="catDropdownStyle">
     <div class="db-cat-item" (click)="selezionaCategoria('')">— Nessuna —</div>

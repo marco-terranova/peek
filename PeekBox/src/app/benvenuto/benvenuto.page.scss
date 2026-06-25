@@ -9,16 +9,13 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .welcome-content { --background: #{$page}; --overflow: hidden; }
 .welcome-stage { width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; }
 
-// ═══════════════════════════════════════════════════════════════════
 //  HERO
-// ═══════════════════════════════════════════════════════════════════
 .hero-section {
   position: relative; min-height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
   background: linear-gradient(160deg, $page 0%, #E8F4F8 40%, #F0F7EE 100%);
 }
 
-// ── Hero animated blobs ─────────────────────────────────────────────
 .hero-bg {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
   overflow: hidden;
@@ -66,7 +63,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-25px,20px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Topbar ──────────────────────────────────────────────────────────
 .topbar {
   position: relative; z-index: 10;
   display: flex; align-items: center; justify-content: space-between;
@@ -89,7 +85,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ── Hero body ───────────────────────────────────────────────────────
 .hero-body {
   position: relative; z-index: 5; flex: 1;
   display: flex; align-items: center; justify-content: center;
@@ -103,7 +98,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 }
 @keyframes hc-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
-// ── Title ──────────────────────────────────────────────────────────────
 .hero-title {
   margin: 0; font-size: clamp(2.8rem, 6vw, 4.2rem); font-weight: 900;
   line-height: 1.04; letter-spacing: -3px; color: $dark;
@@ -118,9 +112,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   max-width: 500px; text-align: center;
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  ABOUT PANELS
-// ═══════════════════════════════════════════════════════════════════
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -174,9 +166,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:last-child { margin-bottom: 0; }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  CTA
-// ═══════════════════════════════════════════════════════════════════
 .cta-section {
   position: relative;
   display: flex; align-items: center; justify-content: center;
@@ -211,16 +201,12 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
 //  SECTION DIVIDER
-// ═══════════════════════════════════════════════════════════════════
 .section-divider {
   height: 2px;
   background: $green;
 }
-// ═══════════════════════════════════════════════════════════════════
 @media (max-width: 899px) {
   .topbar { padding: 14px 22px; }
   .hero-body { padding: 0 28px; }

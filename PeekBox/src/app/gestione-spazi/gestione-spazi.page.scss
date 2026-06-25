@@ -7,7 +7,6 @@ $text-muted:   $mid;
 
 :host { display: block; }
 
-// ─── Header uguale a box-ricevute ───────────────────────────
 ion-header {
   --background: #{$page};
 }
@@ -70,9 +69,7 @@ ion-content {
   --padding-bottom: 100px;
 }
 
-// ═══════════════════════════════════════════════
 //  PAGE WRAPPER
-// ═══════════════════════════════════════════════
 
 .page-wrapper {
   padding: 16px clamp(20px, 3.5vw, 56px) 20px;
@@ -84,9 +81,7 @@ ion-content {
   margin: 0 auto;
 }
 
-// ═══════════════════════════════════════════════
 //  ADD SPACE ROW
-// ═══════════════════════════════════════════════
 
 .add-space-row {
   display: flex;
@@ -133,9 +128,7 @@ ion-content {
   &:disabled { opacity: 0.4; }
 }
 
-// ═══════════════════════════════════════════════
 //  SPACES LIST
-// ═══════════════════════════════════════════════
 
 .spaces-list {
   display: flex;
@@ -261,9 +254,7 @@ ion-content {
   cursor: pointer;
 }
 
-// ═══════════════════════════════════════════════
 //  LOADING & EMPTY
-// ═══════════════════════════════════════════════
 
 .loading-state {
   display: flex;
@@ -296,9 +287,7 @@ ion-content {
   p { color: $text-muted; font-size: 0.88rem; margin: 0; }
 }
 
-// ═══════════════════════════════════════════════
 //  FLOATING BOTTOM NAV — identica alla homepage
-// ═══════════════════════════════════════════════
 
 .floating-nav {
   position: fixed;
@@ -375,11 +364,8 @@ ion-content {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
 // RESPONSIVE — Adattamento adattivo per tutte le dimensioni
-// ═══════════════════════════════════════════════════════════════
 
-// ── Mobile piccolo (< 400px) ──────────────────────────────────
 @media (max-width: 399px) {
   .page-wrapper {
     padding: 12px clamp(20px, 3.5vw, 56px) 16px;
@@ -405,16 +391,13 @@ ion-content {
   }
 }
 
-// ── Tablet (≥ 768px) ──────────────────────────────────────────
 @media (min-width: 768px) {
   .page-wrapper {
     padding: 18px clamp(20px, 3.5vw, 56px) 24px;
   }
 }
 
-// ═══════════════════════════════════════════════
 //  BOX ORFANE — IN ATTESA DI RIALLOCAZIONE
-// ═══════════════════════════════════════════════
 
 .gs-orfane-section {
   margin-bottom: 20px;
@@ -571,7 +554,6 @@ ion-content {
   .gs-orfana-select { flex: 1; min-width: 0; }
 }
 
-// ── Desktop (≥ 1024px) ────────────────────────────────────────
 @media (min-width: 1024px) {
   .page-wrapper {
     padding: 20px clamp(20px, 3.5vw, 56px) 28px;

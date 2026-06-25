@@ -2,15 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { PbDropdownComponent } from '../components/pb-dropdown/pb-dropdown.component';
 import {
   filterCircleOutline, documentTextOutline,
   documentOutline, gridOutline, codeSlashOutline, sparkles,
-  qrCodeOutline, chatbubblesOutline, printOutline, cubeOutline,
-  home, add
+  printOutline, cubeOutline
 } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
 
@@ -27,7 +26,7 @@ import { ExportService } from '../services/export';
     CommonModule,
     FormsModule,
     RouterModule,
-    IonContent, IonHeader, IonToolbar, IonIcon, IonSpinner,
+    IonContent, IonIcon, IonSpinner,
     PbDropdownComponent,
   ],
 })
@@ -56,11 +55,7 @@ export class EsportaArchivioPage implements OnInit {
       'code-slash-outline': codeSlashOutline,
       'sparkles': sparkles,
       'print-outline': printOutline,
-      'cube-outline': cubeOutline,
-      'chatbubbles-outline': chatbubblesOutline,
-      'qr-code-outline': qrCodeOutline,
-      'home': home,
-      'add': add
+      'cube-outline': cubeOutline
     });
   }
 
@@ -132,7 +127,6 @@ export class EsportaArchivioPage implements OnInit {
       }
     }
 
-    // Carica le box della home (attive + in transito, escluse quelle nel cestino)
     const resBox: any = await firstValueFrom(
       this.dbService.getBox(utenteId) as any
     );
@@ -269,9 +263,6 @@ export class EsportaArchivioPage implements OnInit {
     }
   }
 
-  vaiHome() {
-    this.router.navigateByUrl('/home', { replaceUrl: true });
-  }
   navTo(route: string) { this.navHistory.navTo(route); }
 
 }

@@ -7,9 +7,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 :host { display: block; }
 .filtri-content { --background: #{$page}; --overflow: hidden; }
 
-// ═══════════════════════════════════════════════════════════
 //  SPLIT VIEW
-// ═══════════════════════════════════════════════════════════
 
 .filtri-split {
   position: fixed;
@@ -32,9 +30,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   -webkit-backdrop-filter: blur(4px);
 }
 
-// ═══════════════════════════════════════════════════════════
 //  LEFT PANEL — Filter info + steps
-// ═══════════════════════════════════════════════════════════
 
 .fs-left {
   position: relative;
@@ -99,7 +95,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-15px,10px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-// ── Back button ─────────────────────────────────────────
 .fs-l-back {
   position: absolute; top: 28px; left: 28px; z-index: 10;
   display: flex; align-items: center; gap: 6px;
@@ -114,7 +109,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ── Left content ─────────────────────────────────────────
 .fs-l-content {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center;
@@ -126,7 +120,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   justify-content: center;
 }
 
-// ── Title ────────────────────────────────────────────────
 .fs-l-title {
   margin: 0;
   font-size: 1.4rem;
@@ -139,7 +132,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   text-align: center;
 }
 
-// ── Info steps ──────────────────────────────────────────
 .fs-l-info {
   display: flex;
   flex-direction: column;
@@ -172,9 +164,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RIGHT PANEL — Glass card with filter form
-// ═══════════════════════════════════════════════════════════
 
 .fs-right {
   position: relative;
@@ -208,7 +198,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   overflow-y: auto;
 }
 
-// ── Glass card ───────────────────────────────────────────
 .fsr-card {
   position: relative; width: 100%; max-width: 440px;
   background: rgba(255, 255, 255, 0.6);
@@ -291,7 +280,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   gap: 16px;
 }
 
-// ── Star row (Box Preferite) ─────────────────────────────
 .fsr-star-row {
   display: flex;
   align-items: center;
@@ -352,7 +340,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   span { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; color: #e74c3c; }
 }
 
-// ── Form fields ──────────────────────────────────────────
 .fsr-field {
   display: flex;
   flex-direction: column;
@@ -380,12 +367,10 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .fsr-select-trigger {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   width: 100%; padding: 12px 14px;
-  background: $white; border-radius: 12px;
-  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  background: transparent; border-radius: 12px;
+  border: none;
   cursor: pointer;
   font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 500; color: $dark;
-  transition: border-color 0.2s;
-  &:hover { border-color: rgba($green, 0.3); }
   .placeholder { color: $mid; opacity: 0.4; }
   svg { width: 16px; height: 16px; color: $mid; flex-shrink: 0; }
 }
@@ -400,6 +385,11 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   box-shadow: 0 12px 40px rgba(15,23,42,0.12), 0 0 0 1px rgba(15,23,42,0.04);
   max-height: 200px; overflow-y: auto; padding: 4px;
   animation: fsr-dd-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 @keyframes fsr-dd-in {
   from { opacity: 0; transform: translateY(-6px); }
@@ -438,7 +428,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-// ── Action buttons ──────────────────────────────────────
 .fsr-actions {
   display: flex;
   gap: 8px;
@@ -482,9 +471,7 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-// ═══════════════════════════════════════════════════════════
 //  TAB BAR
-// ═══════════════════════════════════════════════════════════
 
 ion-footer { position: relative; z-index: 10; }
 
@@ -513,9 +500,7 @@ ion-tab-button svg {
   box-shadow: 0 4px 12px rgba($green, 0.3) !important;
 }
 
-// ═══════════════════════════════════════════════════════════
 //  RESPONSIVE
-// ═══════════════════════════════════════════════════════════
 
 @media (max-width: 899px) {
   .filtri-split { flex-direction: column; }

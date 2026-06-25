@@ -206,6 +206,9 @@ export class ScanQrPage implements OnInit, OnDestroy {
           }
           this.erroreCamera = '';
           this.caricamentoError = '';
+          if (res.box.moving_mode) {
+            this.salvaCheckpointGPS(res.box.id);
+          }
         } else {
           this.caricamentoError = 'Box non trovata.';
         }
@@ -227,10 +230,33 @@ export class ScanQrPage implements OnInit, OnDestroy {
     });
   }
 
+  private salvaCheckpointGPS(boxId: number) {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.ngZone.run(() => {
+          this.dbService.salvaCheckpoint(
+            boxId,
+            pos.coords.latitude,
+            pos.coords.longitude,
+            pos.coords.accuracy,
+            'Scansione QR'
+          ).subscribe();
+        });
+      },
+      () => {}
+    );
+  }
+
   cercaBox() {
     if (!this.codiceManuale) return;
     this.fermaCamera();
-    this.caricaBox(this.codiceManuale);
+    const id = this.estraiBoxId(this.codiceManuale);
+    if (id) {
+      this.caricaBox(id);
+    } else {
+      this.caricaBox(this.codiceManuale.trim());
+    }
     this.codiceManuale = '';
   }
 

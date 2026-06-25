@@ -1,29 +1,28 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { noAuthGuard } from './guards/no-auth.guard';
 
-// Rotte PUBBLICHE: accessibili senza login
-// Rotte PROTETTE: richiedono authGuard (token JWT nel localStorage)
 
 export const routes: Routes = [
 
-  // ── Redirect radice ───────────────────────────────────────────────
   { path: '', redirectTo: 'benvenuto', pathMatch: 'full' },
 
-  // ── Rotte PUBBLICHE (no guard) ─────────────────────────────────
   {
     path: 'benvenuto',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./benvenuto/benvenuto.page').then(m => m.BenvenutoPage)
   },
   {
     path: 'login',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'not-found',
+    canActivate: [authGuard],
     loadComponent: () => import('./not-found/not-found.page').then(m => m.NotFoundPage)
   },
 
-  // ── Rotte PROTETTE (canActivate: authGuard) ───────────────────
   {
     path: 'home',
     canActivate: [authGuard],
@@ -115,6 +114,5 @@ export const routes: Routes = [
     loadComponent: () => import('./messaggi/messaggi.page').then(m => m.MessaggiPage)
   },
 
-  // ── Wildcard 404 — DEVE essere l'ultima voce ─────────────────────
   { path: '**', redirectTo: 'not-found' },
 ];

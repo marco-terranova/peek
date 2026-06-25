@@ -127,6 +127,44 @@ export class MessaggiPage implements OnInit {
     await alert.present();
   }
 
+  getCondivisioneId(m: Messaggio): number | null {
+    const match = m.corpo?.match(/\[condivisione_id:(\d+)\]/);
+    return match ? Number(match[1]) : null;
+  }
+
+  getCorpoVisibile(m: Messaggio): string {
+    return (m.corpo || '').replace(/\s*\[condivisione_id:\d+\]/, '');
+  }
+
+  accettaCondivisione(m: Messaggio) {
+    const id = this.getCondivisioneId(m);
+    if (!id) return;
+    this.dbService.accettaCondivisione(id).subscribe({
+      next: () => {
+        m.corpo = m.corpo.replace(/\[condivisione_id:\d+\]/, '[accettata]');
+        this.toast('Condivisione accettata!');
+      },
+      error: () => this.toast('Errore nell\'accettazione.', 'danger')
+    });
+  }
+
+  rifiutaCondivisione(m: Messaggio) {
+    const id = this.getCondivisioneId(m);
+    if (!id) return;
+    this.dbService.rifiutaCondivisione(id).subscribe({
+      next: () => {
+        m.corpo = m.corpo.replace(/\[condivisione_id:\d+\]/, '[rifiutata]');
+        this.toast('Condivisione rifiutata.');
+      },
+      error: () => this.toast('Errore nel rifiuto.', 'danger')
+    });
+  }
+
+  private async toast(message: string, color = 'success') {
+    const t = await this.toastCtrl.create({ message, duration: 2400, color, position: 'bottom' });
+    await t.present();
+  }
+
   async inviaSupporto() {
     if (!this.supportoOggetto.trim() || !this.supportoCorpo.trim()) return;
     this.supportoInvio = true;

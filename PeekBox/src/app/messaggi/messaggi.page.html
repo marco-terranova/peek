@@ -71,7 +71,17 @@
                   <p class="mg-card-testo">{{ m.corpo }}</p>
                   <div class="mg-card-dettaglio" *ngIf="messaggioAperto === m.id">
                     <div class="mg-card-divider"></div>
-                    <div class="mg-card-corpo-full">{{ m.corpo }}</div>
+                    <div class="mg-card-corpo-full">{{ getCorpoVisibile(m) }}</div>
+                    <div class="mg-card-azioni-cond" *ngIf="m.tipo === 'condivisione' && getCondivisioneId(m)">
+                      <button class="mg-azione mg-azione--accetta" (click)="$event.stopPropagation(); accettaCondivisione(m)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Accetta
+                      </button>
+                      <button class="mg-azione mg-azione--rifiuta" (click)="$event.stopPropagation(); rifiutaCondivisione(m)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Rifiuta
+                      </button>
+                    </div>
                     <div class="mg-card-azioni">
                       <button class="mg-azione mg-azione--elimina" (click)="$event.stopPropagation(); eliminaMessaggio(m)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>

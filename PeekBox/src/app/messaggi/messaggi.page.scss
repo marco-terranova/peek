@@ -236,6 +236,19 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &--importante.is-attivo { background: rgba($amber, 0.08); border-color: rgba($amber, 0.15); color: #c0840a; }
   &--ripristina:hover { color: $green; border-color: rgba($green, 0.15); }
   &--elimina:hover { background: rgba($red, 0.08); border-color: rgba($red, 0.15); color: $red; }
+  &--accetta {
+    background: linear-gradient(135deg, $green, $green-d); color: $white; border: none;
+    box-shadow: 0 2px 8px rgba($green, 0.2);
+    &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba($green, 0.3); }
+  }
+  &--rifiuta {
+    background: rgba($red, 0.06); color: $red; border-color: rgba($red, 0.15);
+    &:hover { background: rgba($red, 0.12); }
+  }
+}
+
+.mg-card-azioni-cond {
+  display: flex; gap: 8px; margin-bottom: 8px;
 }
 
 .mg-stats { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-family: "DM Sans", sans-serif; font-size: 0.78rem; color: $mid; justify-content: center; }

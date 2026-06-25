@@ -1236,7 +1236,21 @@ app.post('/api/condivisioni', verificaToken, (req, res) => {
                         db.run('INSERT INTO condivisioni (rif_box, rif_proprietario, rif_ospite, ruolo, stato) VALUES (?, ?, ?, ?, ?)',
                             [rif_box, req.user.id, ospite.id, ruolo, 'in_attesa'], function(runErr) {
                                 if (runErr) return res.status(500).json({ error: runErr.message });
-                                res.status(201).json({ id: this.lastID, message: "Invito inviato!" });
+                                const condivisioneId = this.lastID;
+                                db.get('SELECT username FROM utenti WHERE id = ?', [req.user.id], (uErr, uRow) => {
+                                    const mittente = uRow?.username || 'Un utente';
+                                    db.get('SELECT nome FROM box WHERE id = ?', [rif_box], (bErr, bRow) => {
+                                        const nomeBox = bRow?.nome || 'una box';
+                                        db.run(
+                                            `INSERT INTO messaggi_utenti (rif_utente, tipo, mittente, oggetto, corpo) VALUES (?, ?, ?, ?, ?)`,
+                                            [ospite.id, 'condivisione', mittente,
+                                             `Invito: condivisione box "${nomeBox}"`,
+                                             `${mittente} vuole condividere con te la box "${nomeBox}" con ruolo ${ruolo === 'editor' ? 'Editor' : 'Visualizzatore'}. [condivisione_id:${condivisioneId}]`
+                                            ], () => {}
+                                        );
+                                    });
+                                });
+                                res.status(201).json({ id: condivisioneId, message: "Invito inviato!" });
                             });
                     });
             });

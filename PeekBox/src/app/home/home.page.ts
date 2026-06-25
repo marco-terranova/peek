@@ -81,7 +81,6 @@ export class HomePage {
       next: (res) => {
         let boxList = res.box || [];
 
-        // Apply stored filters from filtri page
         const filtriRaw = localStorage.getItem('filtri_box');
         if (filtriRaw) {
           try {

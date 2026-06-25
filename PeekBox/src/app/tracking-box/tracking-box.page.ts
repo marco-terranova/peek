@@ -73,8 +73,6 @@ export class TrackingBoxPage implements OnDestroy {
         next: (res: any) => {
           this.boxAttive = res.checkpoints || [];
           this.isLoading = false;
-          // Aspetta che la transizione CSS max-height (~550ms) sia conclusa
-          // prima di inizializzare Leaflet, così il container ha dimensioni reali
           setTimeout(() => {
             this.ngZone.run(() => {
               this.inizializzaMappa();
@@ -111,7 +109,6 @@ export class TrackingBoxPage implements OnDestroy {
     const el = this.mapContainerRef?.nativeElement;
     if (!el) return;
     if (this.leafletMap) {
-      // Mappa già esistente: forzare un resize
       this.leafletMap.invalidateSize();
       return;
     }

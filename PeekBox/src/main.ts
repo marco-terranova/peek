@@ -16,7 +16,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
-    // Registra l'interceptor che aggiunge Bearer token e gestisce 401
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes, withPreloading(PreloadAllModules)),
   ],

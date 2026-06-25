@@ -1,10 +1,3 @@
-/**
- * Custom type declaration for ionicons/icons.
- * Overrides the broken index.d.ts in ionicons v7.x which declares icons locally
- * but fails to export them (TS2459 / TS2305 errors).
- *
- * All icon values are SVG path data strings, compatible with Ionic's addIcons() API.
- */
 declare module 'ionicons/icons' {
   export const add: string;
   export const addCircleOutline: string;

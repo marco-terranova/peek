@@ -16,13 +16,6 @@ export interface MarkerIconOptions {
 @Injectable({ providedIn: 'root' })
 export class MapService {
 
-  /**
-   * Initialises a Leaflet map on the given container element.
-   * @param container - The HTMLElement where the map will be rendered.
-   * @param center - The initial centre coordinates [lat, lng] (default Roma).
-   * @param zoom - The initial zoom level (default 13).
-   * @returns A new L.Map instance.
-   */
   inizializzaMappa(
     container: HTMLElement,
     center: L.LatLngExpression = [41.9028, 12.4964],
@@ -38,13 +31,6 @@ export class MapService {
     return map;
   }
 
-  /**
-   * Creates a tile layer and adds it to the map, removing a previous layer if given.
-   * @param map - The Leaflet map instance.
-   * @param layerConfig - Object with `url` and `attr` for the tile layer.
-   * @param previousLayer - Optional previous tile layer to remove first.
-   * @returns The new L.TileLayer instance.
-   */
   creaTileLayer(
     map: L.Map,
     layerConfig: TileLayerConfig,
@@ -60,15 +46,6 @@ export class MapService {
     return layer;
   }
 
-  /**
-   * Creates a numbered marker using a custom L.divIcon with a coloured pin and numeric badge.
-   * Matches the style used in tracking-box checkpoints.
-   * @param latLng - The geographic position of the marker.
-   * @param numero - The number displayed inside the badge.
-   * @param colore - The CSS colour string for the pin background.
-   * @param extraClass - Optional extra CSS class for the pin (e.g. "tb-marker-pin--edge").
-   * @returns A new L.Marker instance.
-   */
   creaMarkerNumerato(
     latLng: L.LatLngExpression,
     numero: number,
@@ -86,13 +63,6 @@ export class MapService {
     });
   }
 
-  /**
-   * Creates a circle overlay representing a geofence perimeter.
-   * @param center - The geographic centre of the circle.
-   * @param raggioM - The radius in metres.
-   * @param opzioni - Optional styling overrides (colour, dashArray, fillOpacity).
-   * @returns A new L.Circle instance.
-   */
   creaCerchioGeofence(
     center: L.LatLngExpression,
     raggioM: number,
@@ -112,14 +82,6 @@ export class MapService {
     return L.circle(center, opts);
   }
 
-  /**
-   * Creates a marker for the geofence centre point.
-   * When `editabile` is true the marker is draggable and uses the editing style (blue).
-   * When false the marker is static and uses the standard green style.
-   * @param center - The geographic position of the geofence centre.
-   * @param editabile - Whether the marker should be draggable for editing.
-   * @returns A new L.Marker instance.
-   */
   creaMarkerGeofence(
     center: L.LatLngExpression,
     editabile: boolean,
@@ -146,10 +108,6 @@ export class MapService {
     });
   }
 
-  /**
-   * Creates an empty L.FeatureGroup for grouping layers.
-   * @returns A new L.FeatureGroup instance.
-   */
   creaFeatureGroup(): L.FeatureGroup {
     return L.featureGroup();
   }

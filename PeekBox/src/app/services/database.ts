@@ -152,17 +152,14 @@ export class DatabaseService {
     return this.http.delete(`${this.apiUrl}/oggetti/${id}`);
   }
 
-  /** Recupera gli oggetti nel cestino per un utente */
   getOggettiEliminati(utenteId: string) {
     return this.http.get(`${this.apiUrl}/oggetti/eliminate/${utenteId}`);
   }
 
-  /** Ripristina un oggetto dal cestino */
   ripristinaOggetto(id: number) {
     return this.http.put(`${this.apiUrl}/oggetti/${id}/ripristina`, {});
   }
 
-  /** Elimina definitivamente un oggetto dal cestino */
   eliminaOggettoDefinitivo(id: number) {
     return this.http.delete(`${this.apiUrl}/oggetti/${id}/definitivo`);
   }

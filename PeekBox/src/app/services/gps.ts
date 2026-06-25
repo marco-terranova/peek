@@ -12,10 +12,6 @@ export interface GpsPosition {
 })
 export class GpsService {
 
-  /**
-   * Ottieni la posizione GPS corrente via browser Geolocation API.
-   * Compatibile con Capacitor (mobile nativo) e browser (PWA/web).
-   */
   getPosizione(): Promise<GpsPosition> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -42,17 +38,10 @@ export class GpsService {
     });
   }
 
-  /**
-   * Costruisce il link a Google Maps per visualizzare un punto singolo.
-   */
   buildGoogleMapsUrl(lat: number, lng: number): string {
     return `https://www.google.com/maps?q=${lat},${lng}`;
   }
 
-  /**
-   * Costruisce il link a Google Maps per un percorso multipunto.
-   * Waypoints = checkpoint intermedi, ultimo punto = destinazione.
-   */
   buildPercorsoUrl(checkpoints: { latitudine: number; longitudine: number }[]): string {
     if (checkpoints.length === 0) return '';
     if (checkpoints.length === 1) {
@@ -67,10 +56,6 @@ export class GpsService {
     return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}${waypointsParam}`;
   }
 
-  /**
-   * Calcola la distanza in metri tra due coordinate geografiche
-   * usando la formula di Haversine (equivalente lato client del backend).
-   */
   calcolaDistanzaMetri(lat1: number, lng1: number, lat2: number, lng2: number): number {
     const R = 6371000;
     const toRad = (deg: number) => deg * Math.PI / 180;
@@ -82,10 +67,6 @@ export class GpsService {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  /**
-   * Verifica lato client se una posizione è dentro un geofence.
-   * Utile per un controllo immediato prima della chiamata API.
-   */
   isDentroGeofence(
     posizioneAttuale: { latitudine: number; longitudine: number },
     centroFence: { latitudine: number; longitudine: number },

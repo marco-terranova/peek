@@ -1,4 +1,3 @@
-// ─── AUTENTICAZIONE ───────────────────────────────────────
 
 export interface UtenteLogin {
   id: number;
@@ -18,7 +17,6 @@ export interface PendingResponse {
   pending: number;
 }
 
-// ─── BOX ──────────────────────────────────────────────────
 
 export interface Box {
   id: number;
@@ -41,7 +39,6 @@ export interface BoxEliminateResponse {
   box_eliminate: Box[];
 }
 
-// ─── OGGETTI ──────────────────────────────────────────────
 
 export interface Oggetto {
   id?: number;
@@ -54,7 +51,6 @@ export interface Oggetto {
   foto_url?: string;
 }
 
-// ─── CONDIVISIONI ─────────────────────────────────────────
 
 export interface ArchivioCondiviso {
   id: number;
@@ -84,7 +80,6 @@ export interface OggettiBoxCondivisaResponse {
   ruolo_corrente: string;
 }
 
-// ─── MESSAGGI ──────────────────────────────────────────────
 
 export interface Messaggio {
   id: number;

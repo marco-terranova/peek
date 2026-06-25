@@ -10,6 +10,5 @@ import { NavigationHistoryService } from './services/navigation-history';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  // L'iniezione nel costruttore avvia il tracking della history
   constructor(private navHistory: NavigationHistoryService) {}
 }

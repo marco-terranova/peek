@@ -11,14 +11,6 @@ export class ExportService {
 
   constructor(private dbService: DatabaseService) {}
 
-
-  /**
-   * Genera e stampa una griglia di etichette per tutti gli oggetti
-   * contenuti in una box. Ogni etichetta riporta: nome oggetto,
-   * categoria, quantità, flag FRAGILE e il nome della box.
-   *
-   * @param boxId  ID della box di cui stampare le etichette
-   */
   async stampaEtichetteBox(boxId: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.dbService.getEtichetteBox(boxId).subscribe({
@@ -33,10 +25,6 @@ export class ExportService {
     });
   }
 
-  /**
-   * Costruisce l'HTML della griglia di etichette da stampare.
-   * Il CSS è inlined per garantire la corretta resa in fase di print.
-   */
   private buildEtichetteHtml(box: any, oggetti: any[]): string {
     const etichette = oggetti.map(ogg => `
       <div class="etichetta">
@@ -170,12 +158,6 @@ export class ExportService {
 </html>`;
   }
 
-  /**
-   * Genera l'HTML per la stampa di un singolo box.
-   * @param box     Oggetto box con proprietà nome, rif_armadio, data_creazione
-   * @param oggetti Array degli oggetti contenuti (con nome, descrizione, categoria)
-   * @returns       Stringa HTML pronta per window.print()
-   */
   generaHtmlStampaBox(box: any, oggetti: any[]): string {
     const boxName = (box?.nome || 'BOX').toUpperCase();
     const spazio = box?.rif_armadio || '—';
@@ -198,7 +180,6 @@ export class ExportService {
   <meta charset="utf-8">
   <title>${this.esc(boxName)} — PeekBox</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', -apple-system, sans-serif;
       padding: 32px 40px;
@@ -278,7 +259,6 @@ export class ExportService {
 </html>`;
   }
 
-  /** Apre una finestra di stampa con l'HTML generato. */
   apriFinestraStampa(html: string): void {
     const win = window.open('', '_blank', 'width=900,height=700');
     if (!win) return;
@@ -292,10 +272,6 @@ export class ExportService {
   }
 
 
-  /**
-   * Scarica l'inventario in formato CSV.
-   * @param utenteId  ID dell'utente autenticato
-   */
   downloadCsv(utenteId: string): void {
     this.dbService.getExportCsv(utenteId).subscribe({
       next: (blob: Blob) => {
@@ -306,10 +282,6 @@ export class ExportService {
   }
 
 
-  /**
-   * Scarica l'inventario in formato JSON strutturato.
-   * @param utenteId  ID dell'utente autenticato
-   */
   downloadJson(utenteId: string): void {
     this.dbService.getExportJson(utenteId).subscribe({
       next: (blob: Blob) => {
@@ -332,13 +304,6 @@ export class ExportService {
   }
 
 
-  /**
-   * Genera un report PDF con i dati forniti e restituisce l'istanza jsPDF.
-   * Il chiamante può salvarla (doc.save) o visualizzarla.
-   * @param dati      Array di righe {box, contenuto, nOggetti, spazio}
-   * @param scope     'tutto' | 'attive' — usato nell'intestazione
-   * @param logoBase64  Logo in base64 (data:image/...), opzionale
-   */
   async generaReportPdf(dati: any[], scope: string, logoBase64: string): Promise<jsPDF> {
     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
@@ -424,9 +389,6 @@ export class ExportService {
     return doc;
   }
 
-  /**
-   * Scarica il report in PDF (comodità: genera + salva).
-   */
   downloadPdf(exportScope: string, dati: any[], logoBase64: string): Promise<void> {
     return this.generaReportPdf(dati, exportScope, logoBase64).then(doc => {
       doc.save(`peekbox_report_${exportScope}_${new Date().toISOString().slice(0, 10)}.pdf`);
@@ -434,11 +396,6 @@ export class ExportService {
   }
 
 
-  /**
-   * Genera il contenuto CSV (stringa) a partire dai dati del report.
-   * @param dati  Array di righe {box, contenuto, nOggetti, data, spazio}
-   * @returns     Stringa CSV con BOM UTF-8
-   */
   generaReportCsv(dati: any[]): string {
     const header = '"NOME CONTENITORE / BOX","ELENCO OGGETTI INTERNI","Q.TÀ","DATA CREAZIONE","ZONA / SPAZIO"';
     const rows = dati.map(r => {
@@ -453,7 +410,6 @@ export class ExportService {
   }
 
 
-  /** Innesca il download di un Blob nel browser. */
   triggerDownload(blob: Blob, filename: string, mimeType: string): void {
     const url = URL.createObjectURL(new Blob([blob], { type: mimeType }));
     const link = document.createElement('a');
@@ -465,7 +421,6 @@ export class ExportService {
     URL.revokeObjectURL(url);
   }
 
-  /** Escaping HTML di base per prevenire injection nel template PDF. */
   private esc(text: string): string {
     if (!text) return '';
     return text

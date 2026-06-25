@@ -116,7 +116,6 @@ export class ChatbotEngineService {
         this.ultimoContesto = { intent: 'spazi' };
         return await this.spaziResponse(utenteId);
       }
-      // "mostra" senza argomento: usa il contesto precedente
       if (this.ultimoContesto) {
         const ctxRisposta = await this.handleContext(lower, utenteId);
         if (ctxRisposta) return ctxRisposta;
@@ -809,7 +808,6 @@ export class ChatbotEngineService {
           return `"${termine}" corrisponde a una box, non a un oggetto.\n\nLa box "${boxes[0].nome}" si trova nell'archivio "${boxes[0].contesto}".\n\nPer cercare oggetti, usa: "Cerca [nome oggetto]".`;
         }
 
-        // tentativo con normalizzazione
         const normalizzato = this.normalizzaTesto(termine);
         if (normalizzato !== termine) {
           return await this.doveSiTrovaOggettoResponse(utenteId, normalizzato);

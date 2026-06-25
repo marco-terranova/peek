@@ -113,12 +113,9 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 
 .tb-map-panel {
   overflow: hidden;
-  // Usiamo max-height molto veloce (0.1s) così il DOM è pronto
-  // e il timeout da 600ms nel TS aspetta la fine dell'animazione
   max-height: 0;
   transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   background: $page;
-  // Nessuna border-top verde — rimosso come richiesto
 
   &.is-visible {
     max-height: 1400px;
@@ -165,7 +162,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   overflow: hidden;
   border: 1.5px solid rgba($blue, 0.15);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.09);
-  // NO opacity transition — causa white map su Leaflet
   background: $page; // colore di sfondo finché le tile non caricano
 }
 

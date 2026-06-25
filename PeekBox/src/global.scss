@@ -376,7 +376,6 @@ ion-toast.peekbox-toast {
     box-shadow: 0 2px 8px rgba($blue, 0.3);
   }
 
-  // Variante avatar per area-personale (stato attivo con gradiente)
   .avatar-circle-nav {
     width: 28px; height: 28px; border-radius: 50%;
     background: #E2EAF0;
@@ -483,7 +482,6 @@ ion-tab-button ion-label {
 
 
 .peekbox-photo-sheet {
-  // Contenitore principale
   .action-sheet-container {
     padding: 0 12px 16px;
   }
@@ -497,7 +495,6 @@ ion-tab-button ion-label {
     border: 1px solid rgba($blue, 0.15) !important;
   }
 
-  // Header del sheet
   .action-sheet-title {
     background: $white !important;
     color: $blue-dk !important;
@@ -509,7 +506,6 @@ ion-tab-button ion-label {
     letter-spacing: -0.2px !important;
   }
 
-  // Pulsante Scatta Foto
   .sheet-btn-camera {
     .action-sheet-button-inner {
       color: $blue !important;
@@ -525,7 +521,6 @@ ion-tab-button ion-label {
     }
   }
 
-  // Pulsante Galleria
   .sheet-btn-gallery {
     .action-sheet-button-inner {
       color: $blue-d !important;
@@ -540,7 +535,6 @@ ion-tab-button ion-label {
     }
   }
 
-  // Pulsante Annulla
   .sheet-btn-cancel {
     .action-sheet-button-inner {
       color: $mid !important;
@@ -551,7 +545,6 @@ ion-tab-button ion-label {
     background: $white !important;
   }
 
-  // Backdrop scuro ma non troppo
   .action-sheet-backdrop {
     opacity: 0.45 !important;
   }
@@ -577,7 +570,6 @@ ion-tab-button ion-label {
 
 
 @media (max-width: 399px) {
-  // Floating nav più compatta su schermi molto piccoli
   .floating-nav {
     height: 58px !important;
     width: calc(100% - 20px) !important;
@@ -593,18 +585,15 @@ ion-tab-button ion-label {
       ion-icon { font-size: 1.5rem !important; }
     }
   }
-  // Ion modal più compatto
   ion-modal {
     --border-radius: 16px;
   }
-  // Toast più piccolo
   ion-toast {
     --min-width: 80vw;
   }
 }
 
 @media (min-width: 768px) {
-  // Floating nav — più ampia su tablet
   .floating-nav {
     max-width: min(85vw, 700px) !important;
     .nav-item {
@@ -613,7 +602,6 @@ ion-tab-button ion-label {
       span { font-size: 0.7rem !important; }
     }
   }
-  // Ion modal più ampio
   ion-modal {
     --width: 80vw;
     --max-width: min(85vw, 800px);
@@ -622,7 +610,6 @@ ion-tab-button ion-label {
 }
 
 @media (min-width: 1024px) {
-  // Floating nav — si espande proporzionalmente
   .floating-nav {
     max-width: min(75vw, 800px) !important;
     height: 70px !important;
@@ -636,7 +623,6 @@ ion-tab-button ion-label {
       height: 62px !important;
     }
   }
-  // Ion modal desktop
   ion-modal {
     --width: 60vw;
     --max-width: min(75vw, 1000px);

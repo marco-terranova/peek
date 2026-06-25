@@ -135,10 +135,8 @@ export class EsportaArchivioPage implements OnInit {
     let boxFiltrate: any[];
 
     if (this.exportScope === 'attive') {
-      // Solo box attive = quelle presenti nella home (il server già esclude cestino)
       boxFiltrate = boxHome;
     } else {
-      // Intero archivio = home + cestino (box eliminate soft-delete)
       const resCestino: any = await firstValueFrom(
         this.dbService.getBoxEliminate(utenteId) as any
       ).catch(() => ({ box_eliminate: [] }));
@@ -149,7 +147,6 @@ export class EsportaArchivioPage implements OnInit {
     const righe: any[] = [];
     for (const box of boxFiltrate) {
       try {
-        // ✅ FIX 2: la risposta HTTP è { oggetti: [...] }, non un array diretto
         const resOgg: any = await firstValueFrom(
           this.dbService.getOggettiPerBox(box.id) as any
         );

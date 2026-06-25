@@ -57,7 +57,6 @@ $red: #EF4444; $amber: #F59E0B;
   border-radius: 2px;
 }
 
-//  SEZIONE ELEMENTI — layout orizzontale
 
 .db-section-elementi {
   min-height: 100vh;
@@ -185,7 +184,6 @@ $red: #EF4444; $amber: #F59E0B;
   margin: 0 0 40px;
 }
 
-//  HERO CARD
 
 .db-hero-card {
   text-align: left;
@@ -256,7 +254,6 @@ $red: #EF4444; $amber: #F59E0B;
   &--on { color: $amber; background: rgba(245,158,11,0.1); }
 }
 
-//  OBJECTS SECTION
 
 .db-obj-toolbar {
   display: flex; gap: 8px; align-items: center;
@@ -399,7 +396,6 @@ $red: #EF4444; $amber: #F59E0B;
   &:hover { background: rgba(239,68,68,0.08); }
 }
 
-//  QR CODE SECTION
 
 .db-qr-section {
   text-align: center;
@@ -424,7 +420,6 @@ $red: #EF4444; $amber: #F59E0B;
   display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
 }
 
-//  ACTIONS SECTION
 
 .db-actions-row {
   display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
@@ -455,7 +450,6 @@ $red: #EF4444; $amber: #F59E0B;
   }
 }
 
-//  LOADING
 
 .db-loading-spinner {
   display: flex; flex-direction: column; align-items: center; gap: 14px;
@@ -471,7 +465,6 @@ $red: #EF4444; $amber: #F59E0B;
 }
 @keyframes db-spin { to { transform: rotate(360deg); } }
 
-//  MAP + BUSINESS MESSAGE
 
 .db-section-mappa {
   min-height: 100vh;
@@ -528,7 +521,6 @@ $red: #EF4444; $amber: #F59E0B;
   width: fit-content;
 }
 
-//  CATEGORY DROPDOWN (outside modal)
 
 .db-select-row {
   display: flex;
@@ -560,17 +552,14 @@ $red: #EF4444; $amber: #F59E0B;
   gap: 8px;
   width: 100%;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1.5px solid rgba(15, 23, 42, 0.06);
+  background: transparent;
+  border: none;
   border-radius: 12px;
   cursor: pointer;
   font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
   font-weight: 500;
   color: #0F172A;
-  transition: border-color 0.2s;
-
-  &:hover { border-color: rgba(125, 199, 64, 0.3); }
 
   .placeholder { color: #4A7A94; opacity: 0.4; }
   svg { width: 16px; height: 16px; color: #4A7A94; flex-shrink: 0; }
@@ -621,7 +610,6 @@ $red: #EF4444; $amber: #F59E0B;
   color: #4A7A94;
 }
 
-//  MODAL
 
 .db-modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
@@ -772,7 +760,6 @@ $red: #EF4444; $amber: #F59E0B;
   &:disabled { opacity: 0.35; cursor: not-allowed; background: rgba(15,23,42,0.06); color: rgba(15,23,42,0.15); box-shadow: none; }
 }
 
-//  RESPONSIVE
 
 @media (max-width: 899px) {
   .about-inner { flex-direction: column; gap: 48px; padding: 60px 28px; }

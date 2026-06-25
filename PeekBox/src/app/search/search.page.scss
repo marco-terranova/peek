@@ -15,7 +15,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   --overflow: hidden;
 }
 
-//  BACK BUTTON
 .ia-back-btn {
   position: fixed; top: 28px; left: 28px; z-index: 100;
   display: flex; align-items: center; gap: 6px;
@@ -30,7 +29,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   &:active { transform: scale(0.97); }
 }
 
-//  ABOUT PANELS — SINGLE VIEWPORT
 .about-section {
   height: 100dvh;
   display: flex; align-items: center;
@@ -67,7 +65,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   border-radius: 2px;
 }
 
-//  SEARCH BAR
 .search-bar {
   display: flex;
   align-items: center;
@@ -124,7 +121,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   }
 }
 
-//  QUICK SUGGESTIONS
 .search-quick {
   flex-shrink: 0;
 
@@ -162,7 +158,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   }
 }
 
-//  LOADING
 .search-loading {
   flex: 1;
   display: flex;
@@ -191,7 +186,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   to { transform: rotate(360deg); }
 }
 
-//  RESULTS — scrollable internally
 .search-results {
   flex: 1;
   display: flex;
@@ -337,7 +331,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   opacity: 0.25;
 }
 
-//  BOX RESULTS — QR‑style cards (same as scan-qr page)
 .sr-box-card {
   display: flex;
   flex-direction: column;
@@ -457,7 +450,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   &:active { transform: scale(0.97); }
 }
 
-//  RESPONSIVE
 @media (max-width: 899px) {
   .about-inner { padding: 28px 28px 20px; }
 }

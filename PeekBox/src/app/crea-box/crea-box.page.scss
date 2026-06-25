@@ -7,7 +7,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 :host { display: block; }
 .crea-content { --background: #{$page}; --overflow: hidden; }
 
-//  SPLIT VIEW
 
 .crea-split {
   position: fixed;
@@ -30,7 +29,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   -webkit-backdrop-filter: blur(4px);
 }
 
-//  LEFT PANEL — Box preview + info steps
 
 .cs-left {
   position: relative;
@@ -233,7 +231,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-//  RIGHT PANEL — Glass card with form + photo
 
 .cs-right {
   position: relative;
@@ -656,7 +653,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   }
 }
 
-//  TAB BAR
 
 ion-footer { position: relative; z-index: 10; }
 
@@ -685,7 +681,6 @@ ion-tab-button svg {
   box-shadow: 0 4px 12px rgba($green, 0.3) !important;
 }
 
-//  RESPONSIVE
 
 @media (max-width: 899px) {
   .crea-split { flex-direction: column; }

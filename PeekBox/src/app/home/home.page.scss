@@ -75,7 +75,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   50% { transform: translate(-25px,20px) rotate(-180deg) scale(1.1); border-radius: 58% 42% 45% 55% / 48% 52% 48% 52%; }
 }
 
-//  HAMBURGER MENU
 .hm-hamburger-wrap {
   position: absolute;
   top: 28px;
@@ -172,7 +171,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:hover { color: $red; }
 }
 
-//  MAIN CONTENT — BOX LIST
 .hm-main {
   position: absolute;
   inset: 50px 20px 100px 20px;
@@ -473,7 +471,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.95); }
 }
 
-//  BOTTOM: PILL NAVIGATION DOCK
 .dock-nav {
   position: absolute;
   bottom: 36px;
@@ -545,7 +542,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.92); }
 }
 
-//  RESPONSIVE
 @media (max-width: 640px) {
   .dock-nav {
     bottom: 28px;

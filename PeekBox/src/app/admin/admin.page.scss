@@ -38,7 +38,6 @@ ion-content {
   position:relative;
 }
 
-//  ANIMATED BLOBS
 .ad-blobs { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
 
 .adb-blob {
@@ -94,7 +93,6 @@ ion-content {
   to { opacity:1; transform:translateY(0); }
 }
 
-//  SECTION
 .ad-section {
   position:relative;
   animation:ad-section-in 0.8s cubic-bezier(0.16,1,0.3,1) both 0.1s;
@@ -111,7 +109,6 @@ ion-content {
   width:100%; display:flex; flex-direction:column; gap:20px;
 }
 
-//  STATS GRID
 .admin-stats-grid {
   display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
   max-width:900px; margin:0 auto; width:100%;
@@ -166,7 +163,6 @@ ion-content {
   }
 }
 
-//  TABS
 .admin-tabs {
   display:flex; gap:8px;
   max-width:900px; margin:20px auto 0;
@@ -195,7 +191,6 @@ ion-content {
   &:hover:not(.active) { background:rgba(255,255,255,0.7); }
 }
 
-//  TAB CONTENT
 .admin-tab-content {
   max-width:900px; margin:0 auto;
   padding:16px clamp(20px,3.5vw,56px) 80px;
@@ -269,7 +264,6 @@ ion-content {
   background:rgba($red,0.04); border-radius:14px;
 }
 
-//  USERS GRID
 .admin-users-grid {
   display:flex; flex-direction:column; gap:14px;
 }
@@ -364,7 +358,6 @@ ion-content {
   span { font-family:'DM Sans',sans-serif; font-size:0.95rem; }
 }
 
-//  SEGNALAZIONI
 .admin-seg-list {
   display:flex; flex-direction:column; gap:12px;
 }
@@ -464,7 +457,6 @@ ion-content {
   &:disabled { opacity:0.4; cursor:default; transform:none; box-shadow:none; }
 }
 
-//  RESPONSIVE
 @media (max-width: 399px) {
   .admin-stat-card { padding:12px 14px; gap:10px; }
   .admin-stat-icon { width:34px; height:34px; svg { width:16px; height:16px; } }

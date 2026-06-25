@@ -9,7 +9,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
 .welcome-content { --background: #{$page}; --overflow: hidden; }
 .welcome-stage { width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; }
 
-//  HERO
 .hero-section {
   position: relative; min-height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
@@ -112,7 +111,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   max-width: 500px; text-align: center;
 }
 
-//  ABOUT PANELS
 .about-section {
   position: relative; min-height: 100vh;
   display: flex; align-items: center;
@@ -166,7 +164,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:last-child { margin-bottom: 0; }
 }
 
-//  CTA
 .cta-section {
   position: relative;
   display: flex; align-items: center; justify-content: center;
@@ -201,8 +198,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-//  RESPONSIVE
-//  SECTION DIVIDER
 .section-divider {
   height: 2px;
   background: $green;

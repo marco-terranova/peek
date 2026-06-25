@@ -18,7 +18,6 @@ $font: 'Poppins', sans-serif;
   height: 100%;
 }
 
-// Backdrop rimosso per avere lo sfondo pieno
 .geo-backdrop {
   display: none;
 }
@@ -53,7 +52,6 @@ $font: 'Poppins', sans-serif;
   }
 }
 
-// Vecchia animazione rimossa
 
 .geo-header {
   display: grid;
@@ -266,7 +264,6 @@ $font: 'Poppins', sans-serif;
   p { margin: 0; font-size: 0.65rem; color: $mid; line-height: 1.4; }
 }
 
-// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
 
 @media (max-width: 399px) {
   .geo-dialog {

@@ -56,100 +56,6 @@ ion-content {
   box-sizing: border-box;
 }
 
-// ===== PEEKBOX — GLOBAL CUSTOM STYLES =====
-
-// Ion-select popover light theme
-ion-popover.select-popover,
-ion-popover[trigger] {
-  --background: #{$white};
-  --border-radius: 16px;
-  --box-shadow: 0 16px 48px rgba($dark, .12);
-  --backdrop-opacity: 0;
-  --min-width: var(--popover-min-width, 260px);
-  --width: auto;
-  --max-width: 90vw;
-
-  &::part(content) {
-    border: 1px solid #{$brd-light};
-    border-radius: 16px;
-    overflow: hidden;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  ion-list {
-    background: $white !important;
-    padding: 6px !important;
-  }
-
-  ion-item {
-    --background: transparent;
-    --background-hover: rgba($blue, .08);
-    --color: #{$dark};
-    --border-color: transparent;
-    border-radius: 10px;
-    margin: 2px 0;
-    font-family: 'Outfit', sans-serif;
-    font-size: .93rem;
-    font-weight: 500;
-  }
-
-  ion-radio {
-    --color: rgba($dark, .3);
-    --color-checked: #{$blue};
-  }
-
-  ion-item.item-radio-checked {
-    --background: rgba($blue, .08);
-    ion-label { color: #{$blue} !important; font-weight: 700; }
-  }
-}
-
-ion-select.csr-select {
-  --popover-min-width: 100%;
-}
-
-// Filtri page select popover
-.fsr-popover {
-  --background: #{$white};
-  --border-radius: 16px;
-  --box-shadow: 0 16px 48px rgba($dark, .15);
-
-  &::part(content) {
-    border: 1.5px solid #{$brd-light};
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  ion-list {
-    background: #{$white} !important;
-    padding: 6px !important;
-  }
-
-  ion-item {
-    --background: transparent;
-    --background-hover: rgba($blue, .08);
-    --color: #{$dark};
-    --border-color: transparent;
-    border-radius: 10px;
-    margin: 2px 0;
-    font-family: 'Outfit', sans-serif;
-    font-size: .93rem;
-    font-weight: 500;
-
-    &.item-radio-checked {
-      --background: rgba($blue, .08);
-      ion-label { color: #{$blue} !important; font-weight: 700; }
-    }
-  }
-
-  ion-radio {
-    --color: rgba($dark, .25);
-    --color-checked: #{$blue};
-  }
-}
-
-// ===== ALERT PEEKBOX STYLE =====
 ion-alert {
   --background: #{$white};
   --border-radius: 24px;
@@ -276,7 +182,6 @@ ion-alert .alert-button.alert-button-role-destructive .alert-button-inner {
   color: #f87171 !important;
 }
 
-// ===== ALERT PEEKBOX — SLIM VARIANT =====
 ion-alert.peekbox-alert--slim {
   --min-width: 320px;
 
@@ -321,7 +226,6 @@ ion-alert.peekbox-alert--slim {
   }
 }
 
-// ===== TOAST PEEKBOX STYLE =====
 ion-toast {
   --background: #{$white};
   --color: #{$dark};
@@ -395,7 +299,6 @@ ion-toast.peekbox-toast {
 }
 
 
-//  FLOATING BOTTOM NAV — Componente globale condiviso tra le pagine
 .floating-nav {
   position: fixed;
   bottom: 18px; left: 50%;
@@ -488,7 +391,6 @@ ion-toast.peekbox-toast {
     }
   }
 }
-//  FIX DEFINITIVI — Icone azzurre nav + Avatar profilo azzurro
 
 .floating-nav .nav-item ion-icon {
   color: $blue !important;
@@ -515,7 +417,6 @@ ion-toast.peekbox-toast {
   box-shadow: 0 2px 8px rgba($blue, 0.25) !important;
 }
 
-//  FIX TAB BAR — Opacità forzata 100%, azzurro solido su tutto
 
 ion-tab-button {
   opacity: 1 !important;
@@ -527,7 +428,6 @@ ion-tab-button ion-label {
   opacity: 1 !important;
 }
 
-//  FIX DEFINITIVO TAB BAR — Variabili Ionic native + forza bruta
 
 ion-tab-bar {
   --color: $blue !important;
@@ -552,7 +452,6 @@ ion-tab-button ion-label {
   fill: $blue !important;
 }
 
-//  FIX NUCLEARE TAB BAR — Shadow DOM + variabili Ionic + forza bruta
 
 ion-tab-bar {
   --color: $sky !important;
@@ -582,7 +481,6 @@ ion-tab-button ion-label {
   opacity: 1 !important;
 }
 
-//  PEEKBOX — ACTION SHEET CUSTOM FOTO (Premium Design)
 
 .peekbox-photo-sheet {
   // Contenitore principale
@@ -659,9 +557,6 @@ ion-tab-button ion-label {
   }
 }
 
-//  PEEKBOX — FIX EMOJI GLOBALE
-//  Le emoji vengono renderizzate con il font di sistema corretto
-//  su tutte le piattaforme (iOS, Android, Web).
 
 .empty-icon,
 .empty-emoji,
@@ -680,8 +575,6 @@ ion-tab-button ion-label {
   line-height: 1 !important;
 }
 
-//  RESPONSIVE GLOBALE — Adattamento adattivo per tutte le pagine
-//  Gestisce elementi condivisi: floating-nav, floating-nav, font base
 
 @media (max-width: 399px) {
   // Floating nav più compatta su schermi molto piccoli
@@ -751,53 +644,3 @@ ion-tab-button ion-label {
   }
 }
 
-//  CREA-BOX: Select popover — stessa larghezza del trigger, discesa lineare, compatto
-
-ion-popover.select-popover.csr-select-popover {
-  --min-width: var(--popover-trigger-width, 100%);
-  --width: var(--popover-trigger-width, 100%);
-  --max-width: var(--popover-trigger-width, 100%);
-  --backdrop-opacity: 0;
-
-  &::part(content) {
-    border-radius: 10px !important;
-    box-shadow: 0 16px 48px rgba(15,23,42,0.14), 0 0 0 1px rgba(58,171,219,0.10) !important;
-    overflow: hidden;
-    transform-origin: left top;
-    left: 0;
-    top: 4px;
-  }
-
-  ion-list {
-    padding: 4px 0 !important;
-    background: rgba(255,255,255,0.96) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  ion-item {
-    --background: transparent;
-    --color: #0F172A;
-    --border-color: rgba(15,23,42,0.04);
-    --padding-start: 10px;
-    --padding-end: 10px;
-    --min-height: 30px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 500;
-
-    &:hover {
-      --background: rgba(125,199,64,0.06);
-    }
-
-    &.item-radio-checked {
-      --background: rgba(125,199,64,0.09);
-      --color: #5A9E2A;
-      font-weight: 700;
-    }
-  }
-
-  ion-radio {
-    --color-checked: #7DC740;
-  }
-}

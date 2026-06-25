@@ -9,7 +9,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   -webkit-font-smoothing: antialiased;
 }
 
-//  FAB
 .chat-fab {
   position: fixed;
   bottom: 80px; right: 24px;
@@ -35,7 +34,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   svg { display: block; }
 }
 
-//  PANEL
 .chat-panel {
   position: fixed;
   bottom: 100px; right: 24px;
@@ -62,7 +60,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   }
 }
 
-//  HEADER
 .cph {
   display: flex;
   align-items: center;
@@ -152,7 +149,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   50% { opacity: 0.5; transform: scale(0.85); }
 }
 
-//  BODY
 .chat-body {
   flex: 1;
   overflow-y: auto;
@@ -168,7 +164,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   &::-webkit-scrollbar-thumb { background: rgba($green, 0.2); border-radius: 4px; }
 }
 
-//  MESSAGES
 .cm {
   display: flex;
   gap: 8px;
@@ -221,7 +216,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   to   { opacity: 1; transform: translateY(0); }
 }
 
-//  TYPING
 .cm-typing {
   display: flex;
   gap: 5px;
@@ -243,7 +237,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   40%           { transform: scale(1);   opacity: 1;   }
 }
 
-//  SUGGESTIONS
 .chat-suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -274,7 +267,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   }
 }
 
-//  FOOTER
 .chat-footer {
   display: flex;
   gap: 8px;
@@ -324,7 +316,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #FFFFFF;
   }
 }
 
-//  RESPONSIVE
 @media (max-width: 480px) {
   .chat-panel {
     width: calc(100vw - 24px);

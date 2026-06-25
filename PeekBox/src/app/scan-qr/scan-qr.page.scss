@@ -21,7 +21,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   --background: #{$page};
 }
 
-//  SCAN SPLIT VIEW
 
 .scan-split {
   display: flex;
@@ -428,7 +427,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:active { transform: scale(0.97); }
 }
 
-//  RIGHT PANEL
 
 .ss-right {
   position: relative;
@@ -725,7 +723,6 @@ $dark: #0F172A; $mid: #4A7A94; $page: #F4F7F9; $white: #ffffff;
   &:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
 }
 
-//  RESPONSIVE
 
 @media (max-width: 899px) {
   .scan-split { flex-direction: column-reverse; }

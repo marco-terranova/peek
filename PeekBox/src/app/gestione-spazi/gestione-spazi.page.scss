@@ -1,7 +1,6 @@
 @use '../../theme/variables' as *;
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800;900&display=swap');
 
-// === DESIGN TOKENS ===
 $text-primary: $dark;
 $text-muted:   $mid;
 
@@ -69,7 +68,6 @@ ion-content {
   --padding-bottom: 100px;
 }
 
-//  PAGE WRAPPER
 
 .page-wrapper {
   padding: 16px clamp(20px, 3.5vw, 56px) 20px;
@@ -81,7 +79,6 @@ ion-content {
   margin: 0 auto;
 }
 
-//  ADD SPACE ROW
 
 .add-space-row {
   display: flex;
@@ -128,7 +125,6 @@ ion-content {
   &:disabled { opacity: 0.4; }
 }
 
-//  SPACES LIST
 
 .spaces-list {
   display: flex;
@@ -254,7 +250,6 @@ ion-content {
   cursor: pointer;
 }
 
-//  LOADING & EMPTY
 
 .loading-state {
   display: flex;
@@ -287,7 +282,6 @@ ion-content {
   p { color: $text-muted; font-size: 0.88rem; margin: 0; }
 }
 
-//  FLOATING BOTTOM NAV — identica alla homepage
 
 .floating-nav {
   position: fixed;
@@ -364,7 +358,6 @@ ion-content {
   }
 }
 
-// RESPONSIVE — Adattamento adattivo per tutte le dimensioni
 
 @media (max-width: 399px) {
   .page-wrapper {
@@ -397,7 +390,6 @@ ion-content {
   }
 }
 
-//  BOX ORFANE — IN ATTESA DI RIALLOCAZIONE
 
 .gs-orfane-section {
   margin-bottom: 20px;

@@ -1,0 +1,259 @@
+<ion-content [fullscreen]="true" class="ia-content">
+  <div class="ia-stage">
+
+    <button class="ia-back-btn" (click)="tornaIndietro()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      <span>Torna indietro</span>
+    </button>
+
+    <ng-container *ngIf="!isLoading && box; else caricaState">
+
+      <!-- ═══════════════ SEZIONE 1: ELEMENTI (layout orizzontale) ══════ -->
+      <section class="db-section-elementi">
+        <div class="db-split">
+          <!-- LEFT: info box -->
+          <div class="db-split-left">
+            <div class="db-info-card">
+              <div class="ia-tips-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </div>
+              <h2 class="ac-title">{{ box.nome }}</h2>
+              <p class="ac-text ia-pw-text" *ngIf="box.descrizione">{{ box.descrizione }}</p>
+              <div class="db-info-stats">
+                <span>{{ oggetti.length }} oggett{{ oggetti.length === 1 ? 'o' : 'i' }}</span>
+                <span *ngIf="numFragili > 0">{{ numFragili }} fragil{{ numFragili === 1 ? 'e' : 'i' }}</span>
+                <span>{{ totaleElementi }} pezzi totali</span>
+              </div>
+              <button *ngIf="!isViewer && oggetti.length > 0 && !isBoxPiena" class="db-add-btn db-add-btn--full" (click)="apriFormOggetto()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Aggiungi oggetto</span>
+              </button>
+              <div *ngIf="isBoxPiena" class="db-full-badge">Scatola piena</div>
+            </div>
+          </div>
+
+          <!-- RIGHT: oggetti list -->
+          <div class="db-split-right">
+            <div class="db-obj-toolbar" *ngIf="oggetti.length > 0">
+              <div class="db-obj-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca tra gli oggetti..." class="db-search-input" />
+              </div>
+            </div>
+
+            <div class="db-empty db-empty--center" *ngIf="oggetti.length === 0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <p>Nessun oggetto in questo box.</p>
+              <button *ngIf="!isViewer" class="db-add-btn" (click)="apriFormOggetto()">Aggiungi il primo oggetto</button>
+            </div>
+
+            <div class="db-empty" *ngIf="oggetti.length > 0 && filteredOggetti.length === 0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <p>Nessun risultato per "{{ searchQuery }}"</p>
+            </div>
+
+            <div class="db-obj-list" *ngIf="filteredOggetti.length > 0">
+              <div class="db-card-obj" *ngFor="let o of filteredOggetti">
+                <div class="db-card-obj-body">
+                  <span class="db-card-obj-nome">{{ o.nome }}</span>
+                  <span class="db-card-obj-info">
+                    <span class="db-card-obj-qta">{{ o.quantita || 1 }} pz</span>
+                    <span *ngIf="o.tipo" class="db-card-obj-tipo">{{ o.tipo }}</span>
+                  </span>
+                </div>
+                <div *ngIf="o.fragile" class="db-card-obj-fragile-badge">Fragile</div>
+                <div class="db-card-obj-acts" *ngIf="!isViewer">
+                  <button class="db-card-obj-btn" (click)="apriFormOggetto(o)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <button class="db-card-obj-btn db-card-obj-btn--del" (click)="eliminaOggetto(o)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="db-obj-foot" *ngIf="oggetti.length > 0">
+              <span class="db-obj-count">{{ filteredOggetti.length }} di {{ oggetti.length }} oggetti</span>
+              <button *ngIf="!isViewer" class="db-obj-svuota" (click)="svuotaBox()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Svuota box
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- ═══════════════ SEZIONE 2: QR CODE ══════ -->
+      <section class="about-section">
+        <div class="about-bg"></div>
+        <div class="about-inner about-inner--rows">
+          <div class="about-content-full">
+            <div class="ia-tips-card">
+              <div class="ia-tips-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg>
+              </div>
+              <h2 class="ac-title">QR Code</h2>
+
+              <div class="db-qr-section">
+                <div class="db-qr-box">
+                  <div *ngIf="isLoadingQr" class="db-spinner"></div>
+                  <canvas #qrCanvas [style.display]="isLoadingQr ? 'none' : 'block'" style="width:200px;height:200px"></canvas>
+                </div>
+                <p class="db-qr-name" *ngIf="qrGenerato">{{ box.nome }}</p>
+
+                <div class="db-qr-acts" *ngIf="qrGenerato">
+                  <button class="db-action-btn db-action-btn--primary" (click)="scaricaQr()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Scarica QR</span>
+                  </button>
+                  <button class="db-action-btn db-action-btn--secondary" (click)="condividiLink()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    <span>Copia link</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ SEZIONE 3: MAPPA (condizionale) ══════ -->
+      <ng-container *ngIf="box.moving_mode">
+        <div class="section-divider"></div>
+        <section class="db-section-mappa">
+          <div class="db-mappa-header">
+            <div class="ia-tips-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <h2 class="ac-title">Posizione</h2>
+          </div>
+
+          <ng-container *ngIf="tipoProfilo === 'business'; else personalMapMsg">
+            <div #detMapContainer class="db-map-container" *ngIf="ultimoCheckpoint"></div>
+            <div class="db-empty" *ngIf="!ultimoCheckpoint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <p>Nessun checkpoint registrato per questo box.</p>
+            </div>
+          </ng-container>
+
+          <ng-template #personalMapMsg>
+            <div class="db-business-msg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <p>Funzionalit&agrave; disponibile solo per account Business</p>
+            </div>
+          </ng-template>
+        </section>
+      </ng-container>
+
+    </ng-container>
+
+    <ng-template #caricaState>
+      <section class="about-section">
+        <div class="about-bg"></div>
+        <div class="about-inner about-inner--rows">
+          <div class="about-content-full">
+            <div class="ia-tips-card">
+              <div class="db-loading-spinner">
+                <div class="db-spinner"></div>
+                <p>Caricamento box...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ng-template>
+
+  </div>
+
+  <!-- ═══════════════ OBJECT FORM MODAL ══════ -->
+  <div class="db-modal-overlay" *ngIf="objectFormOpen" (click)="chiudiFormOggetto()">
+    <div class="db-modal-sheet" (click)="$event.stopPropagation()">
+      <div class="db-modal-handle"></div>
+      <div class="db-modal-head">
+        <h3 class="db-modal-title">{{ editingObject ? 'Modifica oggetto' : 'Nuovo oggetto' }}</h3>
+        <button class="db-modal-close" (click)="chiudiFormOggetto()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="db-modal-body">
+        <div class="db-form-cols">
+          <div class="db-form-left">
+            <div class="db-form-photo" (click)="apriSceltaFoto()">
+              <img *ngIf="formFoto" [src]="formFoto" class="db-form-photo-img"/>
+              <div *ngIf="!formFoto" class="db-form-photo-ph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Foto</span>
+              </div>
+              <button *ngIf="formFoto" class="db-form-photo-rm" (click)="rimuoviFoto($event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <input type="file" id="db-foto-input" accept="image/*" (change)="onFileSelected($event)" style="display:none"/>
+            <label class="db-form-switch">
+              <input type="checkbox" [(ngModel)]="formFragile"/>
+              <span class="db-form-switch-track"><span class="db-form-switch-thumb"></span></span>
+              <span class="db-form-switch-lbl">Oggetto fragile</span>
+            </label>
+          </div>
+          <div class="db-form-right">
+            <div class="db-form-field">
+              <label>Nome *</label>
+              <input type="text" [(ngModel)]="formNome" placeholder="Es. Lampada"/>
+            </div>
+            <div class="db-form-field">
+              <label>Categoria</label>
+              <div class="db-select-row">
+                <div class="db-select-wrap">
+                  <div #catTrigger class="db-select-trigger" (click)="toggleCatDropdown()">
+                    <span [class.placeholder]="!formTipo">{{ formTipo || '— Nessuna —' }}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                </div>
+                <button type="button" class="db-btn-add-cat" (click)="aggiungiCategoria($event)" title="Nuova categoria">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="db-form-field">
+              <label>Quantità</label>
+              <input type="number" [(ngModel)]="formQuantita" min="1"/>
+            </div>
+            <div class="db-form-field">
+              <label>Note</label>
+              <textarea [(ngModel)]="formDescrizione" rows="3" placeholder="Dettagli..."></textarea>
+            </div>
+            <button class="db-form-submit" (click)="salvaOggetto()" [disabled]="isSaving">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              {{ isSaving ? 'Salvataggio...' : 'Salva' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dropdown categorie renderizzato fuori dal modal -->
+  <div class="db-cat-backdrop" *ngIf="mostraCatDropdown" (click)="chiudiCatDropdown()"></div>
+  <div class="db-cat-dropdown" *ngIf="mostraCatDropdown" [ngStyle]="catDropdownStyle">
+    <div class="db-cat-item" (click)="selezionaCategoria('')">— Nessuna —</div>
+    <div class="db-cat-item" *ngFor="let cat of categorie" (click)="selezionaCategoria(cat.nome)">
+      {{ cat.nome }}
+    </div>
+    <div class="db-cat-empty" *ngIf="categorie.length === 0">Nessuna categoria disponibile</div>
+  </div>
+
+</ion-content>

@@ -1,0 +1,105 @@
+<ion-content class="ia-content" scroll-y="false">
+  <div class="ia-back-btn" (click)="tornaIndietro()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+    <span>Torna indietro</span>
+  </div>
+
+  <div class="about-section">
+    <div class="about-bg"></div>
+    <div class="about-inner about-inner--rows">
+      <div class="about-content-full">
+
+        <div class="search-bar">
+          <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            class="sb-input"
+            [(ngModel)]="termineDiRicerca"
+            (ngModelChange)="cercaOggetti()"
+            placeholder="Cerca un oggetto o una box..."
+            data-testid="search-input"
+          />
+          <button *ngIf="termineDiRicerca" class="sb-clear" (click)="pulisciRicerca()" aria-label="Cancella ricerca">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div *ngIf="!haCercato && !cercando" class="search-quick">
+          <div class="sq-chips">
+            <button *ngFor="let s of suggerimenti" class="sq-chip" (click)="cercaConTermine(s)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              {{ s }}
+            </button>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div *ngIf="cercando" class="search-loading">
+          <div class="spinner"></div>
+          <p>Ricerca in corso...</p>
+        </div>
+
+        <div *ngIf="!cercando && risultati.length > 0" class="search-results">
+          <div class="sr-header">
+            <p class="sr-count">
+              {{ risultati.length }} risultat{{ risultati.length === 1 ? 'o' : 'i' }} per <strong>"{{ termineDiRicerca }}"</strong>
+            </p>
+
+          </div>
+          <div class="sr-list">
+            <ng-container *ngFor="let r of risultati">
+              <!-- Box result — QR-style card -->
+              <div *ngIf="r.tipo === 'box'" class="sr-box-card">
+                <div class="sr-box-card-inner">
+                  <div class="sr-box-row sr-box-row--label">
+                    <span>{{ r.nome }}</span>
+                  </div>
+                  <div class="sr-box-row" *ngIf="r.descrizione">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    <span>{{ r.descrizione }}</span>
+                  </div>
+                  <div class="sr-box-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    <span>{{ r.nome_armadio || 'Nessun armadio' }}</span>
+                  </div>
+                  <div class="sr-box-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Creata il {{ r.data_creazione || '—' }}</span>
+                  </div>
+                  <div class="sr-box-tags" *ngIf="r.is_preferito">
+                    <span class="sr-box-tag sr-box-tag--fav">
+                      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      Preferito
+                    </span>
+                  </div>
+                </div>
+                <button class="sr-box-cta" (click)="vaiABox(r)">
+                  <span>Vedi dettaglio</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+
+              <!-- Oggetto result — existing list style -->
+              <a *ngIf="r.tipo === 'oggetto'"
+                 class="sr-item sr-item--ogg"
+                 data-testid="search-result-item">
+                <div class="sr-foto sr-foto--ogg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="sr-info">
+                  <div class="sr-nome">{{ r.nome }}</div>
+                  <div class="sr-contesto">
+                    <svg class="src-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <span>Nella box <strong>{{ r.contesto }}</strong></span>
+                  </div>
+                </div>
+                <span class="sr-badge sr-badge--ogg">OGG</span>
+              </a>
+            </ng-container>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ion-content>

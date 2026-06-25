@@ -584,6 +584,28 @@ app.get('/api/checkpoint/tutti/:utenteId', verificaToken, (req, res) => {
     });
 });
 
+app.get('/api/checkpoint/tutti-attivi/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+    const sql = `
+        SELECT cp.id, cp.rif_box, cp.latitudine, cp.longitudine, cp.accuratezza,
+               cp.label, cp.timestamp, cp.rif_utente,
+               b.nome as box_nome, armadi.nome as armadio_nome
+        FROM checkpoint_gps cp
+        JOIN box b ON cp.rif_box = b.id
+        JOIN armadi ON b.rif_armadio = armadi.id
+        LEFT JOIN condivisioni c ON c.rif_box = b.id AND c.rif_ospite = ? AND c.stato = 'accettata'
+        WHERE b.moving_mode = 1
+          AND b.data_eliminazione IS NULL
+          AND (armadi.rif_utente = ? OR c.id IS NOT NULL)
+        ORDER BY cp.timestamp DESC
+    `;
+    db.all(sql, [req.params.utenteId, req.params.utenteId], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ checkpoints: rows || [] });
+    });
+});
+
 // ─────────────────────────────────────────────
 // GEOFENCE & NOTIFICHE
 // ─────────────────────────────────────────────

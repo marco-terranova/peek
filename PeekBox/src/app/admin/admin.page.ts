@@ -34,7 +34,6 @@ export class AdminPage implements OnInit {
   searchTerm = '';
   tab: 'utenti' | 'segnalazioni' = 'utenti';
 
-  nomeAdmin = '';
   utenteIdCorrente: string | null = null;
 
   String = String;
@@ -53,7 +52,6 @@ export class AdminPage implements OnInit {
 
   ionViewWillEnter() {
     this.utenteIdCorrente = localStorage.getItem('utente_id');
-    this.nomeAdmin = (localStorage.getItem('utente_nome') || '').toUpperCase();
 
     if (localStorage.getItem('is_admin') !== '1') {
       this.router.navigateByUrl('/home', { replaceUrl: true });
@@ -239,15 +237,6 @@ export class AdminPage implements OnInit {
       },
       error: (err) => this.mostraToast(err?.error?.error || 'Errore invio risposta.', 'danger')
     });
-  }
-
-  // ── NAV ──────────────────────────────
-  vaiHome()    { this.navHistory.navTo('/home'); }
-  vaiSearch()  { this.navHistory.navTo('/search'); }
-  vaiProfilo() { this.router.navigateByUrl('/profilo', { replaceUrl: true }); }
-
-  inizialeAdmin(): string {
-    return this.nomeAdmin.charAt(0) || 'A';
   }
 
   private async mostraToast(msg: string, color: string) {

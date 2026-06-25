@@ -1,0 +1,95 @@
+/**
+ * Custom type declaration for ionicons/icons.
+ * Overrides the broken index.d.ts in ionicons v7.x which declares icons locally
+ * but fails to export them (TS2459 / TS2305 errors).
+ *
+ * All icon values are SVG path data strings, compatible with Ionic's addIcons() API.
+ */
+declare module 'ionicons/icons' {
+  export const add: string;
+  export const addCircleOutline: string;
+  export const addOutline: string;
+  export const alertCircleOutline: string;
+  export const apertureOutline: string;
+  export const archiveOutline: string;
+  export const arrowBackOutline: string;
+  export const arrowDownCircleOutline: string;
+  export const arrowForwardOutline: string;
+  export const bagAddOutline: string;
+  export const banOutline: string;
+  export const barChartOutline: string;
+  export const businessOutline: string;
+  export const camera: string;
+  export const cameraReverseOutline: string;
+  export const chatbubblesOutline: string;
+  export const checkmarkCircleOutline: string;
+  export const checkmarkDoneOutline: string;
+  export const checkmarkOutline: string;
+  export const chevronDownOutline: string;
+  export const chevronForwardOutline: string;
+  export const closeCircleOutline: string;
+  export const closeOutline: string;
+  export const cloudDownloadOutline: string;
+  export const codeSlashOutline: string;
+  export const createOutline: string;
+  export const cubeOutline: string;
+  export const documentOutline: string;
+  export const documentTextOutline: string;
+  export const downloadOutline: string;
+  export const eyeOutline: string;
+  export const filter: string;
+  export const filterCircleOutline: string;
+  export const flashOutline: string;
+  export const funnelOutline: string;
+  export const gridOutline: string;
+  export const heart: string;
+  export const heartOutline: string;
+  export const home: string;
+  export const homeOutline: string;
+  export const idCardOutline: string;
+  export const imageOutline: string;
+  export const informationCircleOutline: string;
+  export const keypadOutline: string;
+  export const layersOutline: string;
+  export const listOutline: string;
+  export const locationOutline: string;
+  export const logOutOutline: string;
+  export const mailOpenOutline: string;
+  export const mailOutline: string;
+  export const mapOutline: string;
+  export const navigateOutline: string;
+  export const optionsOutline: string;
+  export const paperPlaneOutline: string;
+  export const pencilOutline: string;
+  export const print: string;
+  export const printOutline: string;
+  export const printSharp: string;
+  export const people: string;
+  export const peopleOutline: string;
+  export const person: string;
+  export const personAddOutline: string;
+  export const personCircleOutline: string;
+  export const personOutline: string;
+  export const pricetagOutline: string;
+  export const qrCodeOutline: string;
+  export const refreshOutline: string;
+  export const removeCircleOutline: string;
+  export const saveOutline: string;
+  export const scan: string;
+  export const scanOutline: string;
+  export const search: string;
+  export const searchOutline: string;
+  export const shareOutline: string;
+  export const shareSocialOutline: string;
+  export const shieldCheckmarkOutline: string;
+  export const sparkles: string;
+  export const star: string;
+  export const starOutline: string;
+  export const stopCircleOutline: string;
+  export const swapHorizontalOutline: string;
+  export const timeOutline: string;
+  export const trashBinOutline: string;
+  export const trashOutline: string;
+  export const videocamOutline: string;
+  export const warningOutline: string;
+}

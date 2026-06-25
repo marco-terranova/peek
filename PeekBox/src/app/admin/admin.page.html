@@ -2,7 +2,7 @@
   <ion-toolbar class="peek-toolbar">
     <div class="header-inner">
       <div class="header-top">
-        <button class="ia-back-btn" (click)="goBack()" style="position:relative;top:auto;left:auto;margin:0;">
+        <button class="ia-back-btn" (click)="goBack()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
             <polyline points="10 17 15 12 10 7"/>
@@ -10,25 +10,24 @@
           </svg>
           <span>Torna indietro</span>
         </button>
-        <div class="header-greet">
-          <img src="assets/icon/logoTitolo1.png" class="header-logo" alt="PeekBox" style="cursor:pointer;" />
-          <h1 class="header-greeting">PANEL <span class="nome-verde">ADMIN</span></h1>
-        </div>
-        <div class="admin-avatar" (click)="vaiProfilo()" title="Profilo">
-          {{ inizialeAdmin() }}
-        </div>
       </div>
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="ad-blobs">
+    <div class="adb-blob adb-blob--1"></div>
+    <div class="adb-blob adb-blob--2"></div>
+    <div class="adb-blob adb-blob--3"></div>
+    <div class="adb-blob adb-blob--4"></div>
+  </div>
   <div class="admin-stage">
 
     <!-- ═══════════════════════════════════ STATS DASHBOARD ══════ -->
-    <section class="about-section" style="min-height:auto;">
-      <div class="about-inner about-inner--rows" style="padding:30px 48px 10px;">
-        <div class="about-content-full">
+    <section class="ad-section">
+      <div class="ad-section-inner">
+        <div class="ad-section-body">
           <div class="admin-stats-grid">
             <div class="admin-stat-card" *ngIf="stats">
               <div class="admin-stat-icon admin-stat-icon--blue">

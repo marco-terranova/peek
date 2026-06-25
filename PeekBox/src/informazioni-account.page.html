@@ -1,0 +1,166 @@
+<ion-content [fullscreen]="true" class="ia-content">
+  <div class="ia-stage">
+
+    <button class="ia-back-btn" (click)="tornaIndietro()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      <span>Torna indietro</span>
+    </button>
+
+    <!-- ═══════════════════════════════════ SEZIONE 1: I TUOI DATI ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <div class="ia-tips-card">
+            <h2 class="ac-title">I tuoi dati</h2>
+            <p class="ac-text ia-pw-text">
+              Benvenuto, <strong>{{ nome || 'Utente' }}</strong>. Qui puoi aggiornare il nome associato al tuo account e visualizzare le informazioni principali del tuo profilo. Il nome viene utilizzato in tutta l&rsquo;app per personalizzare l&rsquo;esperienza e appare nelle notifiche, nei messaggi di sistema e nelle condivisioni. L&rsquo;indirizzo email &egrave; il tuo identificativo univoco e non pu&ograve; essere modificato direttamente da questa pagina: se desideri cambiarlo contatta il supporto. La data di registrazione indica il giorno in cui hai creato il tuo account PeekBox e non &egrave; modificabile. Puoi anche vedere il tipo di profilo assegnato, che determina le funzionalit&agrave; a cui hai accesso.
+            </p>
+            <div class="ia-dati-cards">
+              <div class="ia-dc-card">
+                <div class="ia-dc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="ia-dc-body">
+                  <span class="ia-dc-label">Nome completo</span>
+                  <div class="ia-input-wrap">
+                    <input type="text"
+                           [(ngModel)]="nome"
+                           (input)="verificaModifiche()"
+                           placeholder="Il tuo nome"
+                           class="ia-input">
+                  </div>
+                </div>
+              </div>
+              <div class="ia-dc-card">
+                <div class="ia-dc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div class="ia-dc-body">
+                  <span class="ia-dc-label">Indirizzo email</span>
+                  <span class="ia-dc-value">{{ email }}</span>
+                  <span class="ia-dc-note">Non modificabile &mdash; contatta il supporto per richiedere un cambio email.</span>
+                </div>
+              </div>
+              <div class="ia-dc-card">
+                <div class="ia-dc-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="ia-dc-body">
+                  <span class="ia-dc-label">Data registrazione</span>
+                  <span class="ia-dc-value">{{ dataRegistrazione || 'Non disponibile' }}</span>
+                  <span class="ia-dc-note">Data di creazione del tuo account PeekBox.</span>
+                </div>
+              </div>
+            </div>
+            <div class="ia-badge-row">
+              <span class="ia-badge" [class.ia-badge--business]="tipoProfilo === 'business'">
+                <svg *ngIf="tipoProfilo === 'business'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ia-badge-icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                {{ tipoProfilo === 'business' ? 'Business' : 'Personale' }}
+              </span>
+              <span class="ia-badge ia-badge--admin" *ngIf="isAdmin">Amministratore</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══════════════════════════════════ SEZIONE 2: SUGGERIMENTI PASSWORD ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <div class="ia-tips-card">
+            <div class="ia-tips-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <h2 class="ac-title">Suggerimenti per la password</h2>
+            <p class="ac-text ia-pw-text">
+               Una password sicura &egrave; il primo baluardo a protezione del tuo account. Per essere considerata robusta deve contenere almeno 8 caratteri, ma ti consigliamo di puntare a 12 o pi&ugrave;. Alterna lettere maiuscole e minuscole, includi almeno un numero e un carattere speciale come !, ?, @, # o $. Evita parole comuni, il tuo nome, date di nascita o sequenze banali come &ldquo;123456&rdquo; o &ldquo;password&rdquo;. Usa una frase facile da ricordare ma difficile da indovinare, oppure affidati a un gestore di password che ne generi una casuale per te. Non riutilizzare mai la stessa password su piattaforme diverse: se una viene compromessa, tutte le altre sarebbero a rischio. Ti suggeriamo di cambiare la password periodicamente, almeno ogni tre mesi, e di non comunicarla a nessuno. PeekBox non ti chieder&agrave; mai la password via email o messaggio. Se sospetti che qualcuno possa averla intercettata, cambiala immediatamente.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ═══════════════════════════════════ SEZIONE 3: CAMBIO PASSWORD ══════ -->
+    <section class="about-section">
+      <div class="about-bg"></div>
+      <div class="about-inner about-inner--rows">
+        <div class="about-content-full">
+          <h2 class="ac-title">Cambio password</h2>
+          <p class="ac-text">
+            Inserisci la password attuale e scegli una nuova password robusta seguendo i suggerimenti qui sopra.
+          </p>
+          <div class="ia-form">
+            <div class="ia-field">
+              <label class="ia-label">Password attuale</label>
+              <div class="ia-input-wrap">
+                <svg class="ia-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" [(ngModel)]="vecchiaPassword" placeholder="Password attuale" class="ia-input">
+              </div>
+            </div>
+            <div class="ia-field">
+              <label class="ia-label">Nuova password</label>
+              <div class="ia-input-wrap">
+                <svg class="ia-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password"
+                       [(ngModel)]="nuovaPassword"
+                       (input)="verificaModifiche()"
+                       placeholder="Minimo 8 caratteri"
+                       class="ia-input">
+              </div>
+            </div>
+            <div class="ia-field">
+              <label class="ia-label">Conferma nuova password</label>
+              <div class="ia-input-wrap">
+                <svg class="ia-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" [(ngModel)]="confermaPassword" placeholder="Ripeti la password" class="ia-input">
+              </div>
+            </div>
+          </div>
+          <!-- Indicatore forza password -->
+          <div class="ia-pw-strength" *ngIf="nuovaPassword.length > 0">
+            <div class="ia-pws-bar">
+              <div class="ia-pws-fill"
+                   [style.width.%]="pwStrengthPercent"
+                   [class.weak]="pwStrengthLevel === 'weak'"
+                   [class.medium]="pwStrengthLevel === 'medium'"
+                   [class.strong]="pwStrengthLevel === 'strong'">
+              </div>
+            </div>
+            <span class="ia-pws-label"
+                  [class.weak]="pwStrengthLevel === 'weak'"
+                  [class.medium]="pwStrengthLevel === 'medium'"
+                  [class.strong]="pwStrengthLevel === 'strong'">
+              {{ pwStrengthLabel }}
+            </span>
+          </div>
+          <div class="ia-save-row">
+            <button class="ac-btn ia-save-btn"
+                    [class.is-active]="datiModificati"
+                    [disabled]="!datiModificati || isSaving"
+                    (click)="salvaModifiche()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              {{ isSaving ? 'Salvataggio in corso...' : 'Salva modifiche' }}
+            </button>
+            <p class="ia-save-hint"
+               *ngIf="!datiModificati">
+              Nessuna modifica rilevata &mdash; modifica nome o password
+              per abilitare il salvataggio.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</ion-content>

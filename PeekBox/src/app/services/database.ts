@@ -345,6 +345,12 @@ export class DatabaseService {
     return this.http.post(`${this.apiUrl}/segnalazioni`, data);
   }
 
+  exportArchivio(utenteId: string, scope: string, boxId?: string) {
+    let url = `${this.apiUrl}/export/${utenteId}?scope=${scope}`;
+    if (scope === 'singola' && boxId) url += `&boxId=${boxId}`;
+    return this.http.get<{ export: any[] }>(url);
+  }
+
 
   adminGetUtenti() {
     return this.http.get(`${this.apiUrl}/admin/utenti`);

@@ -525,7 +525,7 @@ export class ChatbotEngineService {
   }
 
   private messaggiResponse(): string {
-    return '📬 **Centro Messaggi**\n\nPuoi trovare tutti i tuoi messaggi, le risposte rapide e il modulo di contatto supporto nella sezione "Messaggi" del tuo profilo.\n\nVai su Profilo → Messaggi per:\n- Leggere la posta in arrivo\n- Gestire messaggi importanti\n- Contattare il supporto\n- Usare le risposte rapide\n\nVuoi che ti dica di più?';
+    return '📬 **Centro Messaggi**\n\nPuoi trovare tutti i tuoi messaggi e il modulo di contatto supporto nella sezione "Messaggi" del tuo profilo.\n\nVai su Profilo → Messaggi per:\n- Leggere la posta in arrivo\n- Gestire messaggi importanti\n- Contattare il supporto\n\nVuoi che ti dica di più?';
   }
 
 

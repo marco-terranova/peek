@@ -214,7 +214,11 @@ export class EsportaArchivioPage implements OnInit {
 
     try {
       if (this.exportFormat === 'json') {
-        const dati = await this.getDatiReali();
+        const utenteId = localStorage.getItem('utente_id') || '';
+        const res: any = await firstValueFrom(
+          this.dbService.exportArchivio(utenteId, this.exportScope, this.selectedBoxId || undefined)
+        );
+        const dati = res?.export ?? [];
         const jsonContent = this.exportService.generaReportJson(dati);
         const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
         this.exportService.triggerDownload(

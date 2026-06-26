@@ -90,7 +90,6 @@ export interface Messaggio {
   corpo: string;
   letto: number;
   importante: number;
-  archiviato?: number;
   direzione?: number;
   timestamp: string;
   /** Se presente, il messaggio è una notifica geofence mappata */

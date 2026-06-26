@@ -1388,6 +1388,96 @@ app.delete('/api/condivisioni/:id', verificaToken, (req, res) => {
 });
 
 
+app.get('/api/export/:utenteId', verificaToken, (req, res) => {
+    if (String(req.user.id) !== String(req.params.utenteId))
+        return res.status(403).json({ error: "Non autorizzato." });
+
+    const scope = req.query.scope || 'tutto';
+    const boxId = req.query.boxId;
+
+    let boxSql, boxParams;
+
+    if (scope === 'singola') {
+        if (!boxId) return res.status(400).json({ error: "boxId obbligatorio per scope 'singola'." });
+        boxSql = `
+            SELECT b.*, a.nome as nome_armadio
+            FROM box b
+            JOIN armadi a ON b.rif_armadio = a.id
+            WHERE b.id = ? AND a.rif_utente = ?
+        `;
+        boxParams = [boxId, req.params.utenteId];
+    } else if (scope === 'attive') {
+        boxSql = `
+            SELECT b.*, a.nome as nome_armadio
+            FROM box b
+            JOIN armadi a ON b.rif_armadio = a.id
+            WHERE a.rif_utente = ? AND b.data_eliminazione IS NULL
+            ORDER BY b.id ASC
+        `;
+        boxParams = [req.params.utenteId];
+    } else {
+        boxSql = `
+            SELECT b.*, a.nome as nome_armadio
+            FROM box b
+            JOIN armadi a ON b.rif_armadio = a.id
+            WHERE a.rif_utente = ?
+            ORDER BY b.id ASC
+        `;
+        boxParams = [req.params.utenteId];
+    }
+
+    db.all(boxSql, boxParams, (err, boxes) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!boxes || boxes.length === 0) return res.json({ export: [] });
+
+        const ids = boxes.map(b => b.id);
+        const placeholders = ids.map(() => '?').join(', ');
+
+        db.all(
+            `SELECT * FROM oggetti WHERE rif_box IN (${placeholders}) AND data_eliminazione IS NULL`,
+            ids,
+            (oggErr, oggetti) => {
+                if (oggErr) return res.status(500).json({ error: oggErr.message });
+
+                const oggettiPerBox = {};
+                for (const o of (oggetti || [])) {
+                    if (!oggettiPerBox[o.rif_box]) oggettiPerBox[o.rif_box] = [];
+                    oggettiPerBox[o.rif_box].push(o);
+                }
+
+                const result = boxes.map(box => {
+                    const items = oggettiPerBox[box.id] || [];
+                    return {
+                        box: (box.nome || '').toUpperCase(),
+                        descrizione: box.descrizione || '',
+                        contenuto: items.length > 0
+                            ? items.map(o => o.nome || o.descrizione || '?').join(', ')
+                            : '— Nessun oggetto —',
+                        nOggetti: items.length,
+                        data: box.data_creazione
+                            ? new Date(box.data_creazione).toLocaleDateString('it-IT')
+                            : '—',
+                        spazio: box.nome_armadio || '—',
+                        dimensione: box.dimensione || 'piccola',
+                        is_preferito: box.is_preferito === 1,
+                        moving_mode: box.moving_mode === 1,
+                        oggetti: items.map(o => ({
+                            nome: o.nome,
+                            descrizione: o.descrizione || '',
+                            tipo: o.tipo || '',
+                            fragile: o.fragile === 1,
+                            quantita: o.quantita || 1,
+                        })),
+                    };
+                });
+
+                res.json({ export: result });
+            }
+        );
+    });
+});
+
+
 app.get('/api/admin/utenti', verificaAdmin, (req, res) => {
     db.all(`
         SELECT 

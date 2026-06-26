@@ -67,9 +67,11 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               Cerca per Categoria
             </label>
-            <div #catTrigger class="fsr-select-trigger" (click)="toggleCatDd()">
-              <span [class.placeholder]="!selectedCategoria">{{ selectedCategoria || 'Nessuna categoria selezionata' }}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="csr-select-wrap">
+              <div #catTrigger class="csr-select-trigger" (click)="toggleCatDd()">
+                <span>{{ selectedCategoria || 'Nessuna categoria selezionata' }}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
             </div>
           </div>
 
@@ -78,9 +80,11 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><line x1="8" y1="6" x2="10" y2="6"/></svg>
               Spazio / Armadio
             </label>
-            <div #armTrigger class="fsr-select-trigger" (click)="toggleArmDd()">
-              <span [class.placeholder]="!selectedArmadio">{{ selectedArmadio ? getNomeArmadio() : 'Nessun armadio selezionato' }}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="csr-select-wrap">
+              <div #armTrigger class="csr-select-trigger" (click)="toggleArmDd()">
+                <span>{{ selectedArmadio ? getNomeArmadio() : 'Nessuno Spazio Trovato' }}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
             </div>
           </div>
 
@@ -114,14 +118,15 @@
   </div>
 </div>
 
-<div class="fsr-dd-backdrop" *ngIf="mostraCatDd || mostraArmDd" (click)="chiudiDd()"></div>
-<div class="fsr-dd" *ngIf="mostraCatDd" [ngStyle]="catDdStyle">
-  <div class="fsr-dd-item" (click)="selCat('')">Nessuna categoria selezionata</div>
-  <div class="fsr-dd-item" *ngFor="let c of categorie" (click)="selCat(c)">{{ c }}</div>
+<div class="csr-dropdown-backdrop" *ngIf="mostraCatDd || mostraArmDd" (click)="chiudiDd()"></div>
+<div class="csr-dropdown" *ngIf="mostraCatDd" [ngStyle]="catDdStyle">
+  <button type="button" class="csr-dropdown-item" (click)="selCat('')">Nessuna categoria selezionata</button>
+  <button type="button" class="csr-dropdown-item" *ngFor="let c of categorie" (click)="selCat(c)">{{ c }}</button>
 </div>
-<div class="fsr-dd" *ngIf="mostraArmDd" [ngStyle]="armDdStyle">
-  <div class="fsr-dd-item" (click)="selArm({id: 0})">Nessun armadio selezionato</div>
-  <div class="fsr-dd-item" *ngFor="let a of armadiDisponibili" (click)="selArm(a)">{{ a.nome }}</div>
+<div class="csr-dropdown" *ngIf="mostraArmDd" [ngStyle]="armDdStyle">
+  <button type="button" class="csr-dropdown-item" (click)="selArm({id: 0})">Nessuno Spazio Trovato</button>
+  <button type="button" class="csr-dropdown-item" *ngFor="let a of armadiDisponibili" (click)="selArm(a)">{{ a.nome }}</button>
+  <div class="csr-dropdown-empty" *ngIf="armadiDisponibili.length === 0">Nessuno spazio disponibile</div>
 </div>
 
 </ion-content>
